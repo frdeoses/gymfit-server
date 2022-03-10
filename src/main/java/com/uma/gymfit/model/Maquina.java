@@ -19,6 +19,8 @@ public class Maquina {
 
     private String descripcion;
 
-    private int like;
+    private List<PesoTrabajado> pesosTrabajados;
+
+    private int meGusta;
 
 }
