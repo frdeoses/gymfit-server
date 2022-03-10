@@ -19,6 +19,8 @@ public class TablaEntrenamiento {
     @Id
     private String id;
 
+    private String idUsuario;
+
     private long fechaCreacion;
 
     private String tipoEntreno;
