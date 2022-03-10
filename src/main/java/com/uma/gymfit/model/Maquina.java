@@ -3,14 +3,16 @@ package com.uma.gymfit.model;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.Id;
 
-@Document(value = "Maquina")
+import java.util.List;
+
 @Data
 @Getter
 @Setter
 public class Maquina {
 
+    @Id
     private String id;
 
     private String nombre;
