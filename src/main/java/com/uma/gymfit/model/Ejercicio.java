@@ -2,7 +2,6 @@ package com.uma.gymfit.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class Ejercicio {
 
     private String explicacion;
 
-    private int like;
+    private int meGusta;
 
     private List<PesoTrabajado> pesosTrabajados;
     
