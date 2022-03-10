@@ -12,6 +12,6 @@ public class PGrasa {
 
     private long fecha;
 
-    private double peso;
+    private double porcentajeGrasa;
 
 }

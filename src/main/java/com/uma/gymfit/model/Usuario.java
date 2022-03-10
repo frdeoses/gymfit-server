@@ -33,7 +33,7 @@ public class Usuario {
 
     private double altura;
 
-    private List<Peso> peso;
+    private List<Peso> pesoUsuario;
 
     private List<PGrasa> porcentajeGrasa;
 
