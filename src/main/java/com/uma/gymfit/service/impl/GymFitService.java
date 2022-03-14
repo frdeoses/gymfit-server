@@ -22,16 +22,28 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
     @Autowired
     private IRepositorioUsuario repositorioUsuario;
 
+    /**
+     * Devuelve todos los usuarios almacenados en BBDD
+     * @return
+     */
     @Override
     public List allUser() {
         return repositorioUsuario.findAll();
     }
 
+    /**
+     * Devuelve todas las tablas almacenadas en BBDD
+     * @return
+     */
     @Override
     public List allTrainingTable() {
         return repositorioTabla.findAll();
     }
 
+    /**
+     * Crea un usuario
+     * @param user
+     */
     @Override
     public void createUser(Usuario user) {
 
@@ -42,6 +54,10 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
 
     }
 
+    /**
+     * Crea  una tabla de entrenamiento
+     * @param trainingT
+     */
     @Override
     public void createTrainingTable(TablaEntrenamiento trainingT) {
 
@@ -53,6 +69,10 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
 
     }
 
+    /**
+     * Borra un usuario por su id
+     * @param id
+     */
     @Override
     public void deleteUser(String id) {
 
@@ -66,6 +86,10 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
 
     }
 
+    /**
+     * Borra una tabla de entrenamiento por su id
+     * @param id
+     */
     @Override
     public void deleteTrainingTable(String id) {
 
@@ -79,6 +103,11 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
 
     }
 
+    /**
+     * Modifica un usuario
+     * @param user
+     * @return
+     */
     @Override
     public Usuario updateUser(Usuario user) {
 
@@ -91,6 +120,11 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
         return null;
     }
 
+    /**
+     * Modifica una tabla de entrenamimento
+     * @param trainingT
+     * @return
+     */
     @Override
     public TablaEntrenamiento updateTrainingTable(TablaEntrenamiento trainingT) {
         return null;
