@@ -24,7 +24,7 @@ public interface IGymFitService<T extends TablaEntrenamiento, U extends Usuario>
      * Crea un usuario
      * @param user
      */
-    public void createUser(U user);
+    public void createUser(U user) throws Exception;
 
     /**
      * Crea  una tabla de entrenamiento

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.IllegalFormatConversionException;
 import java.util.List;
 
 @AllArgsConstructor
@@ -45,12 +46,30 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
      * @param user
      */
     @Override
-    public void createUser(Usuario user) {
+    public void createUser(Usuario user) throws Exception {
 
         //comprobar que no me llega un user invalido
 
+        checkUser(user);
+
         //en caso de no tener problemas guardaremos en el repositorio.
         repositorioUsuario.save(user);
+
+    }
+
+    private void checkUser(Usuario user) throws Exception {
+
+        if(user == null)
+            throw new NullPointerException("Usuario nulo.");
+
+        if(user.getNombre().isBlank() || user.getNombre().isEmpty())
+            throw new Exception("Nombre vacio.");
+
+        if(user.getApellidos().isBlank() || user.getApellidos().isEmpty())
+            throw new Exception("Apellidos vacio.");
+
+        if(user.getEmail().isBlank() || user.getEmail().isEmpty())
+            throw new Exception("Email vacio.");
 
     }
 
