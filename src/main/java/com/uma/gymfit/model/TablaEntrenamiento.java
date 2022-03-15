@@ -1,5 +1,6 @@
 package com.uma.gymfit.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,10 +22,13 @@ public class TablaEntrenamiento {
 
     private String idUsuario;
 
+    @JsonProperty(required = true)
     private long fechaCreacion;
 
+    @JsonProperty(required = true)
     private String tipoEntreno;
 
+    @JsonProperty(required = true)
     private long fechaInicio;
 
     private long fechaFin;
