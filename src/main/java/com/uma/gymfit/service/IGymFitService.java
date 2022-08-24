@@ -3,7 +3,6 @@ package com.uma.gymfit.service;
 import com.uma.gymfit.model.TablaEntrenamiento;
 import com.uma.gymfit.model.Usuario;
 
-import java.net.http.HttpResponse;
 import java.util.List;
 
 public interface IGymFitService<T extends TablaEntrenamiento, U extends Usuario> {
@@ -30,31 +29,29 @@ public interface IGymFitService<T extends TablaEntrenamiento, U extends Usuario>
      * Crea  una tabla de entrenamiento
      * @param trainingT
      */
-    public void createTrainingTable(T trainingT);
+    public void createTrainingTable(T trainingT) throws Exception;
 
     /**
      * Borra un usuario por su id
      * @param id
      */
-    public void deleteUser(String id);
+    public void deleteUser(String id) throws Exception;
 
     /**
      * Borra una tabla de entrenamiento por su id
      * @param id
      */
-    public void deleteTrainingTable(String id);
+    public void deleteTrainingTable(String id) throws Exception;
 
     /**
      * Modifica un usuario
      * @param user
-     * @return U
      */
-    public U updateUser(U user);
+    public void updateUser(U user) throws Exception;
 
     /**
      * Modifica una tabla de entrenamimento
      * @param trainingT
-     * @return T
      */
-    public T updateTrainingTable(T trainingT);
+    public void updateTrainingTable(T trainingT) throws Exception;
 }
