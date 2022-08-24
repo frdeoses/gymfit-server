@@ -8,6 +8,8 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Document(value = "TablaEntrenamiento")
@@ -20,14 +22,22 @@ public class TablaEntrenamiento {
     @Id
     private String id;
 
+    @JsonProperty(required = true)
+    @NotNull
+    @NotBlank
     private String idUsuario;
 
     @JsonProperty(required = true)
+    @NotNull
+    @NotBlank
     private long fechaCreacion;
 
     @JsonProperty(required = true)
+    @NotNull
+    @NotBlank
     private String tipoEntreno;
 
+    @NotNull
     @JsonProperty(required = true)
     private long fechaInicio;
 
