@@ -59,6 +59,11 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
 
     }
 
+    /***
+     *  Método que controla que el objeto que le llega es válido
+     * @param user
+     * @throws Exception
+     */
     private void checkUser(Usuario user) throws Exception {
 
         if (user == null)
@@ -93,6 +98,12 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
 
     }
 
+    /**
+     * Método que controla que el objeto que le llega es válido
+     *
+     * @param trainingT
+     * @throws Exception
+     */
     private void checkTable(TablaEntrenamiento trainingT) throws Exception {
         if (trainingT == null)
             throw new NullPointerException("Tabla nula.");
