@@ -6,6 +6,7 @@ import com.uma.gymfit.repository.IRepositorioTabla;
 import com.uma.gymfit.repository.IRepositorioUsuario;
 import com.uma.gymfit.service.IGymFitService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +57,9 @@ public class GymFitService
 //        checkUser(user);
 
         //en caso de no tener problemas guardaremos en el repositorio.
+        log.info("Procedemos a guardar en el sistema el siguiente usuario: {}.",user);
         repositorioUsuario.save(user);
+        log.info("OK: Usuario guardado con exito.");
 
     }
 
@@ -94,7 +97,9 @@ public class GymFitService
 //        checkTable(trainingT);
 
         //en caso de no tener problemas guardaremos en el repositorio.
+        log.info("Procedemos a guardar en el sistema la siguiente tabla de entrenamiento: {}.",trainingT);
         repositorioTabla.save(trainingT);
+        log.info("OK: Tabla de entrenamiento guardado con exito.");
 
 
     }
@@ -126,15 +131,19 @@ public class GymFitService
     public void deleteUser(String id) throws Exception {
 
         //comprobamos que el id es correcto.
-        if (id == null || id.isEmpty() || id.isBlank())
-            throw new Exception("El id del usuario que quieres eliminar es invalido");
+//        if (id == null || id.isEmpty() || id.isBlank())
+//            throw new Exception("El id del usuario que quieres eliminar es invalido");
 
         //comprobamos que el id se encuentra en el reepositorio
+        log.info("Comprobamos en el sistema que exite el usuario en el sistema ");
         if (repositorioUsuario.existsById(id)) {
 
+            log.info("Exite el usuario en el sistema.");
             //una vez este todo correcto guardaremos el dato.
             repositorioUsuario.deleteById(id);
+            log.info("OK: Usuario eliminado con exito.");
         } else {
+            log.error("El usuario que quiere eliminar no se encuentra en el sistema");
             throw new Exception("El usuario que quiere eliminar no se encuentra en el sistema");
         }
 
@@ -149,17 +158,21 @@ public class GymFitService
     @Override
     public void deleteTrainingTable(String id) throws Exception {
 
-        //comprobamos que el id es correcto.
+        //comprobamos que el id es correcto (No puede pasar porque no funcionaria el método).
 
-        if (id == null || id.isEmpty() || id.isBlank())
-            throw new Exception("El id de la tabla que quieres eliminar es invalido");
+//        if (id == null || id.isEmpty() || id.isBlank())
+//            throw new Exception("El id de la tabla que quieres eliminar es invalido");
 
         //comprobamos que el id se encuentra en el reepositorio
+        log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");
         if (repositorioTabla.existsById(id)) {
+            log.info("Exite la tabla de entrenamiento en el sistema.");
             //una vez este todo correcto borramos el dato.
             repositorioTabla.deleteById(id);
+            log.info("OK: Tabla de entrenamiento eliminada con exito.");
 
         } else {
+            log.error("La tabla que quiere eliminar no se encuentra en el sistema.");
             throw new Exception("La tabla que quiere eliminar no se encuentra en el sistema.");
         }
 
@@ -179,15 +192,18 @@ public class GymFitService
 //        checkUser(user);
 
         // comprobamos que se encuentra en la BBDD
+        log.info("Comprobamos en el sistema que exite el usuario.");
         if (repositorioUsuario.existsById(user.getId())) {
 
             // Borramos antrior user
 //            repositorioUsuario.deleteById(user.getId());
-
+            log.info("Exite el usuario en el sistema.");
             // insertamos nuevo
             repositorioUsuario.save(user);
+            log.info("OK: Usuario guardado con exito.");
 
         } else {
+            log.error("No se encuentra el usuario que quieres modificar");
             throw new Exception("No se encuentra el usuario que quieres modificar");
         }
 
@@ -206,15 +222,18 @@ public class GymFitService
 //        checkTable(trainingT);
 
         // comprobamos que se encuentra en la BBDD
+        log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");
         if (repositorioTabla.existsById(trainingT.getId())) {
 
             // Borramos antrior user (se supone que el save ya lo hace)
 //            repositorioTabla.deleteById(trainingT.getId());
-
+            log.info("Exite la tabla de entrenamiento en el sistema.");
             // insertamos nuevo
             repositorioTabla.save(trainingT);
+            log.info("OK: Tabla de entrenamiento guardado con exito.");
 
         } else {
+            log.error("No se encuentra la tabla de entrenamiento que quieres modificar");
             throw new Exception("No se encuentra la tabla que quieres modificar");
         }
 
