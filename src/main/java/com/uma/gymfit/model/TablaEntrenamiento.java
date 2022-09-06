@@ -29,7 +29,6 @@ public class TablaEntrenamiento {
 
     @JsonProperty(required = true)
     @NotNull
-    @NotBlank
     private long fechaCreacion;
 
     @JsonProperty(required = true)

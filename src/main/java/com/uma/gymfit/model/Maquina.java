@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -13,6 +15,8 @@ import java.util.List;
 public class Maquina {
 
     @Id
+    @NotNull
+    @NotBlank
     private String id;
 
     private String nombre;

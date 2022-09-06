@@ -3,6 +3,8 @@ package com.uma.gymfit.model;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -11,6 +13,8 @@ import java.util.List;
 public class Ejercicio {
 
     @Id
+    @NotNull
+    @NotBlank
     private String id;
 
     private String tipoEjercicio;
