@@ -5,31 +5,31 @@ import com.uma.gymfit.model.Usuario;
 
 import java.util.List;
 
-public interface IGymFitService<T extends TablaEntrenamiento, U extends Usuario> {
+public interface IGymFitService {
 
     /**
      * Devuelve todos los usuarios almacenados en BBDD
      * @return List<U>
      */
-    public List<U> allUser();
+    public List<Usuario> allUser();
 
     /**
      * Devuelve todas las tablas almacenadas en BBDD
      * @return List<T>
      */
-    public List<T> allTrainingTable();
+    public List<TablaEntrenamiento> allTrainingTable();
 
     /**
      * Crea un usuario
      * @param user
      */
-    public void createUser(U user) throws Exception;
+    public void createUser(Usuario user) throws Exception;
 
     /**
      * Crea  una tabla de entrenamiento
      * @param trainingT
      */
-    public void createTrainingTable(T trainingT) throws Exception;
+    public void createTrainingTable(TablaEntrenamiento trainingT) throws Exception;
 
     /**
      * Borra un usuario por su id
@@ -47,11 +47,11 @@ public interface IGymFitService<T extends TablaEntrenamiento, U extends Usuario>
      * Modifica un usuario
      * @param user
      */
-    public void updateUser(U user) throws Exception;
+    public void updateUser(Usuario user) throws Exception;
 
     /**
      * Modifica una tabla de entrenamimento
      * @param trainingT
      */
-    public void updateTrainingTable(T trainingT) throws Exception;
+    public void updateTrainingTable(TablaEntrenamiento trainingT) throws Exception;
 }

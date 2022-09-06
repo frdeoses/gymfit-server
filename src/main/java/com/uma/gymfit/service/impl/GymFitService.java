@@ -13,7 +13,8 @@ import java.util.List;
 
 @AllArgsConstructor
 @Service
-public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
+@Slf4j
+public class GymFitService
         implements IGymFitService {
 
     @Autowired
@@ -28,7 +29,7 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
      * @return
      */
     @Override
-    public List allUser() {
+    public List<Usuario> allUser() {
         return repositorioUsuario.findAll();
     }
 
@@ -38,7 +39,7 @@ public class GymFitService<T extends TablaEntrenamiento, U extends Usuario>
      * @return
      */
     @Override
-    public List allTrainingTable() {
+    public List<TablaEntrenamiento> allTrainingTable() {
         return repositorioTabla.findAll();
     }
 
