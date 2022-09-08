@@ -27,7 +27,7 @@ public class GymFitService
     /**
      * Devuelve todos los usuarios almacenados en BBDD
      *
-     * @return
+     * @return List<Usuario>
      */
     @Override
     public List<Usuario> allUser() {
@@ -35,13 +35,53 @@ public class GymFitService
     }
 
     /**
+     * Devuelve el usuarios almacenado en BBDD
+     *
+     * @param idUser
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Usuario findUser(String idUser) throws Exception {
+
+        log.info("Buscamos el usuario en el sistema....");
+        if (repositorioUsuario.existsById(idUser)) {
+            log.info("OK: User encontrado.....");
+            return repositorioUsuario.findById(idUser).get();
+        }
+
+        log.error("ERROR: User no se encuentra en el sistema...");
+        throw new Exception("ERROR: User no se encuentra en el sistema...");
+    }
+
+    /**
      * Devuelve todas las tablas almacenadas en BBDD
      *
-     * @return
+     * @return List<TablaEntrenamiento>
      */
     @Override
     public List<TablaEntrenamiento> allTrainingTable() {
         return repositorioTabla.findAll();
+    }
+
+    /***
+     * Devuelve la tablas almacenadas en BBDD
+     * @param idTrainingTable
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public TablaEntrenamiento findTrainingTable(String idTrainingTable) throws Exception {
+
+        log.info("Buscamos la Tabla en el sistema...");
+        if (repositorioTabla.existsById(idTrainingTable)) {
+            log.info("OK: TrainingTable encontrado.....");
+            return repositorioTabla.findById(idTrainingTable).get();
+        }
+
+        log.error("ERROR: TrainingTable no se encuentra en el sistema...");
+        throw new Exception("ERROR: TrainingTable no se encuentra en el sistema...");
+
     }
 
     /**
@@ -52,12 +92,8 @@ public class GymFitService
     @Override
     public void createUser(Usuario user) throws Exception {
 
-        //comprobar que no me llega un user invalido
-//        Lo hacemos en el modelo
-//        checkUser(user);
-
         //en caso de no tener problemas guardaremos en el repositorio.
-        log.info("Procedemos a guardar en el sistema el siguiente usuario: {}.",user);
+        log.info("Procedemos a guardar en el sistema el siguiente usuario: {}.", user);
         repositorioUsuario.save(user);
         log.info("OK: Usuario guardado con exito.");
 
@@ -92,12 +128,8 @@ public class GymFitService
     @Override
     public void createTrainingTable(TablaEntrenamiento trainingT) throws Exception {
 
-        //comprobar que no me llega una tabla invalido
-//        Lo hacemos en el modelo
-//        checkTable(trainingT);
-
         //en caso de no tener problemas guardaremos en el repositorio.
-        log.info("Procedemos a guardar en el sistema la siguiente tabla de entrenamiento: {}.",trainingT);
+        log.info("Procedemos a guardar en el sistema la siguiente tabla de entrenamiento: {}.", trainingT);
         repositorioTabla.save(trainingT);
         log.info("OK: Tabla de entrenamiento guardado con exito.");
 
@@ -130,10 +162,6 @@ public class GymFitService
     @Override
     public void deleteUser(String id) throws Exception {
 
-        //comprobamos que el id es correcto.
-//        if (id == null || id.isEmpty() || id.isBlank())
-//            throw new Exception("El id del usuario que quieres eliminar es invalido");
-
         //comprobamos que el id se encuentra en el reepositorio
         log.info("Comprobamos en el sistema que exite el usuario en el sistema ");
         if (repositorioUsuario.existsById(id)) {
@@ -157,11 +185,6 @@ public class GymFitService
      */
     @Override
     public void deleteTrainingTable(String id) throws Exception {
-
-        //comprobamos que el id es correcto (No puede pasar porque no funcionaria el método).
-
-//        if (id == null || id.isEmpty() || id.isBlank())
-//            throw new Exception("El id de la tabla que quieres eliminar es invalido");
 
         //comprobamos que el id se encuentra en el reepositorio
         log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");
@@ -217,10 +240,6 @@ public class GymFitService
     @Override
     public void updateTrainingTable(TablaEntrenamiento trainingT) throws Exception {
 
-//        comprobamos que nos llega un usuario valido.
-//        Lo hacemos en el modelo
-//        checkTable(trainingT);
-
         // comprobamos que se encuentra en la BBDD
         log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");
         if (repositorioTabla.existsById(trainingT.getId())) {
@@ -236,7 +255,6 @@ public class GymFitService
             log.error("No se encuentra la tabla de entrenamiento que quieres modificar");
             throw new Exception("No se encuentra la tabla que quieres modificar");
         }
-
 
     }
 }

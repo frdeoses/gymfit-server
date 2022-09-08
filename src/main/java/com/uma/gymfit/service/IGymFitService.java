@@ -14,10 +14,23 @@ public interface IGymFitService {
     public List<Usuario> allUser();
 
     /**
+     * Devuelve el usuarios almacenado en BBDD
+     * @param idUser
+     * @return Usuario
+     */
+    public Usuario findUser(String idUser) throws Exception;
+
+    /**
      * Devuelve todas las tablas almacenadas en BBDD
      * @return List<T>
      */
     public List<TablaEntrenamiento> allTrainingTable();
+
+    /**
+     * Devuelve la tablas almacenadas en BBDD
+     * @return TablaEntrenamiento
+     */
+    public TablaEntrenamiento findTrainingTable(String idTrainingTable) throws Exception;
 
     /**
      * Crea un usuario
