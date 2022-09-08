@@ -27,10 +27,36 @@ public class GymFitController {
         allUser = gymFitService.allUser();
         return new ResponseEntity<>(allUser, HttpStatus.OK);
     }
+    @GetMapping("/users/{idUser}")
+    public ResponseEntity<Usuario> findUser(@PathVariable String idUser) {
+        Usuario user;
+        try {
+            user = gymFitService.findUser(idUser);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), user, null);
+            return new ResponseEntity(res, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idUser, e.getMessage());
+            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/training-tables")
     public ResponseEntity<List<TablaEntrenamiento>> allTrainingTable() {
         return new ResponseEntity<>(gymFitService.allTrainingTable(), HttpStatus.OK);
+    }
+
+    @GetMapping("/training-tables/{idTrainingTable}")
+    public ResponseEntity<TablaEntrenamiento> findTrainingTable(@PathVariable String idTrainingTable) {
+
+        TablaEntrenamiento tablaEntrenamiento;
+        try {
+            tablaEntrenamiento = gymFitService.findTrainingTable(idTrainingTable);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), tablaEntrenamiento, null);
+            return new ResponseEntity(res, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idTrainingTable, e.getMessage());
+            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/user")
