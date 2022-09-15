@@ -1,4 +1,4 @@
-package com.uma.gymfit;
+package com.uma.gymfit.trainingtable;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -12,12 +12,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Document(value = "TablaEntrenamiento")
+@Document(value = "TrainingTable")
 @Data
 @Getter
 @Setter
 @ToString
-public class TablaEntrenamiento {
+public class TrainingTable {
 
     @Id
     private String id;
@@ -25,30 +25,30 @@ public class TablaEntrenamiento {
     @JsonProperty(required = true)
     @NotNull
     @NotBlank
-    private String idUsuario;
+    private String idUser;
 
     @JsonProperty(required = true)
     @NotNull
-    private long fechaCreacion;
+    private long creationDate;
 
     @JsonProperty(required = true)
     @NotNull
     @NotBlank
-    private String tipoEntreno;
+    private String typeTraining;
 
     @NotNull
     @JsonProperty(required = true)
-    private long fechaInicio;
+    private long initDate;
 
-    private long fechaFin;
+    private long endDate;
 
-    private int duracionEntrenamiento;
+    private int trainingDuration;
 
-    private int tiempoDescanso;
+    private int breakTime;
 
-    private String obserevacion;
+    private String observation;
 
-    private List<Ejercicio> ejercicios;
+    private List<Training> training;
 
 
 }

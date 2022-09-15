@@ -10,27 +10,27 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class Ejercicio {
+public class Training {
 
     @Id
     @NotNull
     @NotBlank
     private String id;
 
-    private String tipoEjercicio;
+    private String typeTraining;
 
-    private int numRepeticiones;
+    private int numRepetitions;
 
     private int numSeries;
 
-    private String zonaEjercitada;
+    private String exercisedArea;
 
-    private String explicacion;
+    private String explication;
 
-    private int meGusta;
+    private int like;
 
-    private List<PesoTrabajado> pesosTrabajados;
+    private List<WorkedWeights> workedWeights;
     
-    private Maquina maquina;
+    private GymMachine gymMachine;
 
 }

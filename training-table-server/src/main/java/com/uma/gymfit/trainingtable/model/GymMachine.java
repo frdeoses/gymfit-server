@@ -12,21 +12,21 @@ import java.util.List;
 @Data
 @Getter
 @Setter
-public class Maquina {
+public class GymMachine {
 
     @Id
     @NotNull
     @NotBlank
     private String id;
 
-    private String nombre;
+    private String name;
 
-    private String zonaEjercitada;
+    private String exercisedArea;
 
-    private String descripcion;
+    private String description;
 
-    private List<PesoTrabajado> pesosTrabajados;
+    private List<WorkedWeights> workedWeights;
 
-    private int meGusta;
+    private int like;
 
 }

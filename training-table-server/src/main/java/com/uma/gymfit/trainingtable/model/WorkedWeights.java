@@ -7,11 +7,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PesoTrabajado {
+public class WorkedWeights {
 
-    private double peso;
+    private double weight;
 
-    private long fecha;
+    private long date;
 
     private int serie;
 
