@@ -1,4 +1,4 @@
-package com.uma.gymfit.server;
+package com.uma.gymfit.trainingtable.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
