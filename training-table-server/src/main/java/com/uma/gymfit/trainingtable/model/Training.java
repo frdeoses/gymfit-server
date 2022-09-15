@@ -1,4 +1,4 @@
-package com.uma.gymfit.model;
+package com.uma.gymfit.trainingtable.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

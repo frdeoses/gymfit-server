@@ -1,5 +1,4 @@
-package com.uma.gymfit.model;
-
+package com.uma.gymfit.trainingtable.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,10 +7,12 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Peso {
+public class PesoTrabajado {
+
+    private double peso;
 
     private long fecha;
 
-    private double peso;
+    private int serie;
 
 }
