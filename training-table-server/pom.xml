@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.uma</groupId>
-	<artifactId>gymfit.server</artifactId>
+	<artifactId>gymfit.training-table.server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>gymfit.server</name>
+	<name>gymfit.training-table.server</name>
 	<description>Small api-rest application, made with spring boot 2 and non-relational database (MongoDB).</description>
 	<properties>
 		<java.version>11</java.version>
