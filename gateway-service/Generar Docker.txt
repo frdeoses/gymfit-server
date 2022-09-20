@@ -1,0 +1,2 @@
+docker build --tag=gateway:latest .
+docker run -p80:80 gateway:latest .
