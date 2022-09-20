@@ -25,7 +25,7 @@ public class GymMachine {
 
     private String description;
 
-    private List<WorkedWeights> workedWeights;
+    private List<WorkedWeights> listWorkedWeights;
 
     private int like;
 

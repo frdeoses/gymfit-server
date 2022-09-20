@@ -29,7 +29,7 @@ public class Training {
 
     private int like;
 
-    private List<WorkedWeights> workedWeights;
+    private List<WorkedWeights> listWorkedWeights;
     
     private GymMachine gymMachine;
 

@@ -48,7 +48,7 @@ public class TrainingTable {
 
     private String observation;
 
-    private List<Training> training;
+    private List<Training> listTraining;
 
 
 }
