@@ -49,10 +49,10 @@ public class User {
     private long registrationDate;
 
     @JsonProperty(required = true)
-    private double altura;
+    private double height;
 
-    private List<Weight> pesoUsuario;
+    private List<Weight> listUserWeight;
 
-    private List<FatPercentage> porcentajeGrasa;
+    private List<FatPercentage> listFatPercentage;
 
 }
