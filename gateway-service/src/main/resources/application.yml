@@ -21,8 +21,14 @@ spring:
             - Path=/api/gymfit/training-table**
           filters:
             - RewritePath=/(?<path>.*), /$\{path}
+        - id: calendar
+            uri: ${internal.lb.uri}:8003
+            predicates:
+              - Path=/api/gymfit/calendar**
+            filters:
+              - RewritePath=/(?<path>.*), /$\{path}
         - id: webapp
-          uri: ${internal.lb.uri}:8003
+          uri: ${internal.lb.uri}:8004
           predicates:
             - Path=/**
           filters:
