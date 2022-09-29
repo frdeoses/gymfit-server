@@ -42,7 +42,12 @@ public class User {
 
     @JsonProperty(required = true)
     @NotNull
-    private long birthdate;
+    @NotBlank
+    private String phone;
+
+    @JsonProperty(required = true)
+    @NotNull
+    private long birthDate;
 
     @JsonProperty(required = true)
     @NotNull
