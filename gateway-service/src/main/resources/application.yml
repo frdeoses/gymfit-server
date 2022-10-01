@@ -15,18 +15,36 @@ spring:
             - Path=/api/gymfit/user**
           filters:
             - RewritePath=/(?<path>.*), /$\{path}
+        - id: user_id
+          uri: ${internal.lb.uri}:8001
+          predicates:
+            - Path=/api/gymfit/users/**
+          filters:
+            - RewritePath=/users/(?<path>.*), /users/$\{path}
         - id: training-table
           uri: ${internal.lb.uri}:8002
           predicates:
             - Path=/api/gymfit/training-table**
           filters:
             - RewritePath=/(?<path>.*), /$\{path}
+        - id: training-table_id
+          uri: ${internal.lb.uri}:8002
+          predicates:
+            - Path=/api/gymfit/training-tables/**
+          filters:
+            - RewritePath=/training-tables/(?<path>.*), /training-tables/$\{path}
         - id: calendar
-            uri: ${internal.lb.uri}:8003
-            predicates:
-              - Path=/api/gymfit/calendar**
-            filters:
-              - RewritePath=/(?<path>.*), /$\{path}
+          uri: ${internal.lb.uri}:8003
+          predicates:
+            - Path=/api/gymfit/calendar**
+          filters:
+            - RewritePath=/(?<path>.*),/$\{path}
+        - id: calendar_id
+          uri: ${internal.lb.uri}:8003
+          predicates:
+            - Path=/api/gymfit/calendars/**
+          filters:
+            - RewritePath=/calendars/(?<path>.*),/calendars/$\{path}
         - id: webapp
           uri: ${internal.lb.uri}:8004
           predicates:
