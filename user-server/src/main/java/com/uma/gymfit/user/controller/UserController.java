@@ -70,7 +70,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<ResponseHTTP> deleteUser(@PathVariable String id) {
 
         try {

@@ -27,7 +27,7 @@ public class CalendarController {
         return new ResponseEntity<>(allCalendar, HttpStatus.OK);
     }
 
-    @GetMapping("/calendar/{idCalendar}")
+    @GetMapping("/calendars/{idCalendar}")
     public ResponseEntity<Calendar> findCalendar(@PathVariable String idCalendar) {
         Calendar calendar;
         try {
@@ -70,7 +70,7 @@ public class CalendarController {
     }
 
 
-    @DeleteMapping("/calendar/{id}")
+    @DeleteMapping("/calendars/{id}")
     public ResponseEntity<ResponseHTTP> deleteCalendar(@PathVariable String id) {
 
         try {

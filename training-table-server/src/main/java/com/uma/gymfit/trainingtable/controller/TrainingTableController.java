@@ -69,7 +69,7 @@ public class TrainingTableController {
 
     }
 
-    @DeleteMapping("/training-table/{id}")
+    @DeleteMapping("/training-tables/{id}")
     public ResponseEntity<ResponseHTTP> deleteTrainingTable(@PathVariable String id) {
 
         try {
