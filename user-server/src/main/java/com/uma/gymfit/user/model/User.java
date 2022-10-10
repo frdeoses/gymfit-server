@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(value = "User")
@@ -23,6 +24,16 @@ public class User {
 
     @Id
     private String id;
+
+    @JsonProperty(required = true)
+    @NotNull
+    @NotBlank
+    private String userName;
+
+    @JsonProperty(required = true)
+    @NotNull
+    @NotBlank
+    private String password;
 
     @JsonProperty(required = true)
     @NotNull
@@ -47,13 +58,12 @@ public class User {
 
     @JsonProperty(required = true)
     @NotNull
-    private long birthDate;
+    private LocalDateTime birthDate;
 
-    @JsonProperty(required = true)
-    @NotNull
-    private long registrationDate;
+//    @JsonProperty(required = true)
+//    @NotNull
+    private LocalDateTime registrationDate;
 
-    @JsonProperty(required = true)
     private double height;
 
     private List<Weight> listUserWeight;
