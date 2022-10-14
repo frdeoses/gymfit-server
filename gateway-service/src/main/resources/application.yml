@@ -15,6 +15,12 @@ spring:
             - Path=/api/gymfit/user**
           filters:
             - RewritePath=/(?<path>.*), /$\{path}
+        - id: user_authenticate
+          uri: ${internal.lb.uri}:8001
+          predicates:
+            - Path=/api/gymfit/user/authenticate
+          filters:
+            - RewritePath=/(?<path>.*), /$\{path}
         - id: user_id
           uri: ${internal.lb.uri}:8001
           predicates:
