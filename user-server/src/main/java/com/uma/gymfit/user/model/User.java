@@ -1,6 +1,7 @@
 package com.uma.gymfit.user.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.uma.gymfit.user.security.entities.Role;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,13 +14,12 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Document(value = "User")
 @Data
-@Getter
-@Setter
-@ToString
 public class User {
 
     @Id
@@ -34,6 +34,9 @@ public class User {
     @NotNull
     @NotBlank
     private String password;
+
+    @NotNull
+    private Set<Role> roles = new HashSet<>();
 
     @JsonProperty(required = true)
     @NotNull
