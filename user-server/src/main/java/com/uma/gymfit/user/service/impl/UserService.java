@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -61,6 +62,7 @@ public class UserService
 
         //en caso de no tener problemas guardaremos en el repositorio.
         log.info("Procedemos a guardar en el sistema el siguiente usuario: {}.", user);
+        user.setRegistrationDate(LocalDateTime.now());
         repositorioUsuario.save(user);
         log.info("OK: User guardado con exito.");
 
