@@ -41,13 +41,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 username = this.jwtUtils.extractUsername(jwtToken);
             } catch (ExpiredJwtException exception) {
-                System.out.println("El token ha expirado");
+                log.error("El token ha expirado....");
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
+//                e.printStackTrace();
             }
 
         } else {
-            System.out.println("Token invalido , no empieza con bearer string");
+            log.error("Token invalido , no empieza con bearer string");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -59,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         } else {
-            System.out.println("El token no es valido");
+            log.error("El token no es valido...");
         }
         filterChain.doFilter(request, response);
     }
