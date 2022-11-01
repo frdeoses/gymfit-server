@@ -6,10 +6,12 @@ import com.uma.gymfit.user.service.IUserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -17,6 +19,8 @@ import java.util.List;
 public class UserService
         implements IUserService {
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private IUserRepository repositorioUsuario;
@@ -62,7 +66,12 @@ public class UserService
 
         //en caso de no tener problemas guardaremos en el repositorio.
         log.info("Procedemos a guardar en el sistema el siguiente usuario: {}.", user);
+        user.setId(UUID.randomUUID().toString());
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
         user.setRegistrationDate(LocalDateTime.now());
+        user.getUserRols().forEach(userRol -> {
+            userRol.setId(UUID.randomUUID().toString());
+        });
         repositorioUsuario.save(user);
         log.info("OK: User guardado con exito.");
 
