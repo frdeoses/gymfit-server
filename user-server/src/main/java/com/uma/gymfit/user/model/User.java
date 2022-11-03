@@ -25,6 +25,7 @@ public class User implements UserDetails {
     private String id;
 
     @JsonProperty(required = true)
+    @Indexed(unique = true)
     @NotNull
     @NotBlank
     private String username;
