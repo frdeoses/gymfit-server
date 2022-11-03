@@ -1,6 +1,8 @@
 package com.uma.gymfit.user.service.impl;
 
+import com.uma.gymfit.user.model.RoleList;
 import com.uma.gymfit.user.model.User;
+import com.uma.gymfit.user.model.UserRol;
 import com.uma.gymfit.user.repository.IUserRepository;
 import com.uma.gymfit.user.service.IUserService;
 import lombok.AllArgsConstructor;
@@ -69,12 +71,29 @@ public class UserService
         user.setId(UUID.randomUUID().toString());
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
         user.setRegistrationDate(LocalDateTime.now());
-        user.getUserRols().forEach(userRol -> {
-            userRol.setId(UUID.randomUUID().toString());
-        });
+
+        assingRole(user, RoleList.USER);
+
         repositorioUsuario.save(user);
         log.info("OK: User guardado con exito.");
+    }
 
+    /**
+     * Asignamos role al usuario
+     *
+     * @param user
+     * @param role
+     * @return User
+     */
+    private User assingRole(User user, RoleList role) {
+
+        log.info("Asignamos role: {}, al usuario: {}", role, user);
+        UserRol userRol = new UserRol(UUID.randomUUID().toString(), role.name(), role);
+        user.getUserRols().add(userRol);
+
+        log.info("Role asignado correctamente!!");
+
+        return user;
     }
 
     /***
