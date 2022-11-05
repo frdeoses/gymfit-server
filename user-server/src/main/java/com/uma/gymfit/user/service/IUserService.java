@@ -1,5 +1,6 @@
 package com.uma.gymfit.user.service;
 
+import com.uma.gymfit.user.exception.UserException;
 import com.uma.gymfit.user.model.User;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface IUserService {
      * @param idUser
      * @return User
      */
-    public User findUser(String idUser) throws Exception;
+    public User findUser(String idUser) throws UserException;
 
 
     /**
@@ -27,7 +28,7 @@ public interface IUserService {
      *
      * @param user
      */
-    public void createUser(User user) throws Exception;
+    public void createUser(User user) throws UserException;
 
 
     /**
@@ -35,7 +36,7 @@ public interface IUserService {
      *
      * @param id
      */
-    public void deleteUser(String id) throws Exception;
+    public void deleteUser(String id) throws UserException;
 
 
     /**
@@ -43,6 +44,6 @@ public interface IUserService {
      *
      * @param user
      */
-    public void updateUser(User user) throws Exception;
+    public void updateUser(User user) throws UserException;
 
 }

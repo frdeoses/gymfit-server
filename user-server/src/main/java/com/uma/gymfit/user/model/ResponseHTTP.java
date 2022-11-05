@@ -14,11 +14,11 @@ public class ResponseHTTP {
 
     private int code;
 
-    private String response;
-
     private Object body;
 
     private String error;
+
+    private String path;
 
 
 }

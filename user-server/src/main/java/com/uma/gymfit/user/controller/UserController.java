@@ -1,8 +1,10 @@
 package com.uma.gymfit.user.controller;
 
+import com.uma.gymfit.user.exception.UserException;
 import com.uma.gymfit.user.model.ResponseHTTP;
 import com.uma.gymfit.user.model.User;
 import com.uma.gymfit.user.service.IUserService;
+import com.uma.gymfit.user.utils.Literals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,24 +33,24 @@ public class UserController {
         User user;
         try {
             user = gymFitService.findUser(idUser);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), user, null);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), user, null, Literals.USER_ID);
             return new ResponseEntity(res, HttpStatus.OK);
-        } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idUser, e.getMessage());
-            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (UserException e) {
+            ResponseHTTP res = new ResponseHTTP(e.getCode(), idUser, e.getMessage(), Literals.USER_ID);
+            return new ResponseEntity(res, HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PostMapping("/user")
+    @PostMapping(Literals.USER)
     public ResponseEntity<ResponseHTTP> createUser(@Validated @RequestBody User user) {
 
         try {
             gymFitService.createUser(user);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.CREATED.value(), HttpStatus.CREATED.toString(), user, null);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.CREATED.value(), user, null, Literals.USER);
             return new ResponseEntity<>(res, HttpStatus.CREATED);
-        } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), user, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (UserException e) {
+            ResponseHTTP res = new ResponseHTTP(e.getCode(), user, e.getMessage(), Literals.USER_ID);
+            return new ResponseEntity(res, HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -59,26 +61,26 @@ public class UserController {
 
         try {
             gymFitService.updateUser(user);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), user, null);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), user, null, Literals.USER);
             return new ResponseEntity<>(res, HttpStatus.OK);
-        } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), user, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (UserException e) {
+            ResponseHTTP res = new ResponseHTTP(e.getCode(), user, e.getMessage(), Literals.USER_ID);
+            return new ResponseEntity(res, HttpStatus.BAD_REQUEST);
         }
 
     }
 
 
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<ResponseHTTP> deleteUser(@PathVariable String id) {
+    @DeleteMapping(Literals.USER_ID)
+    public ResponseEntity<ResponseHTTP> deleteUser(@PathVariable String idUser) {
 
         try {
-            gymFitService.deleteUser(id);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), id, null);
+            gymFitService.deleteUser(idUser);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), idUser, null, Literals.USER_ID);
             return new ResponseEntity<>(res, HttpStatus.OK);
-        } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), id, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (UserException e) {
+            ResponseHTTP res = new ResponseHTTP(e.getCode(), idUser, e.getMessage(), Literals.USER_ID);
+            return new ResponseEntity(res, HttpStatus.BAD_REQUEST);
         }
 
     }
