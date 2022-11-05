@@ -5,6 +5,7 @@ import com.uma.gymfit.user.security.config.JwtUtils;
 import com.uma.gymfit.user.security.model.JwtRequest;
 import com.uma.gymfit.user.security.model.JwtResponse;
 import com.uma.gymfit.user.security.service.impl.UserDetailsServiceImpl;
+import com.uma.gymfit.user.utils.Literals;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class AuthenticationController {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @PostMapping("/generate-token")
+    @PostMapping(Literals.GENERATE_TOKEN)
     public ResponseEntity<?> generarToken(@RequestBody JwtRequest jwtRequest) throws Exception {
         try {
             autenticar(jwtRequest.getUsername(), jwtRequest.getPassword());
@@ -58,7 +59,7 @@ public class AuthenticationController {
         }
     }
 
-    @GetMapping("/current-user")
+    @GetMapping(Literals.CURRENT_USER)
     public User getCurrentUser(Principal principal) {
         return (User) this.userDetailsService.loadUserByUsername(principal.getName());
     }

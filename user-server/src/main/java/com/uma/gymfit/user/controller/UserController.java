@@ -14,20 +14,19 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
-@RequestMapping("/api/gymfit")
+@RequestMapping(Literals.API)
 public class UserController {
 
     @Autowired
     private IUserService gymFitService;
 
-    @GetMapping("/users")
+    @GetMapping(Literals.USERS)
     public ResponseEntity<List<User>> allUsers() {
-        List<User> allUser = new ArrayList<>();
-        allUser = gymFitService.allUser();
+        List<User> allUser = gymFitService.allUser();
         return new ResponseEntity<>(allUser, HttpStatus.OK);
     }
 
-    @GetMapping("/users/{idUser}")
+    @GetMapping(Literals.USER_ID)
     public ResponseEntity<User> findUser(@PathVariable String idUser) {
         User user;
         try {
@@ -55,7 +54,7 @@ public class UserController {
     }
 
 
-    @PutMapping("/user")
+    @PutMapping(Literals.USER)
     public ResponseEntity<ResponseHTTP> updateUser(@RequestBody User user) {
 
         try {
