@@ -1,6 +1,5 @@
 package com.uma.gymfit.user.security.config;
 
-import com.uma.gymfit.user.security.service.IUserDetailsService;
 import com.uma.gymfit.user.security.service.impl.UserDetailsServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.error("El token ha expirado....");
             } catch (Exception e) {
                 log.error(e.getMessage());
-//                e.printStackTrace();
             }
 
         } else {
