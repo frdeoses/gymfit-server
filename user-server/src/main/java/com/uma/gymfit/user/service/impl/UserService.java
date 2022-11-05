@@ -1,14 +1,19 @@
 package com.uma.gymfit.user.service.impl;
 
+import com.uma.gymfit.user.model.RoleList;
 import com.uma.gymfit.user.model.User;
+import com.uma.gymfit.user.model.UserRol;
 import com.uma.gymfit.user.repository.IUserRepository;
 import com.uma.gymfit.user.service.IUserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -16,6 +21,8 @@ import java.util.List;
 public class UserService
         implements IUserService {
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private IUserRepository repositorioUsuario;
@@ -61,9 +68,32 @@ public class UserService
 
         //en caso de no tener problemas guardaremos en el repositorio.
         log.info("Procedemos a guardar en el sistema el siguiente usuario: {}.", user);
+        user.setId(UUID.randomUUID().toString());
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+        user.setRegistrationDate(LocalDateTime.now());
+
+        assingRole(user, RoleList.USER);
+
         repositorioUsuario.save(user);
         log.info("OK: User guardado con exito.");
+    }
 
+    /**
+     * Asignamos role al usuario
+     *
+     * @param user
+     * @param role
+     * @return User
+     */
+    private User assingRole(User user, RoleList role) {
+
+        log.info("Asignamos role: {}, al usuario: {}", role, user);
+        UserRol userRol = new UserRol(UUID.randomUUID().toString(), role.name(), role);
+        user.getUserRols().add(userRol);
+
+        log.info("Role asignado correctamente!!");
+
+        return user;
     }
 
     /***

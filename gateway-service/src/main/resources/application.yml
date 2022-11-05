@@ -21,6 +21,14 @@ spring:
             - Path=/api/gymfit/users/**
           filters:
             - RewritePath=/users/(?<path>.*), /users/$\{path}
+        - id: autenticate_id
+          uri: ${internal.lb.uri}:8001
+          predicates:
+            - Path=/generate-token**
+        - id: current_user_id
+          uri: ${internal.lb.uri}:8001
+          predicates:
+            - Path=/current-user**
         - id: training-table
           uri: ${internal.lb.uri}:8002
           predicates:
