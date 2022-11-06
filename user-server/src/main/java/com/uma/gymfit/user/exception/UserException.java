@@ -38,7 +38,7 @@ public class UserException extends Exception{
 
         switch (typeError){
 
-            case NOT_FOUND:
+            case BAD_REQUEST:
                 message = "ERROR: User no se encuentra en el sistema...";
                 log.error("ERROR: User no se encuentra en el sistema...");
                 break;

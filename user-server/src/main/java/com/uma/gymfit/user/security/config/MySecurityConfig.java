@@ -1,6 +1,7 @@
 package com.uma.gymfit.user.security.config;
 
 import com.uma.gymfit.user.security.service.impl.UserDetailsServiceImpl;
+import com.uma.gymfit.user.utils.Literals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,7 +54,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/generate-token", "/api/gymfit/user").permitAll()
+                .antMatchers(Literals.GENERATE_TOKEN, Literals.USER).permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated()
                 .and()
