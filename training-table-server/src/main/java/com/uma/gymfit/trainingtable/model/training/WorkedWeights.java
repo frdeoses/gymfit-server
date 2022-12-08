@@ -1,4 +1,4 @@
-package com.uma.gymfit.trainingtable.model;
+package com.uma.gymfit.trainingtable.model.training;
 
 import lombok.Getter;
 import lombok.Setter;

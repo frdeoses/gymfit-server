@@ -1,36 +1,32 @@
-package com.uma.gymfit.trainingtable.model;
+package com.uma.gymfit.trainingtable.model.training;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Data
 @Getter
 @Setter
-@ToString
-public class Training {
+public class GymMachine {
 
     @Id
     @NotNull
     @NotBlank
     private String id;
 
-    private String typeTraining;
-
-    private int numRepetitions;
-
-    private int numSeries;
+    private String name;
 
     private String exercisedArea;
 
-    private String explication;
-
-    private int like;
+    private String description;
 
     private List<WorkedWeights> listWorkedWeights;
-    
-    private GymMachine gymMachine;
+
+    private int like;
 
 }

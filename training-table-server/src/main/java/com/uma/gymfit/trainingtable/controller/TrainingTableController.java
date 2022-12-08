@@ -1,8 +1,9 @@
 package com.uma.gymfit.trainingtable.controller;
 
 import com.uma.gymfit.trainingtable.model.ResponseHTTP;
-import com.uma.gymfit.trainingtable.model.TrainingTable;
+import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
+import com.uma.gymfit.trainingtable.utils.Literals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
