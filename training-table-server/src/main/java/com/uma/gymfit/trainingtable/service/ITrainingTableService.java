@@ -1,6 +1,6 @@
 package com.uma.gymfit.trainingtable.service;
 
-import com.uma.gymfit.trainingtable.model.TrainingTable;
+import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 
 import java.util.List;
 

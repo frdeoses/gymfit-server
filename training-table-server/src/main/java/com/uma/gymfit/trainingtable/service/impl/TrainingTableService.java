@@ -1,6 +1,6 @@
 package com.uma.gymfit.trainingtable.service.impl;
 
-import com.uma.gymfit.trainingtable.model.TrainingTable;
+import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 import com.uma.gymfit.trainingtable.repository.IRepositorioTabla;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import lombok.AllArgsConstructor;

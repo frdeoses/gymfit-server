@@ -41,6 +41,10 @@ spring:
             - Path=/api/gymfit/training-tables/**
           filters:
             - RewritePath=/training-tables/(?<path>.*), /training-tables/$\{path}
+        - id: autenticate_training-table_id
+          uri: ${internal.lb.uri}:8002
+          predicates:
+            - Path=/api/gymfit/training-tables/generate-token**
         - id: calendar
           uri: ${internal.lb.uri}:8003
           predicates:
@@ -53,6 +57,10 @@ spring:
             - Path=/api/gymfit/calendars/**
           filters:
             - RewritePath=/calendars/(?<path>.*),/calendars/$\{path}
+        - id: autenticate_calendars_id
+          uri: ${internal.lb.uri}:8003
+          predicates:
+            - Path=/api/gymfit/calendars/generate-token**
         - id: webapp
           uri: ${internal.lb.uri}:8004
           predicates:

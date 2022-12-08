@@ -1,4 +1,4 @@
-package com.uma.gymfit.trainingtable.model;
+package com.uma.gymfit.trainingtable.model.training;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.uma.gymfit.calendar.service.impl;
 
-import com.uma.gymfit.calendar.model.Calendar;
+import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.repository.ICalendarRepository;
 import com.uma.gymfit.calendar.service.ICalendarService;
 import lombok.AllArgsConstructor;
