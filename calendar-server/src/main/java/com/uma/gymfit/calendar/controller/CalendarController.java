@@ -15,20 +15,20 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
-@RequestMapping("/api/gymfit")
+@RequestMapping(Literals.API)
 public class CalendarController {
 
     @Autowired
     private ICalendarService calendarService;
 
-    @GetMapping("/calendars")
+    @GetMapping(Literals.CALENDARS)
     public ResponseEntity<List<Calendar>> allCalendars() {
         List<Calendar> allCalendar = new ArrayList<>();
         allCalendar = calendarService.allCalendars();
         return new ResponseEntity<>(allCalendar, HttpStatus.OK);
     }
 
-    @GetMapping("/calendars/{idCalendar}")
+    @GetMapping(Literals.CALENDAR_ID)
     public ResponseEntity<Calendar> findCalendar(@PathVariable String idCalendar) {
         Calendar calendar;
         try {
@@ -41,7 +41,7 @@ public class CalendarController {
         }
     }
 
-    @PostMapping("/calendar")
+    @PostMapping(Literals.CALENDAR)
     public ResponseEntity<ResponseHTTP> createCalendar(@Validated @RequestBody Calendar calendar) {
 
         try {
@@ -56,7 +56,7 @@ public class CalendarController {
     }
 
 
-    @PutMapping("/calendar")
+    @PutMapping(Literals.CALENDAR)
     public ResponseEntity<ResponseHTTP> updateCalendar(@RequestBody Calendar calendar) {
 
         try {
@@ -71,15 +71,15 @@ public class CalendarController {
     }
 
 
-    @DeleteMapping("/calendars/{id}")
-    public ResponseEntity<ResponseHTTP> deleteCalendar(@PathVariable String id) {
+    @DeleteMapping(Literals.CALENDAR_ID)
+    public ResponseEntity<ResponseHTTP> deleteCalendar(@PathVariable String idCalendar) {
 
         try {
-            calendarService.deleteCalendar(id);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), id, null);
+            calendarService.deleteCalendar(idCalendar);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idCalendar, null);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), id, e.getMessage());
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idCalendar, e.getMessage());
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
