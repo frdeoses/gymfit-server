@@ -1,6 +1,6 @@
 package com.uma.gymfit.calendar.service;
 
-import com.uma.gymfit.calendar.model.Calendar;
+import com.uma.gymfit.calendar.model.calendar.Calendar;
 
 import java.util.List;
 

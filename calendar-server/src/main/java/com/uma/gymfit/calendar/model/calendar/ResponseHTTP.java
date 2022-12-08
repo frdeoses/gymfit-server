@@ -1,4 +1,4 @@
-package com.uma.gymfit.calendar.model;
+package com.uma.gymfit.calendar.model.calendar;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
