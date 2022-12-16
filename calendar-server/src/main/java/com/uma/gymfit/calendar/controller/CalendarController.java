@@ -34,7 +34,7 @@ public class CalendarController {
         try {
             calendar = calendarService.findCalendar(idCalendar);
             ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), calendar, null);
-            return new ResponseEntity(res, HttpStatus.OK);
+            return new ResponseEntity(calendar, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idCalendar, e.getMessage());
             return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
