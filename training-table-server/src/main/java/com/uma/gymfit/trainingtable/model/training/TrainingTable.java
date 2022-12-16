@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(value = "TrainingTable")
@@ -29,7 +30,14 @@ public class TrainingTable {
 
     @JsonProperty(required = true)
     @NotNull
-    private long creationDate;
+    @NotBlank
+    private String name;
+
+    private String description;
+
+    @JsonProperty(required = true)
+    @NotNull
+    private LocalDateTime creationDate;
 
     @JsonProperty(required = true)
     @NotNull
@@ -38,9 +46,9 @@ public class TrainingTable {
 
     @NotNull
     @JsonProperty(required = true)
-    private long initDate;
+    private LocalDateTime initDate;
 
-    private long endDate;
+    private LocalDateTime endDate;
 
     private int trainingDuration;
 
