@@ -1,6 +1,7 @@
 package com.uma.gymfit.trainingtable.controller;
 
 import com.uma.gymfit.trainingtable.model.ResponseHTTP;
+import com.uma.gymfit.trainingtable.model.training.GymMachine;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import com.uma.gymfit.trainingtable.utils.Literals;
@@ -26,6 +27,12 @@ public class TrainingTableController {
         return new ResponseEntity<>(trainingTableService.allTrainingTable(), HttpStatus.OK);
     }
 
+    @GetMapping(Literals.GYM_MACHINES)
+    public ResponseEntity<List<GymMachine>> allGymMachine() {
+        return new ResponseEntity<>(trainingTableService.allGymMachine(), HttpStatus.OK);
+    }
+
+
     @GetMapping(Literals.TRAINING_TABLE_ID)
     public ResponseEntity<TrainingTable> findTrainingTable(@PathVariable String idTrainingTable) {
 
@@ -35,6 +42,19 @@ public class TrainingTableController {
             return new ResponseEntity(trainingTable, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idTrainingTable, e.getMessage());
+            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(Literals.GYM_MACHINE_ID)
+    public ResponseEntity<GymMachine> findGymMachine(@PathVariable String idGymMachine) {
+
+        GymMachine gymMachine;
+        try {
+            gymMachine = trainingTableService.findGymMachine(idGymMachine);
+            return new ResponseEntity(gymMachine, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idGymMachine, e.getMessage());
             return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -54,6 +74,19 @@ public class TrainingTableController {
 
     }
 
+    @PostMapping(Literals.GYM_MACHINE)
+    public ResponseEntity<ResponseHTTP> createGymMachine(@Validated @RequestBody GymMachine gymMachine) {
+
+        try {
+            trainingTableService.createGymMachine(gymMachine);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.CREATED.value(), HttpStatus.CREATED.toString(), gymMachine, null);
+            return new ResponseEntity<>(res, HttpStatus.CREATED);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), gymMachine, e.getMessage());
+            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 
     @PutMapping(Literals.TRAINING_TABLE)
     public ResponseEntity<ResponseHTTP> updateTrainingTable(@RequestBody TrainingTable trainingTable) {
@@ -78,6 +111,20 @@ public class TrainingTableController {
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idTrainingTable, e.getMessage());
+            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @DeleteMapping(Literals.GYM_MACHINE_ID)
+    public ResponseEntity<ResponseHTTP> deleteGymMachine(@PathVariable String idGymMachine) {
+
+        try {
+            trainingTableService.deleteGymMachine(idGymMachine);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idGymMachine, null);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idGymMachine, e.getMessage());
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

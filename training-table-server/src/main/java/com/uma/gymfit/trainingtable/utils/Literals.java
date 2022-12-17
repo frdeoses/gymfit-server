@@ -6,9 +6,15 @@ public class Literals {
 
     public static final String TRAINING_TABLES = "/training-tables";
 
+    public static final String GYM_MACHINES = "/gym-machines";
+
     public static final String TRAINING_TABLE_ID = "/training-tables/{idTrainingTable}";
 
+    public static final String GYM_MACHINE_ID = "/gym-machines/{idGymMachine}";
+
     public static final String TRAINING_TABLE = "/training-table";
+
+    public static final String GYM_MACHINE = "/gym-machine";
 
     public static final String GENERATE_TOKEN = "/api/gymfit/training-tables/generate-token";
 
