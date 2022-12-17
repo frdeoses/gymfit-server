@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -61,29 +62,13 @@ public class TrainingTableService
 
         //en caso de no tener problemas guardaremos en el repositorio.
         log.info("Procedemos a guardar en el sistema la siguiente tabla de entrenamiento: {}.", trainingT);
+        trainingT.setId(UUID.randomUUID().toString());
         repositorioTabla.save(trainingT);
         log.info("OK: Tabla de entrenamiento guardado con exito.");
 
 
     }
 
-    /**
-     * Método que controla que el objeto que le llega es válido
-     *
-     * @param trainingT
-     * @throws Exception
-     */
-    private void checkTable(TrainingTable trainingT) throws Exception {
-        if (trainingT == null)
-            throw new NullPointerException("Tabla nula.");
-
-        if (trainingT.getIdUser() == null || trainingT.getIdUser().isBlank() || trainingT.getIdUser().isEmpty())
-            throw new Exception("El id del usuario es invalido.");
-
-        if (trainingT.getTypeTraining() == null || trainingT.getTypeTraining().isBlank() || trainingT.getTypeTraining().isEmpty())
-            throw new Exception("Apellidos vacio.");
-
-    }
 
     /**
      * Borra una tabla de entrenamiento por su id
