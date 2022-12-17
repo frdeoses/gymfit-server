@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -59,6 +60,7 @@ public class CalendarService
 
         //en caso de no tener problemas guardaremos en el repositorio.
         log.info("Procedemos a guardar en el sistema el siguiente calendario: {}.", calendar);
+        calendar.setId(UUID.randomUUID().toString());
         calendarRepository.save(calendar);
         log.info("OK: Calendario guardado con exito.");
 

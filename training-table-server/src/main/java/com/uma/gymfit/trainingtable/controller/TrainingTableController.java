@@ -32,8 +32,7 @@ public class TrainingTableController {
         TrainingTable trainingTable;
         try {
             trainingTable = trainingTableService.findTrainingTable(idTrainingTable);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), trainingTable, null);
-            return new ResponseEntity(res, HttpStatus.OK);
+            return new ResponseEntity(trainingTable, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idTrainingTable, e.getMessage());
             return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
