@@ -1,7 +1,9 @@
 package com.uma.gymfit.trainingtable.service;
 
 import com.uma.gymfit.trainingtable.model.training.GymMachine;
+import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
+import com.uma.gymfit.trainingtable.model.training.TrainingType;
 
 import java.util.List;
 
@@ -16,11 +18,25 @@ public interface ITrainingTableService {
     public List<TrainingTable> allTrainingTable();
 
     /**
+     * Devuelve todas las tablas almacenadas en BBDD
+     *
+     * @return List<T>
+     */
+    public TrainingType[] trainingType();
+
+    /**
      * Devuelve todas las maquinas almacenadas en BBDD
      *
      * @return List<T>
      */
     public List<GymMachine> allGymMachine();
+
+    /**
+     * Devuelve todas los ejercicios almacenadas en BBDD
+     *
+     * @return List<T>
+     */
+    public List<Training> allTraining();
 
     /**
      * Devuelve la tablas almacenadas en BBDD
@@ -36,6 +52,12 @@ public interface ITrainingTableService {
      */
     public GymMachine findGymMachine(String idGymMachine) throws Exception;
 
+    /**
+     * Devuelve el ejercicio almacenadas en BBDD
+     *
+     * @return Training
+     */
+    public Training findTraining(String idTraining) throws Exception;
 
     /**
      * Crea  una tabla de entrenamiento
@@ -52,6 +74,13 @@ public interface ITrainingTableService {
     public void createGymMachine(GymMachine gymMachine) throws Exception;
 
     /**
+     * Crea  un ejercicio
+     *
+     * @param training
+     */
+    public void createTraining(Training training) throws Exception;
+
+    /**
      * Borra una tabla de entrenamiento por su id
      *
      * @param id
@@ -65,6 +94,12 @@ public interface ITrainingTableService {
      */
     public void deleteGymMachine(String idGymMachine) throws Exception;
 
+    /**
+     * Borra un ejercicio por su id
+     *
+     * @param idTraining
+     */
+    public void deleteTraining(String idTraining) throws Exception;
 
     /**
      * Modifica una tabla de entrenamimento
@@ -72,4 +107,18 @@ public interface ITrainingTableService {
      * @param trainingT
      */
     public void updateTrainingTable(TrainingTable trainingT) throws Exception;
+
+    /**
+     * Modifica un ejercicio
+     *
+     * @param training
+     */
+    public void updateTraining(Training training) throws Exception;
+
+    /**
+     * Modifica una maquina de entrenamiento
+     *
+     * @param gymMachine
+     */
+    public void updateGymMachine(GymMachine gymMachine) throws Exception;
 }

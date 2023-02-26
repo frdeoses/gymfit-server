@@ -1,8 +1,11 @@
 package com.uma.gymfit.trainingtable.service.impl;
 
 import com.uma.gymfit.trainingtable.model.training.GymMachine;
+import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
+import com.uma.gymfit.trainingtable.model.training.TrainingType;
 import com.uma.gymfit.trainingtable.repository.IGymMachineRepository;
+import com.uma.gymfit.trainingtable.repository.ITrainingRepository;
 import com.uma.gymfit.trainingtable.repository.ITrainingTableRepository;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import lombok.AllArgsConstructor;
@@ -10,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +29,9 @@ public class TrainingTableService
     @Autowired
     private IGymMachineRepository gymMachineRepository;
 
+    @Autowired
+    private ITrainingRepository trainingRepository;
+
 
     /**
      * Devuelve todas las tablas almacenadas en BBDD
@@ -35,6 +42,17 @@ public class TrainingTableService
     public List<TrainingTable> allTrainingTable() {
         return trainingTableRepository.findAll();
     }
+
+    /**
+     * Devuelve todas las tablas almacenadas en BBDD
+     *
+     * @return List<TrainingTable>
+     */
+    @Override
+    public TrainingType[] trainingType() {
+        return TrainingType.values();
+    }
+
     /**
      * Devuelve todas las maquinas almacenadas en BBDD
      *
@@ -45,6 +63,15 @@ public class TrainingTableService
         return gymMachineRepository.findAll();
     }
 
+    /**
+     * Devuelve todas los ejercicios almacenadas en BBDD
+     *
+     * @return List<TrainingTable>
+     */
+    @Override
+    public List<Training> allTraining() {
+        return trainingRepository.findAll();
+    }
 
     /***
      * Devuelve la tablas almacenadas en BBDD
@@ -81,8 +108,28 @@ public class TrainingTableService
             return gymMachineRepository.findById(idGymMachine).get();
         }
 
-        log.error("ERROR: La Maquina no se encuentra en el sistema...");
+        log.error("ERROR: La maquina no se encuentra en el sistema...");
         throw new Exception("ERROR: La maquina no se encuentra en el sistema...");
+
+    }
+
+    /***
+     * Devuelve la tablas almacenadas en BBDD
+     * @param idTraining
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Training findTraining(String idTraining) throws Exception {
+
+        log.info("Buscamos el ejercicio en el sistema...");
+        if (trainingRepository.existsById(idTraining)) {
+            log.info("OK: Ejercicio encontrada.....");
+            return trainingRepository.findById(idTraining).get();
+        }
+
+        log.error("ERROR: El ejercicio no se encuentra en el sistema...");
+        throw new Exception("ERROR: El ejercicio no se encuentra en el sistema...");
 
     }
 
@@ -116,6 +163,24 @@ public class TrainingTableService
         gymMachine.setId(UUID.randomUUID().toString());
         gymMachineRepository.save(gymMachine);
         log.info("OK: Tabla de entrenamiento guardado con exito.");
+
+    }
+
+    /**
+     * Crea  un Ejercicio
+     *
+     * @param training
+     */
+    @Override
+    public void createTraining(Training training) throws Exception {
+
+        //en caso de no tener problemas guardaremos en el repositorio.
+        log.info("Procedemos a guardar en el sistema el siguiente ejercicio: {}.", training);
+        training.setId(UUID.randomUUID().toString());
+        training.setCreationDate(LocalDateTime.now());
+        training.setLastUpdateDate(LocalDateTime.now());
+        trainingRepository.save(training);
+        log.info("OK: Ejercicio guardado con exito.");
 
     }
 
@@ -167,6 +232,29 @@ public class TrainingTableService
     }
 
     /**
+     * Borra un ejercicio por su id
+     *
+     * @param idTraining
+     */
+    @Override
+    public void deleteTraining(String idTraining) throws Exception {
+
+        //comprobamos que el id se encuentra en el reepositorio
+        log.info("Comprobamos en el sistema que existe el ejercicio. ");
+        if (trainingRepository.existsById(idTraining)) {
+            log.info("Exite el ejercicio en el sistema.");
+            //una vez este todo correcto borramos el dato.
+            trainingRepository.deleteById(idTraining);
+            log.info("OK: Ejercicio eliminado con exito.");
+
+        } else {
+            log.error("El ejercicio que quiere eliminar no se encuentra en el sistema.");
+            throw new Exception("El ejercicio que quiere eliminar no se encuentra en el sistema.");
+        }
+
+    }
+
+    /**
      * Modifica una tabla de entrenamimento
      *
      * @param trainingT
@@ -178,16 +266,62 @@ public class TrainingTableService
         log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");
         if (trainingTableRepository.existsById(trainingT.getId())) {
 
-            // Borramos antrior user (se supone que el save ya lo hace)
-//            repositorioTabla.deleteById(trainingT.getId());
             log.info("Exite la tabla de entrenamiento en el sistema.");
             // insertamos nuevo
             trainingTableRepository.save(trainingT);
-            log.info("OK: Tabla de entrenamiento guardado con exito.");
+            log.info("OK: Tabla de entrenamiento actualizado con exito.");
 
         } else {
             log.error("No se encuentra la tabla de entrenamiento que quieres modificar");
             throw new Exception("No se encuentra la tabla que quieres modificar");
+        }
+
+    }/**
+     * Modifica una máquina de entrenamimento
+     *
+     * @param gymMachine
+     */
+    @Override
+    public void updateGymMachine(GymMachine gymMachine) throws Exception {
+
+        // comprobamos que se encuentra en la BBDD
+        log.info("Comprobamos en el sistema que existe la máquina  de entrenamiento. ");
+        if (gymMachineRepository.existsById(gymMachine.getId())) {
+
+            log.info("Exite la mñaquina de entrenamiento en el sistema.");
+            // insertamos nuevo
+            gymMachineRepository.save(gymMachine);
+            log.info("OK: Máquina de entrenamiento actualizado con exito.");
+
+        } else {
+            log.error("No se encuentra la mñaquina de entrenamiento que quieres modificar");
+            throw new Exception("No se encuentra la máquina de entrenamiento que quieres modificar");
+        }
+
+    }
+
+    /**
+     * Modifica un ejercicio
+     *
+     * @param training
+     */
+    @Override
+    public void updateTraining(Training training) throws Exception {
+
+        // comprobamos que se encuentra en la BBDD
+        log.info("Comprobamos en el sistema que existe el ejercicio. ");
+        if (trainingRepository.existsById(training.getId())) {
+
+            training.setLastUpdateDate(LocalDateTime.now());
+
+            log.info("Exite el ejercicio en el sistema.");
+            // insertamos nuevo
+            trainingRepository.save(training);
+            log.info("OK: Ejercicio actualizado con exito.");
+
+        } else {
+            log.error("No se encuentra el ejercicio que quieres modificar");
+            throw new Exception("No se encuentra el ejercicio que quieres modificar");
         }
 
     }
