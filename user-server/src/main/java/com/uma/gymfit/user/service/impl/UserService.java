@@ -3,6 +3,7 @@ package com.uma.gymfit.user.service.impl;
 import com.uma.gymfit.user.model.RoleList;
 import com.uma.gymfit.user.model.User;
 import com.uma.gymfit.user.model.UserRol;
+import com.uma.gymfit.user.model.Weight;
 import com.uma.gymfit.user.repository.IUserRepository;
 import com.uma.gymfit.user.service.IUserService;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,10 +74,17 @@ public class UserService
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
         user.setRegistrationDate(LocalDateTime.now());
 
+        if (user.getWeight() > 0) {
+            log.info("Procedemos a guardar en el sistema el peso del usuario: {}.", user.getWeight());
+            Weight newWeight = new Weight(LocalDateTime.now(), user.getWeight());
+            user.setListUserWeight(new ArrayList<>());
+            user.getListUserWeight().add(newWeight);
+        }
+
         assingRole(user, RoleList.USER);
 
         repositorioUsuario.save(user);
-        log.info("OK: User guardado con exito.");
+        log.info("OK: Usuario guardado con exito.");
     }
 
     /**
@@ -151,10 +160,6 @@ public class UserService
     @Override
     public void updateUser(User user) throws Exception {
 
-        //comprobamos que nos llega un usuario valido.
-//        Lo hacemos en el modelo
-//        checkUser(user);
-
         // comprobamos que se encuentra en la BBDD
         log.info("Comprobamos en el sistema que exite el usuario.");
         if (repositorioUsuario.existsById(user.getId())) {
@@ -162,7 +167,13 @@ public class UserService
             // Borramos antrior user
 //            repositorioUsuario.deleteById(user.getId());
             log.info("Exite el usuario en el sistema.");
+            User oldUser = repositorioUsuario.findById(user.getId()).get();
             // insertamos nuevo
+            if(oldUser.getWeight() != user.getWeight()){
+                log.info("Se ha actualizado el peso actual y procedemos a añadirlo en el historico.");
+                Weight newWeight = new Weight(LocalDateTime.now(), user.getWeight());
+                user.getListUserWeight().add(newWeight);
+            }
             repositorioUsuario.save(user);
             log.info("OK: User guardado con exito.");
 
