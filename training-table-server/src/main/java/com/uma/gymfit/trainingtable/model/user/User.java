@@ -25,7 +25,6 @@ public class User implements UserDetails {
     private String id;
 
     @JsonProperty(required = true)
-    @Indexed(unique = true)
     @NotNull
     @NotBlank
     private String username;
@@ -49,7 +48,6 @@ public class User implements UserDetails {
     @NotBlank
     private String surname;
 
-    @Indexed(unique = true)
     @NotNull
     @NotBlank
     @Email

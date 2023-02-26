@@ -1,16 +1,18 @@
 package com.uma.gymfit.user.model;
 
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class Weight {
 
-    private long date;
+    private LocalDateTime date;
 
     private double weight;
 

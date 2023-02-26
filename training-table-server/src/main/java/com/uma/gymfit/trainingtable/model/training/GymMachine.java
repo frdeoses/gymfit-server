@@ -18,8 +18,6 @@ import java.util.List;
 public class GymMachine {
 
     @Id
-    @NotNull
-    @NotBlank
     private String id;
 
     @JsonProperty(required = true)

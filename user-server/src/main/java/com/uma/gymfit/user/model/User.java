@@ -70,6 +70,8 @@ public class User implements UserDetails {
 
     private double height;
 
+    private double weight;
+
     private List<Weight> listUserWeight;
 
     private List<FatPercentage> listFatPercentage;

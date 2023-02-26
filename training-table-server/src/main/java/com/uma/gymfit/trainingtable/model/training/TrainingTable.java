@@ -1,6 +1,7 @@
 package com.uma.gymfit.trainingtable.model.training;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.uma.gymfit.trainingtable.model.user.User;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,8 +27,7 @@ public class TrainingTable {
 
     @JsonProperty(required = true)
     @NotNull
-    @NotBlank
-    private String idUser;
+    private User user;
 
     @JsonProperty(required = true)
     @NotNull
@@ -46,9 +47,9 @@ public class TrainingTable {
 
     @NotNull
     @JsonProperty(required = true)
-    private LocalDateTime initDate;
+    private LocalDate initDate;
 
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     private int trainingDuration;
 

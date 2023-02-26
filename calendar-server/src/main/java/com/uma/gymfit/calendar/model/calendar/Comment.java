@@ -2,6 +2,8 @@ package com.uma.gymfit.calendar.model.calendar;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class Comment {
 
@@ -11,5 +13,7 @@ public class Comment {
 
     private String userName;
 
-    private long date;
+    private String text;
+
+    private LocalDateTime date;
 }
