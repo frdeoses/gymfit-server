@@ -2,7 +2,9 @@ package com.uma.gymfit.trainingtable.controller;
 
 import com.uma.gymfit.trainingtable.model.ResponseHTTP;
 import com.uma.gymfit.trainingtable.model.training.GymMachine;
+import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
+import com.uma.gymfit.trainingtable.model.training.TrainingType;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import com.uma.gymfit.trainingtable.utils.Literals;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +29,19 @@ public class TrainingTableController {
         return new ResponseEntity<>(trainingTableService.allTrainingTable(), HttpStatus.OK);
     }
 
+    @GetMapping(Literals.TYPE_TRAINING)
+    public ResponseEntity<TrainingType[]> allTrainingType() {
+        return new ResponseEntity<>(trainingTableService.trainingType(), HttpStatus.OK);
+    }
+
     @GetMapping(Literals.GYM_MACHINES)
     public ResponseEntity<List<GymMachine>> allGymMachine() {
         return new ResponseEntity<>(trainingTableService.allGymMachine(), HttpStatus.OK);
+    }
+
+    @GetMapping(Literals.TRAININGS)
+    public ResponseEntity<List<Training>> allTraining() {
+        return new ResponseEntity<>(trainingTableService.allTraining(), HttpStatus.OK);
     }
 
 
@@ -59,6 +71,19 @@ public class TrainingTableController {
         }
     }
 
+    @GetMapping(Literals.TRAINING_ID)
+    public ResponseEntity<Training> findTraining(@PathVariable String idTraining) {
+
+        Training training;
+        try {
+            training = trainingTableService.findTraining(idTraining);
+            return new ResponseEntity(training, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idTraining, e.getMessage());
+            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @PostMapping(Literals.TRAINING_TABLE)
     public ResponseEntity<ResponseHTTP> createTrainingTable(@Validated @RequestBody TrainingTable trainingTable) {
@@ -71,7 +96,6 @@ public class TrainingTableController {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), trainingTable, e.getMessage());
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @PostMapping(Literals.GYM_MACHINE)
@@ -85,7 +109,19 @@ public class TrainingTableController {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), gymMachine, e.getMessage());
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
+    @PostMapping(Literals.TRAINING)
+    public ResponseEntity<ResponseHTTP> createTraining(@Validated @RequestBody Training training) {
+
+        try {
+            trainingTableService.createTraining(training);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.CREATED.value(), HttpStatus.CREATED.toString(), training, null);
+            return new ResponseEntity<>(res, HttpStatus.CREATED);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), training, e.getMessage());
+            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping(Literals.TRAINING_TABLE)
@@ -97,6 +133,34 @@ public class TrainingTableController {
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), trainingTable, e.getMessage());
+            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PutMapping(Literals.TRAINING)
+    public ResponseEntity<ResponseHTTP> updateTraining(@RequestBody Training training) {
+
+        try {
+            trainingTableService.updateTraining(training);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), training, null);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), training, e.getMessage());
+            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PutMapping(Literals.GYM_MACHINE)
+    public ResponseEntity<ResponseHTTP> updateGymMachine(@RequestBody GymMachine gymMachine) {
+
+        try {
+            trainingTableService.updateGymMachine(gymMachine);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), gymMachine, null);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), gymMachine, e.getMessage());
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -125,6 +189,20 @@ public class TrainingTableController {
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idGymMachine, e.getMessage());
+            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @DeleteMapping(Literals.TRAINING_ID)
+    public ResponseEntity<ResponseHTTP> deleteTraining(@PathVariable String idTraining) {
+
+        try {
+            trainingTableService.deleteTraining(idTraining);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idTraining, null);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idTraining, e.getMessage());
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
