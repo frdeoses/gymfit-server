@@ -32,8 +32,7 @@ public class UserController {
         User user;
         try {
             user = gymFitService.findUser(idUser);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), user, null);
-            return new ResponseEntity(res, HttpStatus.OK);
+            return new ResponseEntity(user, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idUser, e.getMessage());
             return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
