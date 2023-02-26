@@ -35,24 +35,12 @@ spring:
             - Path=/api/gymfit/training-table**
           filters:
             - RewritePath=/(?<path>.*), /$\{path}
-        - id: gym-machine
-          uri: ${internal.lb.uri}:8002
-          predicates:
-            - Path=/api/gymfit/gym-machine**
-          filters:
-            - RewritePath=/(?<path>.*), /$\{path}
         - id: training-table_id
           uri: ${internal.lb.uri}:8002
           predicates:
             - Path=/api/gymfit/training-tables/**
           filters:
             - RewritePath=/training-tables/(?<path>.*), /training-tables/$\{path}
-        - id: gym-machine_id
-          uri: ${internal.lb.uri}:8002
-          predicates:
-            - Path=/api/gymfit/gym-machines/**
-          filters:
-            - RewritePath=/training-tables/(?<path>.*), /gym-machines/$\{path}
         - id: autenticate_training-table_id
           uri: ${internal.lb.uri}:8002
           predicates:
