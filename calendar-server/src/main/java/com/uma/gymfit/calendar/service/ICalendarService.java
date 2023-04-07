@@ -43,6 +43,13 @@ public interface ICalendarService {
      *
      * @param calendar
      */
-    public void updateCalendar(Calendar calendar) throws Exception;
+    public Calendar updateCalendar(Calendar calendar) throws Exception;
 
+
+    /**
+     * Devuelve todos los calendarios almacenados en BBDD que estan publicados
+     *
+     * @return List<U>
+     */
+    List<Calendar> allCalendarsPublishedActive();
 }

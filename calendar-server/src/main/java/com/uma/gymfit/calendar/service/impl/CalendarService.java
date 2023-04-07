@@ -4,6 +4,7 @@ import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.repository.ICalendarRepository;
 import com.uma.gymfit.calendar.service.ICalendarService;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Service
 @Slf4j
 public class CalendarService
@@ -59,6 +61,13 @@ public class CalendarService
     public void createCalendar(Calendar calendar) throws Exception {
 
         //en caso de no tener problemas guardaremos en el repositorio.
+        log.info("Verificamos que el evento que quiere crear no esta ya en el sistema...");
+
+        if (calendar == null || !calendarRepository.findById(calendar.getId()).isEmpty()) {
+            log.error("Error: El evento que quiere crear ya esta en el sistema, o no es valido");
+            throw new Exception("Error: El evento que quiere crear ya esta en el sistema, o no es valido");
+        }
+
         log.info("Procedemos a guardar en el sistema el siguiente calendario: {}.", calendar);
         calendar.setId(UUID.randomUUID().toString());
         calendarRepository.save(calendar);
@@ -96,7 +105,7 @@ public class CalendarService
      * @param calendar
      */
     @Override
-    public void updateCalendar(Calendar calendar) throws Exception {
+    public Calendar updateCalendar(Calendar calendar) throws Exception {
 
 
         // comprobamos que se encuentra en la BBDD
@@ -105,14 +114,20 @@ public class CalendarService
 
             log.info("Exite el calendario en el sistema.");
             // insertamos nuevo
-            calendarRepository.save(calendar);
             log.info("OK: Calendario guardado con exito.");
+            return calendarRepository.save(calendar);
 
         } else {
             log.error("No se encuentra el calendario que quieres modificar");
             throw new Exception("No se encuentra el calendario que quieres modificar");
         }
 
+    }
+
+    @Override
+    public List<Calendar> allCalendarsPublishedActive() {
+        log.info("Buscamos en el sistema los eventos que estén publicados....");
+        return calendarRepository.findByPublished(true);
     }
 
 
