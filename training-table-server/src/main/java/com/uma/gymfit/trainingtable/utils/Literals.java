@@ -12,7 +12,15 @@ public class Literals {
 
     public static final String TRAININGS = "/training-tables/trainings";
 
+    public static final String TRAININGS_BY_USER = "/training-tables/trainings/user";
+
+    public static final String TRAININGS_BY_TYPE_TRAINING = "/training-tables/trainings/find-type-training";
+
     public static final String TRAINING_TABLE_ID = "/training-tables/{idTrainingTable}";
+
+    public static final String TRAINING_TABLE_TYPE = "/training-tables/find-type-training";
+
+    public static final String TRAINING_TABLE_USER = "/training-tables/user";
 
     public static final String GYM_MACHINE_ID = "/training-tables/gym-machines/{idGymMachine}";
 
