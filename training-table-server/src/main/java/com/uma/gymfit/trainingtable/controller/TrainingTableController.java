@@ -5,6 +5,9 @@ import com.uma.gymfit.trainingtable.model.training.GymMachine;
 import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 import com.uma.gymfit.trainingtable.model.training.TrainingType;
+import com.uma.gymfit.trainingtable.model.user.User;
+import com.uma.gymfit.trainingtable.service.IGymMachineService;
+import com.uma.gymfit.trainingtable.service.ITrainingService;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import com.uma.gymfit.trainingtable.utils.Literals;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,6 +27,12 @@ public class TrainingTableController {
     @Autowired
     private ITrainingTableService trainingTableService;
 
+    @Autowired
+    private IGymMachineService gymMachineService;
+
+    @Autowired
+    private ITrainingService trainingService;
+
 
     @GetMapping(Literals.TRAINING_TABLES)
     public ResponseEntity<List<TrainingTable>> allTrainingTable() {
@@ -31,17 +41,17 @@ public class TrainingTableController {
 
     @GetMapping(Literals.TYPE_TRAINING)
     public ResponseEntity<TrainingType[]> allTrainingType() {
-        return new ResponseEntity<>(trainingTableService.trainingType(), HttpStatus.OK);
+        return new ResponseEntity<>(trainingService.trainingType(), HttpStatus.OK);
     }
 
     @GetMapping(Literals.GYM_MACHINES)
     public ResponseEntity<List<GymMachine>> allGymMachine() {
-        return new ResponseEntity<>(trainingTableService.allGymMachine(), HttpStatus.OK);
+        return new ResponseEntity<>(gymMachineService.allGymMachine(), HttpStatus.OK);
     }
 
     @GetMapping(Literals.TRAININGS)
     public ResponseEntity<List<Training>> allTraining() {
-        return new ResponseEntity<>(trainingTableService.allTraining(), HttpStatus.OK);
+        return new ResponseEntity<>(trainingService.allTraining(), HttpStatus.OK);
     }
 
 
@@ -58,12 +68,64 @@ public class TrainingTableController {
         }
     }
 
+    @GetMapping(Literals.TRAINING_TABLE_TYPE)
+    public ResponseEntity<List<TrainingTable>> findByTrainingType(@RequestParam String typeTraining, @RequestParam String idUser) {
+
+        List<TrainingTable> trainingTables;
+        try {
+            trainingTables = trainingTableService.findByTrainingType(typeTraining,idUser);
+            return new ResponseEntity(trainingTables, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), typeTraining, e.getMessage());
+            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(Literals.TRAINING_TABLE_USER)
+    public ResponseEntity<List<TrainingTable>> findByUser(@RequestBody User user) {
+
+        List<TrainingTable> trainingTables;
+        try {
+            trainingTables = trainingTableService.findByUser(user);
+            return new ResponseEntity(trainingTables, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), user, e.getMessage());
+            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(Literals.TRAININGS_BY_USER)
+    public ResponseEntity<List<Training>> listTrainingByUser(@RequestBody User user) {
+
+        List<Training> trainingList;
+        try {
+            trainingList = trainingService.findTrainingsByUser(user);
+            return new ResponseEntity(trainingList, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), user, e.getMessage());
+            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(Literals.TRAININGS_BY_TYPE_TRAINING)
+    public ResponseEntity<List<Training>> findTrainingByTrainingType(@RequestParam String typeTraining, @RequestParam String idUser) {
+
+        List<Training> trainingList;
+        try {
+            trainingList = trainingService.findTrainingsByTrainingType(typeTraining,idUser);
+            return new ResponseEntity(trainingList, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), typeTraining, e.getMessage());
+            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(Literals.GYM_MACHINE_ID)
     public ResponseEntity<GymMachine> findGymMachine(@PathVariable String idGymMachine) {
 
         GymMachine gymMachine;
         try {
-            gymMachine = trainingTableService.findGymMachine(idGymMachine);
+            gymMachine = gymMachineService.findGymMachine(idGymMachine);
             return new ResponseEntity(gymMachine, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idGymMachine, e.getMessage());
@@ -76,7 +138,7 @@ public class TrainingTableController {
 
         Training training;
         try {
-            training = trainingTableService.findTraining(idTraining);
+            training = trainingService.findTraining(idTraining);
             return new ResponseEntity(training, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idTraining, e.getMessage());
@@ -102,7 +164,7 @@ public class TrainingTableController {
     public ResponseEntity<ResponseHTTP> createGymMachine(@Validated @RequestBody GymMachine gymMachine) {
 
         try {
-            trainingTableService.createGymMachine(gymMachine);
+            gymMachineService.createGymMachine(gymMachine);
             ResponseHTTP res = new ResponseHTTP(HttpStatus.CREATED.value(), HttpStatus.CREATED.toString(), gymMachine, null);
             return new ResponseEntity<>(res, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -115,7 +177,7 @@ public class TrainingTableController {
     public ResponseEntity<ResponseHTTP> createTraining(@Validated @RequestBody Training training) {
 
         try {
-            trainingTableService.createTraining(training);
+            trainingService.createTraining(training);
             ResponseHTTP res = new ResponseHTTP(HttpStatus.CREATED.value(), HttpStatus.CREATED.toString(), training, null);
             return new ResponseEntity<>(res, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -142,7 +204,7 @@ public class TrainingTableController {
     public ResponseEntity<ResponseHTTP> updateTraining(@RequestBody Training training) {
 
         try {
-            trainingTableService.updateTraining(training);
+            trainingService.updateTraining(training);
             ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), training, null);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
@@ -156,7 +218,7 @@ public class TrainingTableController {
     public ResponseEntity<ResponseHTTP> updateGymMachine(@RequestBody GymMachine gymMachine) {
 
         try {
-            trainingTableService.updateGymMachine(gymMachine);
+            gymMachineService.updateGymMachine(gymMachine);
             ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), gymMachine, null);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
@@ -184,7 +246,7 @@ public class TrainingTableController {
     public ResponseEntity<ResponseHTTP> deleteGymMachine(@PathVariable String idGymMachine) {
 
         try {
-            trainingTableService.deleteGymMachine(idGymMachine);
+            gymMachineService.deleteGymMachine(idGymMachine);
             ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idGymMachine, null);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
@@ -198,7 +260,7 @@ public class TrainingTableController {
     public ResponseEntity<ResponseHTTP> deleteTraining(@PathVariable String idTraining) {
 
         try {
-            trainingTableService.deleteTraining(idTraining);
+            trainingService.deleteTraining(idTraining);
             ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idTraining, null);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
