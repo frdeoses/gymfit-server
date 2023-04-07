@@ -1,6 +1,7 @@
 package com.uma.gymfit.trainingtable.model.training;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.uma.gymfit.trainingtable.model.user.User;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -39,6 +40,10 @@ public class Training {
     private List<WorkedWeights> listWorkedWeights;
     
     private GymMachine gymMachine;
+
+    @JsonProperty(required = true)
+    @NotNull
+    private User user;
 
     private LocalDateTime creationDate;
 

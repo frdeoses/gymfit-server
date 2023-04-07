@@ -25,6 +25,13 @@ public class GymMachine {
     @NotBlank
     private String name;
 
+    @JsonProperty(required = true)
+    @NotNull
+    @NotBlank
+    private String model;
+
+    private int numMachine;
+
     private String exercisedArea;
 
     private String description;
