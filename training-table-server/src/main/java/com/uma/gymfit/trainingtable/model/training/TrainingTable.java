@@ -2,10 +2,7 @@ package com.uma.gymfit.trainingtable.model.training;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.uma.gymfit.trainingtable.model.user.User;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
