@@ -193,7 +193,7 @@ public class TrainingService implements ITrainingService {
     @Override
     public List<Training> findTrainingsByTrainingType(String typeTraining, String idUser) throws Exception {
 
-        log.info("Buscamos en el sitema el siguiente id de usuario: {}", idUser);
+        log.info("Buscamos en el sistema el siguiente id de usuario: {}", idUser);
 
         if (idUser.isEmpty() || idUser.isBlank() || !userRepository.existsById(idUser)) {
             log.error("Error: El usuario introducido es erróneo o no se encuentra en el sistema.");
