@@ -138,7 +138,7 @@ public class GymMachineService implements IGymMachineService {
 
             GymMachine gymMachineDelete = gymMachineRepository.findById(idGymMachine).get();
 
-            findGymMachineInTrainings(gymMachineDelete);
+            deleteGymMachineInTrainings(gymMachineDelete);
 
             //una vez este todo correcto borramos el dato.
             gymMachineRepository.deleteById(idGymMachine);
@@ -151,7 +151,7 @@ public class GymMachineService implements IGymMachineService {
 
     }
 
-    private void findGymMachineInTrainings(GymMachine gymMachine){
+    private void deleteGymMachineInTrainings(GymMachine gymMachine){
 
         log.info("Buscamos en el sistema si existe alguna maquina asociada a algún entrenamiento.");
 
