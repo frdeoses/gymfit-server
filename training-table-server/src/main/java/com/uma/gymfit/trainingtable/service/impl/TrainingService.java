@@ -1,9 +1,11 @@
 package com.uma.gymfit.trainingtable.service.impl;
 
 import com.uma.gymfit.trainingtable.model.training.Training;
+import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 import com.uma.gymfit.trainingtable.model.training.TrainingType;
 import com.uma.gymfit.trainingtable.model.user.User;
 import com.uma.gymfit.trainingtable.repository.ITrainingRepository;
+import com.uma.gymfit.trainingtable.repository.ITrainingTableRepository;
 import com.uma.gymfit.trainingtable.repository.IUserRepository;
 import com.uma.gymfit.trainingtable.service.ITrainingService;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -23,6 +26,9 @@ public class TrainingService implements ITrainingService {
 
     @Autowired
     private ITrainingRepository trainingRepository;
+
+    @Autowired
+    private ITrainingTableRepository trainingTableRepository;
 
     @Autowired
     private IUserRepository userRepository;
@@ -59,7 +65,12 @@ public class TrainingService implements ITrainingService {
         log.info("Buscamos el ejercicio en el sistema...");
         if (trainingRepository.existsById(idTraining)) {
             log.info("OK: Ejercicio encontrada.....");
-            return trainingRepository.findById(idTraining).get();
+
+            Training training = trainingRepository.findById(idTraining).get();
+
+            checkUser(training);
+
+            return training;
         }
 
         log.error("ERROR: El ejercicio no se encuentra en el sistema...");
