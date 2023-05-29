@@ -79,6 +79,33 @@ public class TrainingService implements ITrainingService {
     }
 
     /**
+     * Comprueba que existe el usuario que tiene asignado en el sistema,
+     * en el caso de no existir lo elimina
+     *
+     * @param training
+     */
+    private void checkUser(Training training) {
+
+        log.info("En el caso de que tenga un usuario asignado comprobamos que existe en el sistema");
+        User userTraining = training.getUser();
+
+        if (userTraining != null) {
+
+            log.info("OK: Tiene un usuario asignado y comprobamos que existe el usuario en el sistema");
+            Optional<User> userInRepository = userRepository.findById(userTraining.getId());
+
+            if (userInRepository.isEmpty()) {
+                log.info("OK: No existe dicho usuario, asi que procedemos a eliminarlo...");
+                training.setUser(null);
+                trainingRepository.save(training);
+            }
+
+        }
+
+        log.info("OK: Terminamos el proceso de comprobar si el usuario existe en el sistema con éxito....");
+    }
+
+    /**
      * Crea un Ejercicio
      *
      * @param training
