@@ -139,6 +139,11 @@ public class TrainingService implements ITrainingService {
         log.info("Comprobamos en el sistema que existe el ejercicio. ");
         if (trainingRepository.existsById(idTraining)) {
             log.info("Existe el ejercicio en el sistema.");
+
+            Training trainingDelete = trainingRepository.findById(idTraining).get();
+
+            deleteTrainingInTrainingTable(trainingDelete);
+
             //una vez este todo correcto borramos el dato.
             trainingRepository.deleteById(idTraining);
             log.info("OK: Ejercicio eliminado con éxito.");
@@ -148,6 +153,30 @@ public class TrainingService implements ITrainingService {
             throw new Exception("El ejercicio que quiere eliminar no se encuentra en el sistema.");
         }
 
+    }
+
+    /**
+     * Borra de la tabla de entrenamiento aquellos entrenamientos
+     * que contenga dicho entrenamiento que vamos a eliminar
+     *
+     * @param trainingDelete
+     */
+    private void deleteTrainingInTrainingTable(Training trainingDelete) {
+
+        log.info("Buscamos en el sistema si alguna tabla de entrenamiento contiene el entrenamiento que vamos a borrar");
+        List<TrainingTable> trainingTableList = trainingTableRepository.findAll();
+
+        trainingTableList.stream().forEach(trainingTable -> {
+
+            boolean isTrainingDelete = trainingTable.getListTraining().removeIf(training -> training.getId().equals(trainingDelete.getId()));
+
+            if (isTrainingDelete) {
+                log.info("OK: Se procede a borrar dicho entrenamiento de la tabla: {}", trainingTable);
+                trainingTableRepository.save(trainingTable);
+            }
+
+        });
+        log.info("OK: Finalizado con éxito el proceso de borrado...");
     }
 
     @Override
