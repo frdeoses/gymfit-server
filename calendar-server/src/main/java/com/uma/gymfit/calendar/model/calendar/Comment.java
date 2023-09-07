@@ -2,11 +2,12 @@ package com.uma.gymfit.calendar.model.calendar;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class Comment {
-
+public class Comment implements Serializable {
+    
     private String id;
 
     private String idUser;

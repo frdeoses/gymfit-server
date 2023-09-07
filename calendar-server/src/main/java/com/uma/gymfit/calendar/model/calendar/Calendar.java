@@ -6,10 +6,14 @@ import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class Calendar {
+public class Calendar implements Serializable {
+
+    private static final long serialVersionUID = 2790992461526821035L;
 
     @Id
     private String id;
@@ -22,6 +26,10 @@ public class Calendar {
     private String description;
 
     private boolean published;
+
+    private LocalDateTime creationDate;
+
+    private LocalDateTime lastUpdateDate;
 
     private List<Comment> comments;
 
