@@ -9,13 +9,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
 @Document(value = "GymMachine")
 @Data
 @Getter
 @Setter
-public class GymMachine {
+public class GymMachine implements Serializable {
 
     @Id
     private String id;
@@ -39,5 +40,6 @@ public class GymMachine {
     private List<WorkedWeights> listWorkedWeights;
 
     private int like;
+
 
 }

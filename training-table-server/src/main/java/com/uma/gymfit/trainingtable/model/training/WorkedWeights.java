@@ -4,13 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @ToString
-public class WorkedWeights {
-
+public class WorkedWeights implements Serializable {
+    
     private double weight;
 
     private LocalDateTime date;
