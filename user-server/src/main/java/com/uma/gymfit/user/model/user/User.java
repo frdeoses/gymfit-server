@@ -1,21 +1,20 @@
-package com.uma.gymfit.calendar.model.user;
+package com.uma.gymfit.user.model.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.uma.gymfit.user.model.security.Authority;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Document(value = "User")
 @Data
@@ -64,13 +63,11 @@ public class User implements UserDetails {
     @NotNull
     private LocalDateTime birthDate;
 
-    @JsonProperty(required = true)
-    @NotNull
     private LocalDateTime registrationDate;
-    
-    private double weight;
 
     private double height;
+
+    private double weight;
 
     private int caloriesBurned;
 
@@ -78,14 +75,27 @@ public class User implements UserDetails {
 
     private List<FatPercentage> listFatPercentage;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<Authority> authorities = new HashSet<>();
+
+        if (StringUtils.isEmpty(userRoles)) {
+            userRoles = new HashSet<>();
+            userRoles.add(new UserRol(UUID.randomUUID().toString(), RoleList.USER.toString(), RoleList.USER));
+        }
+
+//        {
+
 
         this.userRoles.forEach(userRol -> {
             Authority authority = new Authority(userRol.getRoleList().name());
             authorities.add(authority);
         });
+//            return authorities;
+//        }
+//
+//        userRoles = new ArrayList<>();
 
         return authorities;
     }

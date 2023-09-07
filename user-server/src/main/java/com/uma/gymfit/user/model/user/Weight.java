@@ -1,9 +1,7 @@
-package com.uma.gymfit.trainingtable.model.user;
+package com.uma.gymfit.user.model.user;
 
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -11,6 +9,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class Weight implements Serializable {
 
     private LocalDateTime date;
