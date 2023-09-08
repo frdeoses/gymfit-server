@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,15 +22,13 @@ public class CalendarController {
 
     @GetMapping(Literals.CALENDARS)
     public ResponseEntity<List<Calendar>> allCalendars() {
-        List<Calendar> allCalendar = new ArrayList<>();
-        allCalendar = calendarService.allCalendars();
+        List<Calendar> allCalendar = calendarService.allCalendars();
         return new ResponseEntity<>(allCalendar, HttpStatus.OK);
     }
 
     @GetMapping(Literals.CALENDARS_PUBLISHED)
     public ResponseEntity<List<Calendar>> allCalendarsPublished() {
-        List<Calendar> allCalendarPublished = new ArrayList<>();
-        allCalendarPublished = calendarService.allCalendarsPublishedActive();
+        List<Calendar> allCalendarPublished = calendarService.allCalendarsPublishedActive();
         return new ResponseEntity<>(allCalendarPublished, HttpStatus.OK);
     }
 
@@ -76,13 +73,15 @@ public class CalendarController {
 
 
     @DeleteMapping(Literals.CALENDAR_ID)
-    public ResponseEntity<String> deleteCalendar(@PathVariable String idCalendar) {
+    public ResponseEntity<ResponseHTTP> deleteCalendar(@PathVariable String idCalendar) {
 
         try {
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idCalendar, null);
             calendarService.deleteCalendar(idCalendar);
-            return new ResponseEntity<>(idCalendar, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idCalendar, e.getMessage());
+            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }

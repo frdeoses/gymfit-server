@@ -16,14 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
 @RequestMapping(Literals.API)
 public class TrainingTableController {
-
+    
     @Autowired
     private ITrainingTableService trainingTableService;
 
@@ -73,7 +72,7 @@ public class TrainingTableController {
 
         List<TrainingTable> trainingTables;
         try {
-            trainingTables = trainingTableService.findByTrainingType(typeTraining,idUser);
+            trainingTables = trainingTableService.findByTrainingType(typeTraining, idUser);
             return new ResponseEntity(trainingTables, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), typeTraining, e.getMessage());
@@ -112,7 +111,7 @@ public class TrainingTableController {
 
         List<Training> trainingList;
         try {
-            trainingList = trainingService.findTrainingsByTrainingType(typeTraining,idUser);
+            trainingList = trainingService.findTrainingsByTrainingType(typeTraining, idUser);
             return new ResponseEntity(trainingList, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), typeTraining, e.getMessage());

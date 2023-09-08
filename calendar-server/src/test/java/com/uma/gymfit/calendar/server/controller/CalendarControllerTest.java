@@ -1,17 +1,5 @@
 package com.uma.gymfit.calendar.server.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
-
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uma.gymfit.calendar.config.JwtAuthenticationEntryPoint;
 import com.uma.gymfit.calendar.config.JwtAuthenticationFilter;
@@ -31,11 +19,17 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @AutoConfigureMockMvc(addFilters = false)
-public class CalendarControllerTest {
+class CalendarControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -205,7 +199,7 @@ public class CalendarControllerTest {
         ResultActions response = mockMvc.perform(put("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendarEdit)));
 
         // then
-        response.andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.id",is(calendarEdit.getId())));
+        response.andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.id", is(calendarEdit.getId())));
 
     }
 
