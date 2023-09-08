@@ -85,17 +85,10 @@ public class User implements UserDetails {
             userRoles.add(new UserRol(UUID.randomUUID().toString(), RoleList.USER.toString(), RoleList.USER));
         }
 
-//        {
-
-
         this.userRoles.forEach(userRol -> {
             Authority authority = new Authority(userRol.getRoleList().name());
             authorities.add(authority);
         });
-//            return authorities;
-//        }
-//
-//        userRoles = new ArrayList<>();
 
         return authorities;
     }
