@@ -1,12 +1,5 @@
 package com.uma.gymfit.calendar.server.service;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.Mockito.*;
-
 import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.repository.ICalendarRepository;
 import com.uma.gymfit.calendar.service.impl.CalendarService;
@@ -20,11 +13,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class CalendarServiceTest {
+class CalendarServiceTest {
 
     @Mock
     ICalendarRepository calendarRepository;
@@ -51,7 +53,7 @@ public class CalendarServiceTest {
 
     @DisplayName("Test ver todos los evento.")
     @Test
-    public void allCalendarsTest() {
+    void allCalendarsTest() {
 
         // given
 
@@ -74,7 +76,7 @@ public class CalendarServiceTest {
 
     @DisplayName("Test ver un listado vacio.")
     @Test
-    public void allCalendarsEmptyTest() {
+    void allCalendarsEmptyTest() {
 
         // given
 
@@ -92,13 +94,13 @@ public class CalendarServiceTest {
         // then
 
         assertThat(calendarList).isEmpty();
-        assertThat(calendarList.size()).isEqualTo(0);
+        assertThat(calendarList.size()).isZero();
 
     }
 
     @DisplayName("Test para obtener un evento.")
     @Test
-    public void findCalendarTest() throws Exception {
+    void findCalendarTest() throws Exception {
 
         // given
 
@@ -118,7 +120,7 @@ public class CalendarServiceTest {
 
     @DisplayName("Test para editar un evento.")
     @Test
-    public void editCalendarTest() throws Exception {
+    void editCalendarTest() throws Exception {
 
         // given
 

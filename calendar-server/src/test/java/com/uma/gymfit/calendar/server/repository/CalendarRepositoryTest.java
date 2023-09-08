@@ -2,7 +2,6 @@ package com.uma.gymfit.calendar.server.repository;
 
 import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.repository.ICalendarRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,8 +12,10 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DataMongoTest
-public class CalendarRepositoryTest {
+class CalendarRepositoryTest {
 
     @Autowired
     private ICalendarRepository calendarRepository;
@@ -31,7 +32,7 @@ public class CalendarRepositoryTest {
     }
 
     @AfterEach
-    void emptyRepository(){
+    void emptyRepository() {
         calendarRepository.deleteAll();
     }
 
@@ -45,8 +46,8 @@ public class CalendarRepositoryTest {
         calendar1.setPublished(false);
 
         Calendar calendarSave = calendarRepository.save(calendar1);
-        Assertions.assertThat(calendarSave).isNotNull();
-        Assertions.assertThat(calendarSave.getTitle()).isEqualToIgnoringCase("Test1");
+        assertThat(calendarSave).isNotNull();
+        assertThat(calendarSave.getTitle()).isEqualToIgnoringCase("Test1");
 
     }
 
@@ -67,8 +68,8 @@ public class CalendarRepositoryTest {
         List<Calendar> calendarList = calendarRepository.findAll();
 
         // then
-        Assertions.assertThat(calendarList).isNotNull();
-        Assertions.assertThat(calendarList.size()).isEqualTo(2);
+        assertThat(calendarList).isNotNull();
+        assertThat(calendarList.size()).isEqualTo(2);
 
     }
 
@@ -84,7 +85,7 @@ public class CalendarRepositoryTest {
 
 
         // then
-        Assertions.assertThat(calendarFound).isNotNull();
+        assertThat(calendarFound).isNotNull();
 
     }
 
@@ -106,8 +107,8 @@ public class CalendarRepositoryTest {
 
         // then
 
-        Assertions.assertThat(calendarEdit.getTitle()).isEqualTo("Prueba editar");
-        Assertions.assertThat(calendarEdit.isPublished()).isTrue();
+        assertThat(calendarEdit.getTitle()).isEqualTo("Prueba editar");
+        assertThat(calendarEdit.isPublished()).isTrue();
 
 
     }
@@ -127,7 +128,7 @@ public class CalendarRepositoryTest {
 
         // then
 
-        Assertions.assertThat(calendarOptional).isEmpty();
+        assertThat(calendarOptional).isEmpty();
 
     }
 
