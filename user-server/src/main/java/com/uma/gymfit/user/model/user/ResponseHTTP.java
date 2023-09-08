@@ -19,5 +19,4 @@ public class ResponseHTTP {
 
     private String error;
 
-
 }
