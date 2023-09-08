@@ -1,5 +1,6 @@
 package com.uma.gymfit.trainingtable.service.impl;
 
+import com.uma.gymfit.trainingtable.exception.training.TrainingNotFoundException;
 import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 import com.uma.gymfit.trainingtable.model.training.TrainingType;
@@ -11,10 +12,13 @@ import com.uma.gymfit.trainingtable.service.ITrainingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,10 +61,10 @@ public class TrainingService implements ITrainingService {
      * Devuelve la tabla almacenada en BBDD
      * @param idTraining
      * @return
-     * @throws Exception
+     * @
      */
     @Override
-    public Training findTraining(String idTraining) throws Exception {
+    public Training findTraining(String idTraining) {
 
         log.info("Buscamos el ejercicio en el sistema...");
         if (trainingRepository.existsById(idTraining)) {
@@ -73,8 +77,8 @@ public class TrainingService implements ITrainingService {
             return training;
         }
 
-        log.error("ERROR: El ejercicio no se encuentra en el sistema...");
-        throw new Exception("ERROR: El ejercicio no se encuentra en el sistema...");
+        log.error("ERROR: El ejercicio no se encuentra en el sistema - ID: {}. ", idTraining);
+        throw new TrainingNotFoundException("ERROR: El ejercicio no se encuentra en el sistema.");
 
     }
 
@@ -89,13 +93,13 @@ public class TrainingService implements ITrainingService {
         log.info("En el caso de que tenga un usuario asignado comprobamos que existe en el sistema");
         User userTraining = training.getUser();
 
-        if (userTraining != null) {
+        if (!Objects.isNull(training)) {
 
             log.info("OK: Tiene un usuario asignado y comprobamos que existe el usuario en el sistema");
             Optional<User> userInRepository = userRepository.findById(userTraining.getId());
 
             if (userInRepository.isEmpty()) {
-                log.info("OK: No existe dicho usuario, asi que procedemos a eliminarlo...");
+                log.warn("OK: No existe dicho usuario, asi que procedemos a eliminarlo...");
                 training.setUser(null);
                 trainingRepository.save(training);
             }
@@ -111,20 +115,25 @@ public class TrainingService implements ITrainingService {
      * @param training
      */
     @Override
-    public void createTraining(Training training) throws Exception {
+    public void createTraining(Training training) {
 
-        //en caso de no tener problemas guardaremos en el repositorio.
-        log.info("Procedemos a guardar en el sistema el siguiente ejercicio: {}.", training);
-        if (training.getUser() == null || !userRepository.existsById(training.getUser().getId())) {
-            log.error("Error: El usuario asignado al siguiente entrenamiento no se encuentra en el sistema");
-            throw new Exception("Error: El usuario asignado al siguiente entrenamiento no se encuentra en el sistema");
+        try {
+            //en caso de no tener problemas guardaremos en el repositorio.
+            log.info("Procedemos a guardar en el sistema el siguiente ejercicio: {}.", training);
+            if (Objects.isNull(training.getUser()) || !userRepository.existsById(training.getUser().getId())) {
+                log.error("Error: El usuario asignado al siguiente entrenamiento no se encuentra en el sistema - Training: {}", training);
+                throw new UsernameNotFoundException("Error: El usuario asignado al siguiente entrenamiento no se encuentra en el sistema");
+            }
+            training.setId(UUID.randomUUID().toString());
+            training.setCreationDate(LocalDateTime.now());
+            training.setLastUpdateDate(LocalDateTime.now());
+            trainingRepository.save(training);
+            log.info("OK: Ejercicio guardado con éxito.");
+
+        } catch (DataAccessException e) {
+            log.error("ERROR: Error al guardar el entrenamiento en la base de datos - {}", e.getMessage());
+            throw new TrainingNotFoundException("Error al guardar el entrenamiento en la base de datos.");
         }
-        training.setId(UUID.randomUUID().toString());
-        training.setCreationDate(LocalDateTime.now());
-        training.setLastUpdateDate(LocalDateTime.now());
-        trainingRepository.save(training);
-        log.info("OK: Ejercicio guardado con exito.");
-
     }
 
     /**
@@ -133,7 +142,7 @@ public class TrainingService implements ITrainingService {
      * @param idTraining
      */
     @Override
-    public void deleteTraining(String idTraining) throws Exception {
+    public void deleteTraining(String idTraining) {
 
         //comprobamos que el id se encuentra en el repositorio
         log.info("Comprobamos en el sistema que existe el ejercicio. ");
@@ -144,13 +153,13 @@ public class TrainingService implements ITrainingService {
 
             deleteTrainingInTrainingTable(trainingDelete);
 
-            //una vez este todo correcto borramos el dato.
+            //una vez este correcto borramos el dato.
             trainingRepository.deleteById(idTraining);
             log.info("OK: Ejercicio eliminado con éxito.");
 
         } else {
-            log.error("El ejercicio que quiere eliminar no se encuentra en el sistema.");
-            throw new Exception("El ejercicio que quiere eliminar no se encuentra en el sistema.");
+            log.error("El ejercicio que quiere eliminar no se encuentra en el sistema - ID: {}.", idTraining);
+            throw new TrainingNotFoundException("El ejercicio que quiere eliminar no se encuentra en el sistema.");
         }
 
     }
@@ -171,7 +180,7 @@ public class TrainingService implements ITrainingService {
             boolean isTrainingDelete = trainingTable.getListTraining().removeIf(training -> training.getId().equals(trainingDelete.getId()));
 
             if (isTrainingDelete) {
-                log.info("OK: Se procede a borrar dicho entrenamiento de la tabla: {}", trainingTable);
+                log.warn("OK: Se procede a borrar dicho entrenamiento de la tabla: {}", trainingTable);
                 trainingTableRepository.save(trainingTable);
             }
 
@@ -180,28 +189,24 @@ public class TrainingService implements ITrainingService {
     }
 
     @Override
-    public List<Training> findTrainingsByUser(User user) throws Exception {
+    public List<Training> findTrainingsByUser(User user) {
         log.info("Buscamos los entrenamiento del siguiente usuario: {} ", user);
         if (!userRepository.existsById(user.getId())) {
-            log.error("No se encuentra el usuario.");
-            throw new Exception("No se encuentra el usuario.");
+            log.error("No se encuentra el usuario - User: {}.", user);
+            throw new TrainingNotFoundException("No se encuentra el usuario.");
         }
 
         return trainingRepository.findByUser(user);
     }
 
     @Override
-    public List<Training> findTrainingsByTrainingType(String typeTraining, String idUser) throws Exception {
+    public List<Training> findTrainingsByTrainingType(String typeTraining, String idUser) {
 
         log.info("Buscamos en el sistema el siguiente id de usuario: {}", idUser);
 
-        if (idUser.isEmpty() || idUser.isBlank() || !userRepository.existsById(idUser)) {
-            log.error("Error: El usuario introducido es erróneo o no se encuentra en el sistema.");
-            throw new Exception("Error: El usuario introducido es erróneo o no se encuentra en el sistema.");
-        }
-        if (typeTraining.isEmpty() || typeTraining.isBlank()) {
-            log.error("Error: El tipo de entrenamiento no se ha introducido bien.");
-            throw new Exception("Error: El tipo de entrenamiento no se ha introducido bien.");
+        if (!userRepository.existsById(idUser)) {
+            log.error("Error: El usuario introducido es erróneo o no se encuentra en el sistema - ID: {}.", idUser);
+            throw new UsernameNotFoundException("Error: El usuario introducido es erróneo o no se encuentra en el sistema.");
         }
 
         User user = userRepository.findById(idUser).get();
@@ -214,9 +219,7 @@ public class TrainingService implements ITrainingService {
 
         log.info("Buscamos la(s) tabla(s) de entrenamiento según su tipo: {}", typeTraining);
 
-        List<Training> trainingList = trainingListByUser.stream().filter(training -> {
-            return training.getTypeTraining().equals(typeTraining);
-        }).collect(Collectors.toList());
+        List<Training> trainingList = trainingListByUser.stream().filter(training -> training.getTypeTraining().equals(typeTraining)).collect(Collectors.toList());
 
         log.info("OK: Los entrenamientos encontrados son: {}", trainingList);
 
@@ -229,7 +232,7 @@ public class TrainingService implements ITrainingService {
      * @param training
      */
     @Override
-    public void updateTraining(Training training) throws Exception {
+    public void updateTraining(Training training) {
 
         // comprobamos que se encuentra en la BBDD
         log.info("Comprobamos en el sistema que existe el ejercicio. ");
@@ -244,7 +247,7 @@ public class TrainingService implements ITrainingService {
 
         } else {
             log.error("No se encuentra el ejercicio que quieres modificar");
-            throw new Exception("No se encuentra el ejercicio que quieres modificar");
+            throw new TrainingNotFoundException("No se encuentra el ejercicio que quieres modificar");
         }
 
     }

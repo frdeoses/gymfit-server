@@ -7,37 +7,37 @@ import java.util.List;
 public interface IGymMachineService {
 
     /**
-     * Devuelve todas las maquinas almacenadas en BBDD
+     * Devuelve todas las máquinas almacenadas en BBDD
      *
      * @return List<T>
      */
-    public List<GymMachine> allGymMachine();
+    List<GymMachine> allGymMachine();
 
     /**
-     * Devuelve la maquina almacenadas en BBDD
+     * Devuelve la máquina almacenada en BBDD
      *
      * @return GymMachine
      */
-    public GymMachine findGymMachine(String idGymMachine) throws Exception;
+    GymMachine findGymMachine(String idGymMachine);
 
     /**
-     * Crea  una maquina de entrenamiento
+     * Crea una máquina de entrenamiento
      *
      * @param gymMachine
      */
-    public void createGymMachine(GymMachine gymMachine) throws Exception;
+    void createGymMachine(GymMachine gymMachine);
 
     /**
-     * Borra una maquina de entrenamiento por su id
+     * Borra una máquina de entrenamiento por su id
      *
      * @param idGymMachine
      */
-    public void deleteGymMachine(String idGymMachine) throws Exception;
+    void deleteGymMachine(String idGymMachine);
 
     /**
-     * Modifica una maquina de entrenamiento
+     * Modifica una máquina de entrenamiento
      *
      * @param gymMachine
      */
-    public void updateGymMachine(GymMachine gymMachine) throws Exception;
+    void updateGymMachine(GymMachine gymMachine);
 }

@@ -1,5 +1,7 @@
 package com.uma.gymfit.calendar.service.impl;
 
+import com.uma.gymfit.calendar.exception.CalendarCreationException;
+import com.uma.gymfit.calendar.exception.CalendarNotFoundException;
 import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.repository.ICalendarRepository;
 import com.uma.gymfit.calendar.service.ICalendarService;
@@ -7,8 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,14 +37,14 @@ public class CalendarService
     }
 
     /**
-     * Devuelve el calendarios almacenado en BBDD
+     * Devuelve el calendario almacenado en BB DD
      *
      * @param idCalendar
      * @return
-     * @throws Exception
+     * @
      */
     @Override
-    public Calendar findCalendar(String idCalendar) throws Exception {
+    public Calendar findCalendar(String idCalendar) {
 
         log.info("Buscamos el calendario en el sistema....");
         if (calendarRepository.existsById(idCalendar)) {
@@ -48,8 +52,8 @@ public class CalendarService
             return calendarRepository.findById(idCalendar).get();
         }
 
-        log.error("ERROR: Calendario no se encuentra en el sistema...");
-        throw new Exception("ERROR: Calendario no se encuentra en el sistema...");
+        log.error("ERROR: Calendario no se encuentra en el sistema - ID: {}.", idCalendar);
+        throw new CalendarNotFoundException("ERROR: Calendario no se encuentra en el sistema.");
     }
 
     /**
@@ -58,20 +62,23 @@ public class CalendarService
      * @param calendar
      */
     @Override
-    public void createCalendar(Calendar calendar) throws Exception {
+    public void createCalendar(Calendar calendar) {
 
         //en caso de no tener problemas guardaremos en el repositorio.
         log.info("Verificamos que el evento que quiere crear no esta ya en el sistema...");
 
-        if (calendar == null || !calendarRepository.findById(calendar.getId()).isEmpty()) {
-            log.error("Error: El evento que quiere crear ya esta en el sistema, o no es valido");
-            throw new Exception("Error: El evento que quiere crear ya esta en el sistema, o no es valido");
+        try {
+            log.info("Procedemos a guardar en el sistema el siguiente calendario: {}.", calendar);
+            calendar.setId(UUID.randomUUID().toString());
+            calendar.setCreationDate(LocalDateTime.now());
+            calendar.setLastUpdateDate(LocalDateTime.now());
+            calendarRepository.save(calendar);
+            log.info("OK: Calendario guardado con éxito.");
+        } catch (DataAccessException e) {
+            log.error("ERROR: Error al guardar el evento en la base de datos - {}", e.getMessage());
+            throw new CalendarCreationException("Error al crear el evento en la base de datos.");
         }
 
-        log.info("Procedemos a guardar en el sistema el siguiente calendario: {}.", calendar);
-        calendar.setId(UUID.randomUUID().toString());
-        calendarRepository.save(calendar);
-        log.info("OK: Calendario guardado con exito.");
 
     }
 
@@ -81,19 +88,19 @@ public class CalendarService
      * @param id
      */
     @Override
-    public void deleteCalendar(String id) throws Exception {
+    public void deleteCalendar(String id) {
 
-        //comprobamos que el id se encuentra en el reepositorio
-        log.info("Comprobamos en el sistema que exite el calendario en el sistema ");
+        //comprobamos que el 'id' se encuentra en el reepositorio
+        log.info("Comprobamos en el sistema que existe el calendario en el sistema ");
         if (calendarRepository.existsById(id)) {
 
-            log.info("Exite el calendario en el sistema.");
-            //una vez este todo correcto guardaremos el dato.
+            log.info("Existe el calendario en el sistema.");
+            //una vez este correcto guardaremos el dato.
             calendarRepository.deleteById(id);
             log.info("OK: Calendario eliminado con exito.");
         } else {
-            log.error("El calendario que quiere eliminar no se encuentra en el sistema");
-            throw new Exception("El calendario que quiere eliminar no se encuentra en el sistema");
+            log.error("El calendario que quiere eliminar no se encuentra en el sistema - ID: {}.", id);
+            throw new CalendarNotFoundException("El calendario que quiere eliminar no se encuentra en el sistema");
         }
 
     }
@@ -105,21 +112,23 @@ public class CalendarService
      * @param calendar
      */
     @Override
-    public Calendar updateCalendar(Calendar calendar) throws Exception {
+    public Calendar updateCalendar(Calendar calendar) {
 
 
         // comprobamos que se encuentra en la BBDD
-        log.info("Comprobamos en el sistema que exite el calendario.");
+        log.info("Comprobamos en el sistema que existe el calendario.");
         if (calendarRepository.existsById(calendar.getId())) {
 
-            log.info("Exite el calendario en el sistema.");
+            log.info("Existe el calendario en el sistema.");
+            calendar.setLastUpdateDate(LocalDateTime.now());
+
             // insertamos nuevo
-            log.info("OK: Calendario guardado con exito.");
+            log.info("OK: Calendario guardado con éxito.");
             return calendarRepository.save(calendar);
 
         } else {
-            log.error("No se encuentra el calendario que quieres modificar");
-            throw new Exception("No se encuentra el calendario que quieres modificar");
+            log.error("No se encuentra el calendario que quieres modificar - ID: {}.", calendar.getId());
+            throw new CalendarNotFoundException("No se encuentra el calendario que quieres modificar");
         }
 
     }

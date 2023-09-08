@@ -1,25 +1,25 @@
 package com.uma.gymfit.user.service;
 
-import com.uma.gymfit.user.model.User;
+import com.uma.gymfit.user.model.user.User;
 
 import java.util.List;
 
 public interface IUserService {
 
     /**
-     * Devuelve todos los usuarios almacenados en BBDD
+     * Devuelve todos los usuarios almacenados en BB DD
      *
      * @return List<U>
      */
-    public List<User> allUser();
+    List<User> allUser();
 
     /**
-     * Devuelve el usuarios almacenado en BBDD
+     * Devuelve el usuario almacenado en BB DD
      *
      * @param idUser
      * @return User
      */
-    public User findUser(String idUser) throws Exception;
+    User findUser(String idUser);
 
 
     /**
@@ -27,7 +27,7 @@ public interface IUserService {
      *
      * @param user
      */
-    public void createUser(User user) throws Exception;
+    void createUser(User user);
 
 
     /**
@@ -35,7 +35,7 @@ public interface IUserService {
      *
      * @param id
      */
-    public void deleteUser(String id) throws Exception;
+    void deleteUser(String id);
 
 
     /**
@@ -43,6 +43,6 @@ public interface IUserService {
      *
      * @param user
      */
-    public void updateUser(User user) throws Exception;
+    void updateUser(User user);
 
 }

@@ -1,5 +1,8 @@
 package com.uma.gymfit.trainingtable.service.impl;
 
+import com.uma.gymfit.trainingtable.exception.ValidationException;
+import com.uma.gymfit.trainingtable.exception.machine.GymMachineCreateException;
+import com.uma.gymfit.trainingtable.exception.machine.GymMachineNotFoundException;
 import com.uma.gymfit.trainingtable.model.training.GymMachine;
 import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.repository.IGymMachineRepository;
@@ -8,9 +11,12 @@ import com.uma.gymfit.trainingtable.service.IGymMachineService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -25,7 +31,7 @@ public class GymMachineService implements IGymMachineService {
     private ITrainingRepository trainingRepository;
 
     /**
-     * Devuelve todas las maquinas almacenadas en BBDD
+     * Devuelve todas las máquinas almacenadas en BBDD
      *
      * @return List<TrainingTable>
      */
@@ -35,22 +41,27 @@ public class GymMachineService implements IGymMachineService {
     }
 
     /***
-     * Devuelve la tablas almacenadas en BBDD
+     * Devuelve las tablas almacenadas en BBDD
      * @param idGymMachine
      * @return
      * @throws Exception
      */
     @Override
-    public GymMachine findGymMachine(String idGymMachine) throws Exception {
+    public GymMachine findGymMachine(String idGymMachine) {
 
-        log.info("Buscamos la Maquina en el sistema...");
-        if (gymMachineRepository.existsById(idGymMachine)) {
-            log.info("OK: Maquina encontrada.....");
-            return gymMachineRepository.findById(idGymMachine).get();
+        log.info("Buscamos la maquina en el sistema con ID: {}", idGymMachine);
+
+        Optional<GymMachine> gymMachineOptional = gymMachineRepository.findById(idGymMachine);
+
+        if (gymMachineOptional.isPresent()) {
+            GymMachine user = gymMachineOptional.get();
+            log.info("OK: Maquina encontrada - ID: {}", user.getId());
+            return user;
+        } else {
+            log.error("ERROR: La maquina no se encuentra en el sistema - ID: {}", idGymMachine);
+            throw new GymMachineNotFoundException("Maquina no se encuentra en el sistema - ID: " + idGymMachine);
         }
 
-        log.error("ERROR: La maquina no se encuentra en el sistema...");
-        throw new Exception("ERROR: La maquina no se encuentra en el sistema...");
 
     }
 
@@ -60,42 +71,50 @@ public class GymMachineService implements IGymMachineService {
      * @param gymMachine
      */
     @Override
-    public void createGymMachine(GymMachine gymMachine) throws Exception {
+    public void createGymMachine(GymMachine gymMachine) {
 
-        //en caso de no tener problemas guardaremos en el repositorio.
-        log.info("Procedemos a guardar en el sistema la siguiente maquina: {}.", gymMachine);
-        if (gymMachine != null && gymMachine.getId() != null && !gymMachine.getId().isEmpty() && gymMachineRepository.existsById(gymMachine.getId())) {
-            log.error("ERROR: La maquina introducida no es valida o ya esta registrada en el sistema...");
-            throw new Exception("ERROR: La maquina introducida no es valida o ya esta registrada en el sistema...");
-        }
+        try {
 
-        // reviso si esta el modelo ya en el sistema
-        if (gymMachineRepository.existsByModel(gymMachine.getModel())) {
+            //en caso de no tener problemas guardaremos en el repositorio.
+            log.info("Procedemos a guardar en el sistema la siguiente maquina: {}.", gymMachine);
+            if (Objects.isNull(gymMachine) && gymMachine.getId().isEmpty() && gymMachineRepository.existsById(gymMachine.getId())) {
+                log.error("ERROR: La maquina introducida no es valida o ya esta registrada en el sistema...");
+                throw new ValidationException("ERROR: La maquina introducida no es valida o ya esta registrada en el sistema...");
+            }
 
-            GymMachine gymMachineModelSave = gymMachineRepository.findByModel(gymMachine.getModel());
+            // reviso si esta el modelo ya en el sistema
+            if (gymMachineRepository.existsByModel(gymMachine.getModel())) {
 
-            // en el caso de que ya este la maquina , incremento el numero
-            if (gymMachine.getName().equals(gymMachineModelSave.getName()) && gymMachineModelSave.getModel().equals(gymMachine.getModel())) {
-                gymMachineModelSave.setNumMachine(gymMachine.getNumMachine() > 0 ? gymMachineModelSave.getNumMachine() + gymMachine.getNumMachine() : gymMachineModelSave.getNumMachine() + 1);
-                gymMachineRepository.save(gymMachineModelSave);
+                GymMachine gymMachineModelSave = gymMachineRepository.findByModel(gymMachine.getModel());
 
-                // si no lo que hago es que me la vuelvo a crear de nuevo
+                // en el caso de que ya esté la máquina, incremento el número
+                if (gymMachine.getName().equals(gymMachineModelSave.getName()) && gymMachineModelSave.getModel().equals(gymMachine.getModel())) {
+                    gymMachineModelSave.setNumMachine(gymMachine.getNumMachine() > 0 ? gymMachineModelSave.getNumMachine() + gymMachine.getNumMachine() : gymMachineModelSave.getNumMachine() + 1);
+                    gymMachineRepository.save(gymMachineModelSave);
+
+                    // si no lo que hago es que me la vuelvo a crear de nuevo
+                } else {
+                    gymMachine.setId(UUID.randomUUID().toString());
+                    gymMachine.setNumMachine(gymMachine.getNumMachine() > 0 ? gymMachine.getNumMachine() : gymMachine.getNumMachine() + 1);
+                    gymMachineRepository.save(gymMachine);
+                }
+
+                log.info("OK: Máquina de entrenamiento guardado con éxito.");
+
+                // en el caso de que el modelo no este en el sistema lo creo de nuevo
             } else {
                 gymMachine.setId(UUID.randomUUID().toString());
                 gymMachine.setNumMachine(gymMachine.getNumMachine() > 0 ? gymMachine.getNumMachine() : gymMachine.getNumMachine() + 1);
                 gymMachineRepository.save(gymMachine);
+
+                log.info("OK: Máquina de entrenamiento guardado con éxito.");
             }
 
-            log.info("OK: Máquina de entrenamiento guardado con éxito.");
-
-            // en el caso de que el modelo no este en el sistema lo creo de nuevo
-        } else {
-            gymMachine.setId(UUID.randomUUID().toString());
-            gymMachine.setNumMachine(gymMachine.getNumMachine() > 0 ? gymMachine.getNumMachine() : gymMachine.getNumMachine() + 1);
-            gymMachineRepository.save(gymMachine);
-
-            log.info("OK: Máquina de entrenamiento guardado con éxito.");
+        } catch (DataAccessException e) {
+            log.error("ERROR: Error al guardar la maquina en la base de datos - {}", e.getMessage());
+            throw new GymMachineCreateException("Error al crear el usuario en la base de datos.");
         }
+
 
     }
 
@@ -105,7 +124,7 @@ public class GymMachineService implements IGymMachineService {
      * @param gymMachine
      */
     @Override
-    public void updateGymMachine(GymMachine gymMachine) throws Exception {
+    public void updateGymMachine(GymMachine gymMachine) {
 
         // comprobamos que se encuentra en la BBDD
         log.info("Comprobamos en el sistema que existe la máquina  de entrenamiento. ");
@@ -117,8 +136,8 @@ public class GymMachineService implements IGymMachineService {
             log.info("OK: Máquina de entrenamiento actualizado con éxito.");
 
         } else {
-            log.error("No se encuentra la maquina de entrenamiento que quieres modificar");
-            throw new Exception("No se encuentra la máquina de entrenamiento que quieres modificar");
+            log.error("No se encuentra la maquina de entrenamiento que quieres modificar - GymMachine: {} .", gymMachine);
+            throw new GymMachineNotFoundException("No se encuentra la máquina de entrenamiento que quieres modificar");
         }
 
     }
@@ -129,9 +148,9 @@ public class GymMachineService implements IGymMachineService {
      * @param idGymMachine
      */
     @Override
-    public void deleteGymMachine(String idGymMachine) throws Exception {
+    public void deleteGymMachine(String idGymMachine) {
 
-        //comprobamos que el id se encuentra en el repositorio
+        //comprobamos que él, id se encuentra en el repositorio
         log.info("Comprobamos en el sistema que existe la maquina de entrenamiento. ");
         if (gymMachineRepository.existsById(idGymMachine)) {
             log.info("Existe la maquina de entrenamiento en el sistema.");
@@ -140,31 +159,31 @@ public class GymMachineService implements IGymMachineService {
 
             deleteGymMachineInTrainings(gymMachineDelete);
 
-            //una vez este todo correcto borramos el dato.
+            //una vez este correcto borramos el dato.
             gymMachineRepository.deleteById(idGymMachine);
             log.info("OK: Maquina de entrenamiento eliminada con éxito.");
 
         } else {
-            log.error("La máquina que quiere eliminar no se encuentra en el sistema.");
-            throw new Exception("La maquina que quiere eliminar no se encuentra en el sistema.");
+            log.error("La máquina que quiere eliminar no se encuentra en el sistema - ID:{} .", idGymMachine);
+            throw new GymMachineNotFoundException("La maquina que quiere eliminar no se encuentra en el sistema ");
         }
 
     }
 
-    private void deleteGymMachineInTrainings(GymMachine gymMachine){
+    private void deleteGymMachineInTrainings(GymMachine gymMachine) {
 
         log.info("Buscamos en el sistema si existe alguna maquina asociada a algún entrenamiento.");
 
-        if(trainingRepository.existsByGymMachine(gymMachine)){
+        if (trainingRepository.existsByGymMachine(gymMachine)) {
             log.info("OK: Existe entrenamientos que contienen dicha maquina que quieres eliminar.");
             List<Training> trainings = trainingRepository.findByGymMachine(gymMachine);
             trainings.stream().forEach(training -> {
-                if(training.getGymMachine().getId().equals(gymMachine.getId())){
+                if (training.getGymMachine().getId().equals(gymMachine.getId())) {
                     training.setGymMachine(null);
                     trainingRepository.save(training);
                 }
             });
-            log.info("OK: Se han eliminado con éxito las maquinas de los {} entrenamientos",trainings.size());
+            log.info("OK: Se han eliminado con éxito las maquinas de los {} entrenamientos", trainings.size());
         }
 
     }

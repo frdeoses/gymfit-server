@@ -1,9 +1,6 @@
 package com.uma.gymfit.trainingtable.service;
 
-import com.uma.gymfit.trainingtable.model.training.GymMachine;
-import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
-import com.uma.gymfit.trainingtable.model.training.TrainingType;
 import com.uma.gymfit.trainingtable.model.user.User;
 
 import java.util.List;
@@ -16,7 +13,7 @@ public interface ITrainingTableService {
      *
      * @return List<T>
      */
-    public List<TrainingTable> allTrainingTable();
+    List<TrainingTable> allTrainingTable();
 
 
     /**
@@ -24,7 +21,7 @@ public interface ITrainingTableService {
      *
      * @return TrainingTable
      */
-    public TrainingTable findTrainingTable(String idTrainingTable) throws Exception;
+    TrainingTable findTrainingTable(String idTrainingTable);
 
 
     /**
@@ -32,7 +29,7 @@ public interface ITrainingTableService {
      *
      * @param trainingT
      */
-    public void createTrainingTable(TrainingTable trainingT) throws Exception;
+    void createTrainingTable(TrainingTable trainingT);
 
 
     /**
@@ -40,7 +37,7 @@ public interface ITrainingTableService {
      *
      * @param id
      */
-    public void deleteTrainingTable(String id) throws Exception;
+    void deleteTrainingTable(String id);
 
 
     /**
@@ -48,7 +45,7 @@ public interface ITrainingTableService {
      *
      * @param trainingT
      */
-    public void updateTrainingTable(TrainingTable trainingT) throws Exception;
+    void updateTrainingTable(TrainingTable trainingT);
 
     /**
      * Devuelve las tablas según el tipo de entrenamiento que tenga asignado
@@ -58,7 +55,7 @@ public interface ITrainingTableService {
      * @param idUser
      * @return
      */
-    List<TrainingTable> findByTrainingType(String typeTraining, String idUser) throws Exception;
+    List<TrainingTable> findByTrainingType(String typeTraining, String idUser);
 
     /**
      * Devuelve las tablas segun el usuario
