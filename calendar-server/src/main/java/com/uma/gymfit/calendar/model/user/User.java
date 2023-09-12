@@ -37,7 +37,7 @@ public class User implements UserDetails {
 
     @JsonProperty(required = true)
     @NotNull
-    private Set<UserRol> userRols;
+    private Set<UserRol> userRoles;
 
     @JsonProperty(required = true)
     @NotNull
@@ -64,11 +64,15 @@ public class User implements UserDetails {
     @NotNull
     private LocalDateTime birthDate;
 
-//    @JsonProperty(required = true)
-//    @NotNull
+    @JsonProperty(required = true)
+    @NotNull
     private LocalDateTime registrationDate;
+    
+    private double weight;
 
     private double height;
+
+    private int caloriesBurned;
 
     private List<Weight> listUserWeight;
 
@@ -78,7 +82,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<Authority> authorities = new HashSet<>();
 
-        this.userRols.forEach( userRol -> {
+        this.userRoles.forEach(userRol -> {
             Authority authority = new Authority(userRol.getRoleList().name());
             authorities.add(authority);
         });

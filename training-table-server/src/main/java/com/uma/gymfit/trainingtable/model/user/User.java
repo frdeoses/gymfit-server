@@ -3,7 +3,6 @@ package com.uma.gymfit.trainingtable.model.user;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +24,6 @@ public class User implements UserDetails {
     private String id;
 
     @JsonProperty(required = true)
-    @Indexed(unique = true)
     @NotNull
     @NotBlank
     private String username;
@@ -37,7 +35,7 @@ public class User implements UserDetails {
 
     @JsonProperty(required = true)
     @NotNull
-    private Set<UserRol> userRols;
+    private Set<UserRol> userRoles;
 
     @JsonProperty(required = true)
     @NotNull
@@ -49,7 +47,6 @@ public class User implements UserDetails {
     @NotBlank
     private String surname;
 
-    @Indexed(unique = true)
     @NotNull
     @NotBlank
     @Email
@@ -64,11 +61,15 @@ public class User implements UserDetails {
     @NotNull
     private LocalDateTime birthDate;
 
-//    @JsonProperty(required = true)
+    //    @JsonProperty(required = true)
 //    @NotNull
     private LocalDateTime registrationDate;
 
     private double height;
+    
+    private double weight;
+
+    private int caloriesBurned;
 
     private List<Weight> listUserWeight;
 
@@ -78,7 +79,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<Authority> authorities = new HashSet<>();
 
-        this.userRols.forEach( userRol -> {
+        this.userRoles.forEach(userRol -> {
             Authority authority = new Authority(userRol.getRoleList().name());
             authorities.add(authority);
         });

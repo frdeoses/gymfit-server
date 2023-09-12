@@ -1,10 +1,9 @@
-package com.uma.gymfit.user.model;
+package com.uma.gymfit.user.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
@@ -19,6 +18,5 @@ public class ResponseHTTP {
     private Object body;
 
     private String error;
-
 
 }

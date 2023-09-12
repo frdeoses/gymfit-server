@@ -1,9 +1,9 @@
 package com.uma.gymfit.trainingtable.security.controller;
 
-import com.uma.gymfit.trainingtable.model.user.User;
-import com.uma.gymfit.trainingtable.security.config.JwtUtils;
 import com.uma.gymfit.trainingtable.model.security.JwtRequest;
 import com.uma.gymfit.trainingtable.model.security.JwtResponse;
+import com.uma.gymfit.trainingtable.model.user.User;
+import com.uma.gymfit.trainingtable.security.config.JwtUtils;
 import com.uma.gymfit.trainingtable.security.service.impl.UserDetailsServiceImpl;
 import com.uma.gymfit.trainingtable.utils.Literals;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -33,13 +34,13 @@ public class AuthenticationController {
     private JwtUtils jwtUtils;
 
     @PostMapping(Literals.GENERATE_TOKEN)
-    public ResponseEntity<?> generarToken(@RequestBody JwtRequest jwtRequest) throws Exception {
+    public ResponseEntity<?> generarToken(@RequestBody JwtRequest jwtRequest) {
         try {
             autenticar(jwtRequest.getUsername(), jwtRequest.getPassword());
         } catch (Exception exception) {
             log.error(exception.getMessage());
             exception.printStackTrace();
-            throw new Exception("Usuario no encontrado");
+            throw new UsernameNotFoundException("Usuario no encontrado");
         }
 
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtRequest.getUsername());

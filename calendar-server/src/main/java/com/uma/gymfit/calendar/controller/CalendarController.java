@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,9 +22,14 @@ public class CalendarController {
 
     @GetMapping(Literals.CALENDARS)
     public ResponseEntity<List<Calendar>> allCalendars() {
-        List<Calendar> allCalendar = new ArrayList<>();
-        allCalendar = calendarService.allCalendars();
+        List<Calendar> allCalendar = calendarService.allCalendars();
         return new ResponseEntity<>(allCalendar, HttpStatus.OK);
+    }
+
+    @GetMapping(Literals.CALENDARS_PUBLISHED)
+    public ResponseEntity<List<Calendar>> allCalendarsPublished() {
+        List<Calendar> allCalendarPublished = calendarService.allCalendarsPublishedActive();
+        return new ResponseEntity<>(allCalendarPublished, HttpStatus.OK);
     }
 
     @GetMapping(Literals.CALENDAR_ID)
@@ -56,15 +60,13 @@ public class CalendarController {
 
 
     @PutMapping(Literals.CALENDAR)
-    public ResponseEntity<ResponseHTTP> updateCalendar(@RequestBody Calendar calendar) {
+    public ResponseEntity<Calendar> updateCalendar(@RequestBody Calendar calendar) {
 
         try {
-            calendarService.updateCalendar(calendar);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), calendar, null);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            Calendar calendarUpdate = calendarService.updateCalendar(calendar);
+            return new ResponseEntity<>(calendarUpdate, HttpStatus.OK);
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), calendar, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(calendar);
         }
 
     }
@@ -74,8 +76,8 @@ public class CalendarController {
     public ResponseEntity<ResponseHTTP> deleteCalendar(@PathVariable String idCalendar) {
 
         try {
-            calendarService.deleteCalendar(idCalendar);
             ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idCalendar, null);
+            calendarService.deleteCalendar(idCalendar);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
             ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idCalendar, e.getMessage());

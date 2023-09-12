@@ -1,4 +1,4 @@
-package com.uma.gymfit.user.security.model;
+package com.uma.gymfit.user.model.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

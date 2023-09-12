@@ -11,7 +11,7 @@ public interface ICalendarService {
      *
      * @return List<U>
      */
-    public List<Calendar> allCalendars();
+    List<Calendar> allCalendars();
 
     /**
      * Devuelve el calendarios almacenado en BBDD
@@ -19,7 +19,7 @@ public interface ICalendarService {
      * @param idCalendar
      * @return User
      */
-    public Calendar findCalendar(String idCalendar) throws Exception;
+    Calendar findCalendar(String idCalendar);
 
 
     /**
@@ -27,7 +27,7 @@ public interface ICalendarService {
      *
      * @param calendar
      */
-    public void createCalendar(Calendar calendar) throws Exception;
+    void createCalendar(Calendar calendar);
 
 
     /**
@@ -35,7 +35,7 @@ public interface ICalendarService {
      *
      * @param id
      */
-    public void deleteCalendar(String id) throws Exception;
+    void deleteCalendar(String id);
 
 
     /**
@@ -43,6 +43,13 @@ public interface ICalendarService {
      *
      * @param calendar
      */
-    public void updateCalendar(Calendar calendar) throws Exception;
+    Calendar updateCalendar(Calendar calendar);
 
+
+    /**
+     * Devuelve todos los calendarios almacenados en BBDD que estan publicados
+     *
+     * @return List<U>
+     */
+    List<Calendar> allCalendarsPublishedActive();
 }
