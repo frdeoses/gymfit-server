@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uma.gymfit.calendar.config.JwtAuthenticationEntryPoint;
 import com.uma.gymfit.calendar.config.JwtAuthenticationFilter;
 import com.uma.gymfit.calendar.config.JwtUtils;
+import com.uma.gymfit.calendar.exception.CalendarNotFoundException;
 import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.security.service.impl.UserDetailsServiceImpl;
 import com.uma.gymfit.calendar.service.impl.CalendarService;
@@ -144,7 +145,7 @@ class CalendarControllerTest {
 
     }
 
-    @DisplayName("Test para obtener un eventos:")
+    @DisplayName("Test de error que no encuentra eventos:")
     @Test
     void notFoundCalendarTest() throws Exception {
 
@@ -157,7 +158,7 @@ class CalendarControllerTest {
         calendar.setId("1");
         calendar.setComments(new ArrayList<>());
 
-        Exception e = new Exception();
+        CalendarNotFoundException e = new CalendarNotFoundException("ERROR: Calendario no se encuentra en el sistema.");
 
         doThrow(e).when(calendarService).findCalendar("2");
 
@@ -225,7 +226,7 @@ class CalendarControllerTest {
 
     }
 
-    @DisplayName("Test para editar un eventos:")
+    @DisplayName("Test para editar un eventos con errores:")
     @Test
     void editCalendarErrorTest() throws Exception {
 
@@ -240,7 +241,7 @@ class CalendarControllerTest {
         calendar.setComments(new ArrayList<>());
 
 
-        doThrow(Exception.class).when(calendarService).updateCalendar(calendar);
+        doThrow(CalendarNotFoundException.class).when(calendarService).updateCalendar(calendar);
 
 
         // when
