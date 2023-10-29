@@ -5,30 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1370ef46-f676-4bdd-b960-680ebc5fe191" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/Application.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/controller/GymFitController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/model/Ejercicio.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/model/Maquina.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/model/PGrasa.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/model/Peso.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/model/PesoTrabajado.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/model/ResponseHTTP.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/model/TablaEntrenamiento.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/model/Usuario.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/repository/IRepositorioTabla.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/repository/IRepositorioUsuario.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/service/IGymFitService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/uma/gymfit/service/impl/GymFitService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/uma/gymfit/server/ApplicationTests.java" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gymfit-server.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/calendar-server/src/main/resources/application-docker.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/training-table-server/src/main/resources/application-docker.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-server/src/main/resources/application-local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/calendar-server/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/calendar-server/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/calendar-server/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/calendar-server/src/main/resources/application-local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/calendar-server/src/test/java/com/uma/gymfit/calendar/server/controller/CalendarControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/calendar-server/src/test/java/com/uma/gymfit/calendar/server/controller/CalendarControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/calendar-server/src/test/java/com/uma/gymfit/calendar/server/service/CalendarServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/calendar-server/src/test/java/com/uma/gymfit/calendar/server/service/CalendarServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/training-table-server/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/training-table-server/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/training-table-server/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/training-table-server/src/main/resources/application-local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-server/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/user-server/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-server/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-server/src/main/resources/application-docker.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,15 +43,48 @@
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
   <component name="ProjectId" id="2EleZoNFlFJT4FQ6CmjH2QtSToO" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/user-server" />
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/frdeo/Documents/TFG/Server/gymfit-server&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yml.user-service: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="user-service" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Docker.docker-compose.yml.user-service: Compose Deployment" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
