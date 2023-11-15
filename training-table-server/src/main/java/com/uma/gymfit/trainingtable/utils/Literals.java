@@ -24,6 +24,8 @@ public class Literals {
 
     public static final String GYM_MACHINE_ID = "/training-tables/gym-machines/{idGymMachine}";
 
+    public static final String GYM_MACHINE_EMPTY_REPOSITORY = "/training-tables/gym-machines/empty";
+    
     public static final String TRAINING_ID = "/training-tables/trainings/{idTraining}";
 
     public static final String TRAINING_TABLE = "/training-table";
