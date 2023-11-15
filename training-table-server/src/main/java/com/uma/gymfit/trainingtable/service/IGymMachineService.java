@@ -40,4 +40,10 @@ public interface IGymMachineService {
      * @param gymMachine
      */
     void updateGymMachine(GymMachine gymMachine);
+
+
+    /**
+     * Delete all gym machine
+     */
+    void deleteAllGymMachine();
 }
