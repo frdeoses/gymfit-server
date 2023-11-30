@@ -11,7 +11,6 @@ import com.uma.gymfit.trainingtable.repository.IUserRepository;
 import com.uma.gymfit.trainingtable.service.ITrainingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,14 +27,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TrainingService implements ITrainingService {
 
-    @Autowired
-    private ITrainingRepository trainingRepository;
+    private final ITrainingRepository trainingRepository;
 
-    @Autowired
-    private ITrainingTableRepository trainingTableRepository;
+    private final ITrainingTableRepository trainingTableRepository;
 
-    @Autowired
-    private IUserRepository userRepository;
+    private final IUserRepository userRepository;
 
     /**
      * Devuelve todas las tablas almacenadas en BBDD

@@ -1,6 +1,7 @@
 package com.uma.gymfit.trainingtable.service.impl;
 
 import com.uma.gymfit.trainingtable.exception.table.TrainingTableNotFoundException;
+import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 import com.uma.gymfit.trainingtable.model.user.User;
 import com.uma.gymfit.trainingtable.repository.ITrainingTableRepository;
@@ -8,7 +9,6 @@ import com.uma.gymfit.trainingtable.repository.IUserRepository;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -23,11 +23,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TrainingTableService implements ITrainingTableService {
 
-    @Autowired
-    private ITrainingTableRepository trainingTableRepository;
+    private final ITrainingTableRepository trainingTableRepository;
 
-    @Autowired
-    private IUserRepository userRepository;
+    private final IUserRepository userRepository;
 
 
     /**
@@ -106,6 +104,7 @@ public class TrainingTableService implements ITrainingTableService {
             //en caso de no tener problemas guardaremos en el repositorio.
             log.info("Procedemos a guardar en el sistema la siguiente tabla de entrenamiento: {}.", trainingT);
             trainingT.setId(UUID.randomUUID().toString());
+            trainingT.setCaloriesBurned(calculateCalories(trainingT.getListTraining()));
             trainingTableRepository.save(trainingT);
             log.info("OK: Tabla de entrenamiento guardado con exito.");
         } catch (DataAccessException e) {
@@ -114,6 +113,12 @@ public class TrainingTableService implements ITrainingTableService {
             throw new TrainingTableNotFoundException("Error al crear la tabla de entrenamiento en la base de datos.");
         }
 
+    }
+
+    private int calculateCalories(List<Training> listTraining) {
+        return listTraining.stream()
+                .mapToInt(Training::getCaloriesBurned)
+                .sum();
     }
 
     /**

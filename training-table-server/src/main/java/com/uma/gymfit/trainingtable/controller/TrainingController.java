@@ -6,7 +6,6 @@ import com.uma.gymfit.trainingtable.model.training.TrainingType;
 import com.uma.gymfit.trainingtable.model.user.User;
 import com.uma.gymfit.trainingtable.service.ITrainingService;
 import com.uma.gymfit.trainingtable.utils.Literals;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,9 +18,8 @@ import java.util.List;
 @RequestMapping(Literals.API)
 public class TrainingController {
 
-    @Autowired
     private ITrainingService trainingService;
-    
+
     @GetMapping(Literals.TYPE_TRAINING)
     public ResponseEntity<TrainingType[]> allTrainingType() {
         return new ResponseEntity<>(trainingService.trainingType(), HttpStatus.OK);
@@ -111,6 +109,5 @@ public class TrainingController {
         }
 
     }
-
 
 }
