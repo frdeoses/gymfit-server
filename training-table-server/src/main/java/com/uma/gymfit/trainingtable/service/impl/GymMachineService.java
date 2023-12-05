@@ -10,6 +10,7 @@ import com.uma.gymfit.trainingtable.repository.ITrainingRepository;
 import com.uma.gymfit.trainingtable.service.IGymMachineService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -73,49 +74,57 @@ public class GymMachineService implements IGymMachineService {
     @Override
     public void createGymMachine(GymMachine gymMachine) {
 
+        if (Objects.isNull(gymMachine)) {
+            throw new IllegalArgumentException("La máquina no puede ser null.");
+        }
+
+        log.info("Procedemos a guardar en el sistema la siguiente maquina: {}.", gymMachine);
+
+        if (Strings.isEmpty(gymMachine.getId())) {
+            // Solo generar un nuevo 'id' si es necesario.
+            gymMachine.setId(UUID.randomUUID().toString());
+        }
+
+        if (gymMachineRepository.existsByModel(gymMachine.getModel())) {
+            // Verifica si la máquina con el mismo modelo tiene el mismo 'id', lo cual indicaría un registro duplicado.
+            GymMachine existingMachine = gymMachineRepository.findByModel(gymMachine.getModel());
+
+            if (Objects.nonNull(existingMachine)
+                    && existingMachine.getId().equals(gymMachine.getId())
+                    || sameMachine(gymMachine.getName(), existingMachine.getName(), gymMachine.getModel(), existingMachine.getModel())) {
+                log.error("ERROR: La máquina con 'id' {} ya está registrada en el sistema...", gymMachine.getId());
+                throw new ValidationException("ERROR: La máquina ya está registrada en el sistema con el mismo 'id' o  con el mismo nombre y modelo.");
+            }
+
+            gymMachine = increaseNumberMachine(gymMachine, existingMachine);
+        }
+
         try {
-
-            //en caso de no tener problemas guardaremos en el repositorio.
-            log.info("Procedemos a guardar en el sistema la siguiente maquina: {}.", gymMachine);
-            if (Objects.isNull(gymMachine) && gymMachine.getId().isEmpty() && gymMachineRepository.existsById(gymMachine.getId())) {
-                log.error("ERROR: La maquina introducida no es valida o ya esta registrada en el sistema...");
-                throw new ValidationException("ERROR: La maquina introducida no es valida o ya esta registrada en el sistema...");
-            }
-
-            // reviso si esta el modelo ya en el sistema
-            if (gymMachineRepository.existsByModel(gymMachine.getModel())) {
-
-                GymMachine gymMachineModelSave = gymMachineRepository.findByModel(gymMachine.getModel());
-
-                // en el caso de que ya esté la máquina, incremento el número
-                if (gymMachine.getName().equals(gymMachineModelSave.getName()) && gymMachineModelSave.getModel().equals(gymMachine.getModel())) {
-                    gymMachineModelSave.setNumMachine(gymMachine.getNumMachine() > 0 ? gymMachineModelSave.getNumMachine() + gymMachine.getNumMachine() : gymMachineModelSave.getNumMachine() + 1);
-                    gymMachineRepository.save(gymMachineModelSave);
-
-                    // si no lo que hago es que me la vuelvo a crear de nuevo
-                } else {
-                    gymMachine.setId(UUID.randomUUID().toString());
-                    gymMachine.setNumMachine(gymMachine.getNumMachine() > 0 ? gymMachine.getNumMachine() : gymMachine.getNumMachine() + 1);
-                    gymMachineRepository.save(gymMachine);
-                }
-
-                log.info("OK: Máquina de entrenamiento guardado con éxito.");
-
-                // en el caso de que el modelo no este en el sistema lo creo de nuevo
-            } else {
-                gymMachine.setId(UUID.randomUUID().toString());
-                gymMachine.setNumMachine(gymMachine.getNumMachine() > 0 ? gymMachine.getNumMachine() : gymMachine.getNumMachine() + 1);
-                gymMachineRepository.save(gymMachine);
-
-                log.info("OK: Máquina de entrenamiento guardado con éxito.");
-            }
-
+            gymMachineRepository.save(gymMachine);
+            log.info("OK: Máquina de entrenamiento guardado con éxito.");
         } catch (DataAccessException e) {
             log.error("ERROR: Error al guardar la maquina en la base de datos - {}", e.getMessage());
-            throw new GymMachineCreateException("Error al crear el usuario en la base de datos.");
+            throw new GymMachineCreateException("Error al crear la máquina en la base de datos.");
         }
 
 
+    }
+
+    private GymMachine increaseNumberMachine(GymMachine gymMachine, GymMachine gymMachineModelSave) {
+
+        int newNumMachine = gymMachine.getNumMachine() > 0 ? gymMachine.getNumMachine() : 1;
+
+        if (Objects.nonNull(gymMachineModelSave) && sameMachine(gymMachine.getName(), gymMachineModelSave.getName(), gymMachine.getModel(), gymMachineModelSave.getModel())) {
+            newNumMachine += gymMachineModelSave.getNumMachine();
+        }
+
+        gymMachine.setNumMachine(newNumMachine);
+        return gymMachine;
+
+    }
+
+    private boolean sameMachine(String nameMachine, String nameMachineSave, String modelMachine, String modelMachineSave) {
+        return nameMachine.equals(nameMachineSave) && modelMachine.equals(modelMachineSave);
     }
 
     /**
@@ -139,6 +148,15 @@ public class GymMachineService implements IGymMachineService {
             log.error("No se encuentra la maquina de entrenamiento que quieres modificar - GymMachine: {} .", gymMachine);
             throw new GymMachineNotFoundException("No se encuentra la máquina de entrenamiento que quieres modificar");
         }
+
+    }
+
+    @Override
+    public void deleteAllGymMachine() {
+
+        log.info("Procedemos a vaciar la BB DD de maquinas en el sistema...");
+        gymMachineRepository.deleteAll();
+        log.info("OK: Se ha borrado todas las maquinas de la BB DD correctamente...");
 
     }
 

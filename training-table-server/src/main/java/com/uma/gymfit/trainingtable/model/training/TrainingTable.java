@@ -57,10 +57,12 @@ public class TrainingTable implements Serializable {
     private int breakTime;
 
     private int caloriesBurned;
-    
+
     private String observation;
 
     private List<Training> listTraining;
+
+    private LocalDateTime lastUpdateDate;
 
 
 }

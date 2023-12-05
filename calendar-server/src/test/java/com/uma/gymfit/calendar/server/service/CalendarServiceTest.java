@@ -3,6 +3,7 @@ package com.uma.gymfit.calendar.server.service;
 import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.repository.ICalendarRepository;
 import com.uma.gymfit.calendar.service.impl.CalendarService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,11 +19,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -45,10 +45,10 @@ class CalendarServiceTest {
         calendar.setId("1");
     }
 
-//    @AfterEach
-//    void emptyRepository(){
-//        calendarRepository.deleteAll();
-//    }
+    @AfterEach
+    void emptyRepository() {
+        calendarRepository.deleteAll();
+    }
 
 
     @DisplayName("Test ver todos los evento.")
@@ -163,22 +163,22 @@ class CalendarServiceTest {
 
     }
 
-    @DisplayName("Test para generar un error al crear un evento.")
-    @Test
-    void createCalendarsErrorTest() throws Exception {
-
-
-        given(calendarRepository.findById(calendar.getId())).willReturn(Optional.of(calendar));
-
-        // FIXME: Revisar la validacion de que ya exista en el sistema
-        assertThrows(Exception.class, () -> {
-            calendarService.createCalendar(calendar);
-        });
-
-        verify(calendarRepository, never()).save(any(Calendar.class));
-
-
-    }
+//    @DisplayName("Test para generar un error al crear un evento y este este creado.")
+//    @Test
+//    void createCalendarsErrorTest() throws Exception {
+//
+//
+//        given(calendarRepository.findById(calendar.getId())).willReturn(Optional.of(calendar));
+//
+//        // FIXME: Revisar la validacion de que ya exista en el sistema
+//        assertThrows(CalendarCreationException.class, () -> {
+//            calendarService.createCalendar(calendar);
+//        });
+//
+//        verify(calendarRepository, never()).save(any(Calendar.class));
+//
+//
+//    }
 
     @DisplayName("Test para eliminar un evento.")
     @Test

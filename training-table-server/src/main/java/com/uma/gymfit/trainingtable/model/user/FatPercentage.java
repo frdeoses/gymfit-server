@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @ToString
 public class FatPercentage implements Serializable {
 
-    private LocalDateTime fecha;
+    private LocalDateTime date;
 
-    private double porcentajeGrasa;
+    private double fatPercentageData;
 
 }

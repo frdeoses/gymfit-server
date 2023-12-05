@@ -12,8 +12,8 @@ import java.io.Serializable;
 @ToString
 public class FatPercentage implements Serializable {
 
-    private long fecha;
+    private long date;
 
-    private double porcentajeGrasa;
+    private double fatPercentageData;
 
 }
