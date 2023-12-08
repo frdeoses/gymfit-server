@@ -8,6 +8,7 @@ import com.uma.gymfit.trainingtable.repository.IUserRepository;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -105,9 +106,10 @@ public class TrainingTableService implements ITrainingTableService {
         try {
             //en caso de no tener problemas guardaremos en el repositorio.
             log.info("Procedemos a guardar en el sistema la siguiente tabla de entrenamiento: {}.", trainingT);
-            trainingT.setId(UUID.randomUUID().toString());
+            if (Strings.isEmpty(trainingT.getId()))
+                trainingT.setId(UUID.randomUUID().toString());
             trainingTableRepository.save(trainingT);
-            log.info("OK: Tabla de entrenamiento guardado con exito.");
+            log.info("OK: Tabla de entrenamiento guardado con éxito.");
         } catch (DataAccessException e) {
 
             log.error("ERROR: Error al guardar la tabla de entrenamiento en la base de datos - {}", e.getMessage());
@@ -124,13 +126,13 @@ public class TrainingTableService implements ITrainingTableService {
     @Override
     public void deleteTrainingTable(String id) {
 
-        //comprobamos que el id se encuentra en el reepositorio
+        //comprobamos que él, id se encuentra en el repositorio
         log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");
         if (trainingTableRepository.existsById(id)) {
             log.info("Existe la tabla de entrenamiento en el sistema.");
             //una vez este correcto borramos el dato.
             trainingTableRepository.deleteById(id);
-            log.info("OK: Tabla de entrenamiento eliminada con exito.");
+            log.info("OK: Tabla de entrenamiento eliminada con éxito.");
 
         } else {
             log.error("La tabla de entrenamiento que quiere eliminar no se encuentra en el sistema - ID: {} .", id);
@@ -140,7 +142,7 @@ public class TrainingTableService implements ITrainingTableService {
     }
 
     /**
-     * Modifica una tabla de entrenamimento
+     * Modifica una tabla de entrenamiento
      *
      * @param trainingT
      */
@@ -151,7 +153,7 @@ public class TrainingTableService implements ITrainingTableService {
         log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");
         if (trainingTableRepository.existsById(trainingT.getId())) {
 
-            log.info("Exite la tabla de entrenamiento en el sistema.");
+            log.info("Existe la tabla de entrenamiento en el sistema.");
             // insertamos nuevo
             trainingTableRepository.save(trainingT);
             log.info("OK: Tabla de entrenamiento actualizado con éxito.");
