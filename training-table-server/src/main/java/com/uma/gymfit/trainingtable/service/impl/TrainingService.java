@@ -11,6 +11,7 @@ import com.uma.gymfit.trainingtable.repository.IUserRepository;
 import com.uma.gymfit.trainingtable.service.ITrainingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -124,7 +125,9 @@ public class TrainingService implements ITrainingService {
                 log.error("Error: El usuario asignado al siguiente entrenamiento no se encuentra en el sistema - Training: {}", training);
                 throw new UsernameNotFoundException("Error: El usuario asignado al siguiente entrenamiento no se encuentra en el sistema");
             }
-            training.setId(UUID.randomUUID().toString());
+
+            if (Strings.isEmpty(training.getId()))
+                training.setId(UUID.randomUUID().toString());
             training.setCreationDate(LocalDateTime.now());
             training.setLastUpdateDate(LocalDateTime.now());
             trainingRepository.save(training);
