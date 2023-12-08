@@ -21,7 +21,7 @@ public class TrainingController {
 
     @Autowired
     private ITrainingService trainingService;
-    
+
     @GetMapping(Literals.TYPE_TRAINING)
     public ResponseEntity<TrainingType[]> allTrainingType() {
         return new ResponseEntity<>(trainingService.trainingType(), HttpStatus.OK);
