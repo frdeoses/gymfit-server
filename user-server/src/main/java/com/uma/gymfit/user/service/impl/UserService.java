@@ -7,9 +7,9 @@ import com.uma.gymfit.user.model.user.UserRol;
 import com.uma.gymfit.user.model.user.Weight;
 import com.uma.gymfit.user.repository.IUserRepository;
 import com.uma.gymfit.user.service.IUserService;
+import com.uma.gymfit.user.utils.Literals;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,11 +27,9 @@ import java.util.UUID;
 public class UserService
         implements IUserService {
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private IUserRepository repositorioUsuario;
+    private final IUserRepository repositorioUsuario;
 
     /**
      * Devuelve todos los usuarios almacenados en BB DD
@@ -44,11 +42,10 @@ public class UserService
     }
 
     /**
-     * Devuelve el usuario almacenado en BB DD
+     * * Devuelve el usuario almacenado en BB DD
      *
      * @param idUser
-     * @return
-     * @throws Exception
+     * @return User
      */
     @Override
     public User findUser(String idUser) {
@@ -105,7 +102,6 @@ public class UserService
      *
      * @param user
      * @param role
-     * @return User
      */
     private void assignRole(User user, RoleList role) {
 
@@ -125,7 +121,7 @@ public class UserService
     @Override
     public void deleteUser(String id) {
 
-        //comprobamos que el id se encuentra en el repositorio
+        //comprobamos que el ID se encuentra en el repositorio
         log.info("Comprobamos en el sistema que existe el usuario en el sistema ");
         if (repositorioUsuario.existsById(id)) {
 
@@ -137,7 +133,7 @@ public class UserService
             log.error("El usuario que quiere eliminar no se encuentra en el sistema - ID:{} .", id);
             throw new UsernameNotFoundException(Literals.USER_NOT_FOUND);
         }
-        
+
     }
 
     /**
@@ -148,7 +144,7 @@ public class UserService
     @Override
     public void updateUser(User user) {
 
-        // comprobamos que se encuentra en la BBDD
+        // comprobamos que se encuentra en la BB DD
         log.info("Comprobamos en el sistema que existe el usuario.");
         if (repositorioUsuario.existsById(user.getId())) {
 
