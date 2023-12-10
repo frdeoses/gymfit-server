@@ -135,7 +135,7 @@ public class UserService
             log.info("OK: User eliminado con éxito.");
         } else {
             log.error("El usuario que quiere eliminar no se encuentra en el sistema - ID:{} .", id);
-            throw new UsernameNotFoundException("El usuario que quiere eliminar no se encuentra en el sistema");
+            throw new UsernameNotFoundException(Literals.USER_NOT_FOUND);
         }
         
     }
@@ -152,12 +152,19 @@ public class UserService
         log.info("Comprobamos en el sistema que existe el usuario.");
         if (repositorioUsuario.existsById(user.getId())) {
 
-            // Borramos antrior user
-            log.info("Exite el usuario en el sistema.");
-            User oldUser = repositorioUsuario.findById(user.getId()).get();
+            // Borramos anterior user
+            log.info("Existe el usuario en el sistema.");
+            Optional<User> oldUserSave = repositorioUsuario.findById(user.getId());
+
+            if (oldUserSave.isEmpty()) {
+                log.error(Literals.USER_NOT_FOUND);
+                throw new UsernameNotFoundException(Literals.USER_NOT_FOUND);
+            }
+
+            User oldUser = oldUserSave.get();
             // insertamos nuevo
             if (oldUser.getWeight() != user.getWeight()) {
-                log.info("Se ha actualizado el peso actual y procedemos a añadirlo en el historico.");
+                log.info("Se ha actualizado el peso actual y procedemos a añadirlo en el histórico.");
                 Weight newWeight = new Weight(LocalDateTime.now(), user.getWeight());
                 user.getListUserWeight().add(newWeight);
             }
@@ -165,8 +172,8 @@ public class UserService
             log.info("OK: User guardado con éxito.");
 
         } else {
-            log.error("No se encuentra el usuario que quieres modificar");
-            throw new UsernameNotFoundException("No se encuentra el usuario que quieres modificar");
+            log.error(Literals.USER_NOT_FOUND);
+            throw new UsernameNotFoundException(Literals.USER_NOT_FOUND);
         }
 
     }
