@@ -10,6 +10,7 @@ import com.uma.gymfit.trainingtable.repository.IUserRepository;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -111,8 +112,10 @@ public class TrainingTableService implements ITrainingTableService {
         try {
             //en caso de no tener problemas guardaremos en el repositorio.
             log.info("Procedemos a guardar en el sistema la siguiente tabla de entrenamiento: {}.", trainingT);
-            trainingT.setId(UUID.randomUUID().toString());
-            trainingT.setCaloriesBurned(calculateCalories(trainingT.getListTraining()));
+
+            if (Strings.isEmpty(trainingT.getId()))
+                trainingT.setId(UUID.randomUUID().toString());
+
             trainingTableRepository.save(trainingT);
             log.info("OK: Tabla de entrenamiento guardado con éxito.");
         } catch (DataAccessException e) {
@@ -136,6 +139,7 @@ public class TrainingTableService implements ITrainingTableService {
      */
     @Override
     public void deleteTrainingTable(String id) {
+
 
         //comprobamos que el ID se encuentra en el repositorio
         log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");

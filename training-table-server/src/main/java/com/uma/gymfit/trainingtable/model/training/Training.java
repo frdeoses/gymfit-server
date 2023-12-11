@@ -40,6 +40,8 @@ public class Training implements Serializable {
 
     private int like;
 
+    private boolean needBeSupervised;
+
     private int caloriesBurned;
 
     private List<WorkedWeights> listWorkedWeights;
