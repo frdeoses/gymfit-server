@@ -4,6 +4,7 @@ import com.uma.gymfit.trainingtable.model.ResponseHTTP;
 import com.uma.gymfit.trainingtable.model.training.GymMachine;
 import com.uma.gymfit.trainingtable.service.IGymMachineService;
 import com.uma.gymfit.trainingtable.utils.Literals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,8 @@ import java.util.List;
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
 @RequestMapping(Literals.API)
 public class GymMachineController {
+
+    @Autowired
     private IGymMachineService gymMachineService;
 
     @GetMapping(Literals.GYM_MACHINES)

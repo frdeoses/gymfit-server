@@ -4,6 +4,7 @@ import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.model.calendar.ResponseHTTP;
 import com.uma.gymfit.calendar.service.ICalendarService;
 import com.uma.gymfit.calendar.utils.Literals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,7 +17,8 @@ import java.util.List;
 @RequestMapping(Literals.API)
 public class CalendarController {
 
-    private static ICalendarService calendarService;
+    @Autowired
+    private ICalendarService calendarService;
 
     @GetMapping(Literals.CALENDARS)
     public ResponseEntity<List<Calendar>> allCalendars() {

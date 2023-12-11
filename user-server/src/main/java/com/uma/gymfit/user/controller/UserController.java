@@ -4,6 +4,7 @@ import com.uma.gymfit.user.model.user.ResponseHTTP;
 import com.uma.gymfit.user.model.user.User;
 import com.uma.gymfit.user.service.IUserService;
 import com.uma.gymfit.user.utils.Literals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,7 +17,8 @@ import java.util.List;
 @RequestMapping(Literals.API)
 public class UserController {
 
-    private static IUserService gymFitService;
+    @Autowired
+    private IUserService gymFitService;
 
     @GetMapping(Literals.USERS)
     public ResponseEntity<List<User>> allUsers() {
