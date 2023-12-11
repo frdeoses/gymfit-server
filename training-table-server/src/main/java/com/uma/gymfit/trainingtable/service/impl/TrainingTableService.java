@@ -1,6 +1,8 @@
 package com.uma.gymfit.trainingtable.service.impl;
 
+import com.uma.gymfit.trainingtable.exception.table.TrainingTableFindException;
 import com.uma.gymfit.trainingtable.exception.table.TrainingTableNotFoundException;
+import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 import com.uma.gymfit.trainingtable.model.user.User;
 import com.uma.gymfit.trainingtable.repository.ITrainingTableRepository;
@@ -8,8 +10,7 @@ import com.uma.gymfit.trainingtable.repository.IUserRepository;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -24,15 +25,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TrainingTableService implements ITrainingTableService {
 
-    @Autowired
-    private ITrainingTableRepository trainingTableRepository;
+    private final ITrainingTableRepository trainingTableRepository;
 
-    @Autowired
-    private IUserRepository userRepository;
+    private final IUserRepository userRepository;
 
 
     /**
-     * Devuelve todas las tablas almacenadas en BBDD
+     * Devuelve todas las tablas almacenadas en BB DD
      *
      * @return List<TrainingTable>
      */
@@ -42,10 +41,9 @@ public class TrainingTableService implements ITrainingTableService {
     }
 
     /***
-     * Devuelve la tablas almacenadas en BBDD
+     * Devuelve la tabla almacenada en BB DD
      * @param idTrainingTable
      * @return
-     * @throws Exception
      */
     @Override
     public TrainingTable findTrainingTable(String idTrainingTable) {
@@ -53,12 +51,20 @@ public class TrainingTableService implements ITrainingTableService {
         log.info("Buscamos la Tabla en el sistema...");
         if (trainingTableRepository.existsById(idTrainingTable)) {
 
-            TrainingTable trainingTable = trainingTableRepository.findById(idTrainingTable).get();
+            Optional<TrainingTable> trainingTableSave = trainingTableRepository.findById(idTrainingTable);
 
-            checkUserInRepository(trainingTable);
+            if (trainingTableSave.isPresent()) {
+                TrainingTable trainingTable = trainingTableSave.get();
+                checkUserInRepository(trainingTable);
 
-            log.info("OK: TrainingTable encontrado.....");
-            return trainingTable;
+                log.info("OK: TrainingTable encontrado.....");
+                return trainingTable;
+            }
+
+            log.error("ERROR: La tabla no se ha guardado correctamente...");
+            throw new TrainingTableFindException("ERROR: La tabla no se ha guardado correctamente...");
+
+
         }
 
         log.error("ERROR: TrainingTable no se encuentra en el sistema...");
@@ -106,8 +112,10 @@ public class TrainingTableService implements ITrainingTableService {
         try {
             //en caso de no tener problemas guardaremos en el repositorio.
             log.info("Procedemos a guardar en el sistema la siguiente tabla de entrenamiento: {}.", trainingT);
+
             if (Strings.isEmpty(trainingT.getId()))
                 trainingT.setId(UUID.randomUUID().toString());
+
             trainingTableRepository.save(trainingT);
             log.info("OK: Tabla de entrenamiento guardado con éxito.");
         } catch (DataAccessException e) {
@@ -118,6 +126,12 @@ public class TrainingTableService implements ITrainingTableService {
 
     }
 
+    private int calculateCalories(List<Training> listTraining) {
+        return listTraining.stream()
+                .mapToInt(Training::getCaloriesBurned)
+                .sum();
+    }
+
     /**
      * Borra una tabla de entrenamiento por su id
      *
@@ -126,7 +140,8 @@ public class TrainingTableService implements ITrainingTableService {
     @Override
     public void deleteTrainingTable(String id) {
 
-        //comprobamos que él, id se encuentra en el repositorio
+
+        //comprobamos que el ID se encuentra en el repositorio
         log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");
         if (trainingTableRepository.existsById(id)) {
             log.info("Existe la tabla de entrenamiento en el sistema.");
@@ -141,6 +156,7 @@ public class TrainingTableService implements ITrainingTableService {
 
     }
 
+
     /**
      * Modifica una tabla de entrenamiento
      *
@@ -149,12 +165,13 @@ public class TrainingTableService implements ITrainingTableService {
     @Override
     public void updateTrainingTable(TrainingTable trainingT) {
 
-        // comprobamos que se encuentra en la BBDD
+        // comprobamos que se encuentra en la BB DD
         log.info("Comprobamos en el sistema que existe la tabla de entrenamiento. ");
         if (trainingTableRepository.existsById(trainingT.getId())) {
 
             log.info("Existe la tabla de entrenamiento en el sistema.");
             // insertamos nuevo
+            trainingT.setCaloriesBurned(calculateCalories(trainingT.getListTraining()));
             trainingTableRepository.save(trainingT);
             log.info("OK: Tabla de entrenamiento actualizado con éxito.");
 
@@ -179,8 +196,15 @@ public class TrainingTableService implements ITrainingTableService {
             throw new UsernameNotFoundException("ERROR: User no se encuentra en el sistema...");
 
         } else {
-            log.info("OK: User encontrado.....");
-            user = userRepository.findById(idUser).get();
+            Optional<User> userSave = userRepository.findById(idUser);
+
+            if (userSave.isPresent()) {
+                log.info("OK: User encontrado.....");
+                user = userSave.get();
+            } else {
+                log.error("Error: Usuario no encontrado en el sistema - User: {}", userSave);
+                throw new UsernameNotFoundException("Error: Usuario no encontrado en el sistema...");
+            }
 
             log.info("Buscamos las tablas asignadas al siguiente usuario: {}", user);
             List<TrainingTable> listTrainingTablesByUser = trainingTableRepository.findByUser(user);
@@ -189,7 +213,10 @@ public class TrainingTableService implements ITrainingTableService {
 
             log.info("Buscamos la(s) tabla(s) de entrenamiento según su tipo: {}", typeTraining);
 
-            trainingTableList = listTrainingTablesByUser.stream().filter(trainingTable -> trainingTable.getTypeTraining().equals(typeTraining)).collect(Collectors.toList());
+            trainingTableList = listTrainingTablesByUser.stream()
+                    .filter(trainingTable ->
+                            trainingTable.getTypeTraining().equals(typeTraining))
+                    .collect(Collectors.toList());
 
             log.info("OK: Las tablas encontradas son: {}", trainingTableList);
 

@@ -11,7 +11,6 @@ import com.uma.gymfit.trainingtable.service.IGymMachineService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +24,9 @@ import java.util.UUID;
 @Slf4j
 public class GymMachineService implements IGymMachineService {
 
-    @Autowired
-    private IGymMachineRepository gymMachineRepository;
+    private final IGymMachineRepository gymMachineRepository;
 
-    @Autowired
-    private ITrainingRepository trainingRepository;
+    private final ITrainingRepository trainingRepository;
 
     /**
      * Devuelve todas las máquinas almacenadas en BBDD

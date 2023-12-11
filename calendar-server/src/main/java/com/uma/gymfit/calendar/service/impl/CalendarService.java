@@ -6,9 +6,8 @@ import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.repository.ICalendarRepository;
 import com.uma.gymfit.calendar.service.ICalendarService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +16,15 @@ import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Service
 @Slf4j
 public class CalendarService
         implements ICalendarService {
 
-    @Autowired
-    private ICalendarRepository calendarRepository;
+    private final ICalendarRepository calendarRepository;
 
     /**
-     * Devuelve todos los calendarios almacenados en BBDD
+     * Devuelve todos los calendarios almacenados en BB DD
      *
      * @return List<Calendar>
      */
@@ -69,7 +66,8 @@ public class CalendarService
 
         try {
             log.info("Procedemos a guardar en el sistema el siguiente calendario: {}.", calendar);
-            calendar.setId(UUID.randomUUID().toString());
+            if (Strings.isEmpty(calendar.getId()))
+                calendar.setId(UUID.randomUUID().toString());
             calendar.setCreationDate(LocalDateTime.now());
             calendar.setLastUpdateDate(LocalDateTime.now());
             calendarRepository.save(calendar);

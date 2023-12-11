@@ -4,7 +4,6 @@ import com.uma.gymfit.trainingtable.model.ResponseHTTP;
 import com.uma.gymfit.trainingtable.model.training.GymMachine;
 import com.uma.gymfit.trainingtable.service.IGymMachineService;
 import com.uma.gymfit.trainingtable.utils.Literals;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,16 +15,12 @@ import java.util.List;
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
 @RequestMapping(Literals.API)
 public class GymMachineController {
-
-    @Autowired
     private IGymMachineService gymMachineService;
-
 
     @GetMapping(Literals.GYM_MACHINES)
     public ResponseEntity<List<GymMachine>> allGymMachine() {
         return new ResponseEntity<>(gymMachineService.allGymMachine(), HttpStatus.OK);
     }
-
 
     @GetMapping(Literals.GYM_MACHINE_ID)
     public ResponseEntity<GymMachine> findGymMachine(@PathVariable String idGymMachine) {
@@ -40,7 +35,6 @@ public class GymMachineController {
         }
     }
 
-
     @PostMapping(Literals.GYM_MACHINE)
     public ResponseEntity<ResponseHTTP> createGymMachine(@Validated @RequestBody GymMachine gymMachine) {
 
@@ -53,7 +47,6 @@ public class GymMachineController {
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     @PutMapping(Literals.GYM_MACHINE)
     public ResponseEntity<ResponseHTTP> updateGymMachine(@RequestBody GymMachine gymMachine) {
@@ -68,7 +61,6 @@ public class GymMachineController {
         }
 
     }
-
 
     @DeleteMapping(Literals.GYM_MACHINE_ID)
     public ResponseEntity<ResponseHTTP> deleteGymMachine(@PathVariable String idGymMachine) {
@@ -97,6 +89,5 @@ public class GymMachineController {
         }
 
     }
-
 
 }
