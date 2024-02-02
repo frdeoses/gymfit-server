@@ -8,13 +8,16 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Document(value = "User")
 @Data
@@ -80,7 +83,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<Authority> authorities = new HashSet<>();
 
-        if (StringUtils.isEmpty(userRoles)) {
+        if (userRoles.isEmpty()) {
             userRoles = new HashSet<>();
             userRoles.add(new UserRol(UUID.randomUUID().toString(), RoleList.USER.toString(), RoleList.USER));
         }
