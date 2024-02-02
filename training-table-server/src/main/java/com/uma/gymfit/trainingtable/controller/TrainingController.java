@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PATCH})
 @RequestMapping(Literals.API)
 public class TrainingController {
 
@@ -84,7 +84,7 @@ public class TrainingController {
         }
     }
 
-    @PutMapping(Literals.TRAINING)
+    @PatchMapping(Literals.TRAINING)
     public ResponseEntity<ResponseHTTP> updateTraining(@RequestBody Training training) {
 
         try {

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PATCH})
 @RequestMapping(Literals.API)
 public class UserController {
 
@@ -51,7 +51,7 @@ public class UserController {
 
     }
 
-    @PutMapping(Literals.USER)
+    @PatchMapping(Literals.USER)
     public ResponseEntity<ResponseHTTP> updateUser(@RequestBody User user) {
 
         try {
