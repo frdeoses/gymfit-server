@@ -1,0 +1,57 @@
+name: build and test feature branch
+on:
+  pull_request:
+    branches: [ develop, master ]
+    types: [ opened, reopened ]
+jobs:
+  build-feature:
+    runs-on: ubuntu-latest
+    steps:
+      #############################################################
+      # 2- download code from feature branch , setup java 11 and check that source code is buildable
+      ########################################################
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: pull and checkout from git repository
+        run: |
+          echo "pulling and checking out from git repository"
+
+      - name: setup java 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '11'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      #      - name: build with maven 'calendar server'
+      #        run: |
+      #          mvn clean verify
+      #          echo "build with maven `calendar-server`"
+      #        working-directory: ./calendar-server
+
+      - name: build with maven 'user server'
+        run: |
+          mvn clean verify
+          echo "build with maven `user-server`"
+        working-directory: ./user-server
+
+      - name: build with maven 'training-table server'
+        run: |
+          mvn clean verify
+          echo "build with maven `training-table-server`"
+        working-directory: ./training-table-server
+
+      - name: build with maven 'gateway-service'
+        run: |
+          mvn clean verify
+          echo "build with maven `gateway service`"
+        working-directory: ./gateway-service
