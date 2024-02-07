@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -74,6 +75,9 @@ public class UserService
         try {
             //en caso de no tener problemas guardaremos en el repositorio.
             log.info("Procedemos a guardar en el sistema el siguiente usuario: {}.", user);
+
+            validateUsernameAndEmail(user.getUsername(), user.getEmail());
+
             user.setId(UUID.randomUUID().toString());
             user.setPassword(this.passwordEncoder.encode(user.getPassword()));
             user.setRegistrationDate(LocalDateTime.now());
@@ -95,6 +99,19 @@ public class UserService
             throw new UserCreationException("Error al crear el usuario en la base de datos.");
         }
 
+    }
+
+    private void validateUsernameAndEmail(String username, String email) {
+
+        if (repositorioUsuario.existsUserByUsername(username)) {
+            log.error("ERROR: El usurario existe en el sistema con el mismo username: {}", username);
+            throw new UserCreationException("El usurario existe en el sistema con el mismo username");
+        }
+
+        if (repositorioUsuario.existsUserByEmail(email)) {
+            log.error("ERROR: El usurario existe en el sistema con el mismo email: {}", email);
+            throw new UserCreationException("El usurario existe en el sistema con el mismo email");
+        }
     }
 
     /**
@@ -162,6 +179,9 @@ public class UserService
             if (oldUser.getWeight() != user.getWeight()) {
                 log.info("Se ha actualizado el peso actual y procedemos a añadirlo en el histórico.");
                 Weight newWeight = new Weight(LocalDateTime.now(), user.getWeight());
+
+                if (Objects.isNull(user.getListUserWeight()))
+                    user.setListUserWeight(new ArrayList<>());
                 user.getListUserWeight().add(newWeight);
             }
             repositorioUsuario.save(user);
