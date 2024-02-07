@@ -4,19 +4,30 @@ import com.uma.gymfit.user.model.user.ResponseHTTP;
 import com.uma.gymfit.user.model.user.User;
 import com.uma.gymfit.user.service.IUserService;
 import com.uma.gymfit.user.utils.Literals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PATCH})
 @RequestMapping(Literals.API)
 public class UserController {
 
-    private static IUserService gymFitService;
+    @Autowired
+    private IUserService gymFitService;
 
     @GetMapping(Literals.USERS)
     public ResponseEntity<List<User>> allUsers() {
@@ -49,7 +60,7 @@ public class UserController {
 
     }
 
-    @PutMapping(Literals.USER)
+    @PatchMapping(Literals.USER)
     public ResponseEntity<ResponseHTTP> updateUser(@RequestBody User user) {
 
         try {
@@ -64,14 +75,14 @@ public class UserController {
     }
 
     @DeleteMapping(Literals.USER_ID)
-    public ResponseEntity<ResponseHTTP> deleteUser(@PathVariable String id) {
+    public ResponseEntity<ResponseHTTP> deleteUser(@PathVariable String idUser) {
 
         try {
-            gymFitService.deleteUser(id);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), id, null);
+            gymFitService.deleteUser(idUser);
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idUser, null);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), id, e.getMessage());
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idUser, e.getMessage());
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

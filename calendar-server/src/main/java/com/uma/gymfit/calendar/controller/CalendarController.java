@@ -4,6 +4,7 @@ import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.model.calendar.ResponseHTTP;
 import com.uma.gymfit.calendar.service.ICalendarService;
 import com.uma.gymfit.calendar.utils.Literals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,11 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PATCH})
 @RequestMapping(Literals.API)
 public class CalendarController {
 
-    private static ICalendarService calendarService;
+    @Autowired
+    private ICalendarService calendarService;
 
     @GetMapping(Literals.CALENDARS)
     public ResponseEntity<List<Calendar>> allCalendars() {
@@ -57,7 +59,7 @@ public class CalendarController {
     }
 
 
-    @PutMapping(Literals.CALENDAR)
+    @PatchMapping(Literals.CALENDAR)
     public ResponseEntity<Calendar> updateCalendar(@RequestBody Calendar calendar) {
 
         try {

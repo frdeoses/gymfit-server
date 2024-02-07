@@ -1,7 +1,6 @@
 package com.uma.gymfit.trainingtable.model.training;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.uma.gymfit.trainingtable.model.user.User;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,9 +25,7 @@ public class TrainingTable implements Serializable {
     @Id
     private String id;
 
-    @JsonProperty(required = true)
-    @NotNull
-    private User user;
+    private String userId;
 
     @JsonProperty(required = true)
     @NotNull
@@ -37,8 +34,6 @@ public class TrainingTable implements Serializable {
 
     private String description;
 
-    @JsonProperty(required = true)
-    @NotNull
     private LocalDateTime creationDate;
 
     @JsonProperty(required = true)

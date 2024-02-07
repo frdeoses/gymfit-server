@@ -2,21 +2,32 @@ package com.uma.gymfit.trainingtable.controller;
 
 import com.uma.gymfit.trainingtable.model.ResponseHTTP;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
-import com.uma.gymfit.trainingtable.model.user.User;
 import com.uma.gymfit.trainingtable.service.ITrainingTableService;
 import com.uma.gymfit.trainingtable.utils.Literals;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PUT})
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PATCH})
 @RequestMapping(Literals.API)
 public class TrainingTableController {
 
+    @Autowired
     private ITrainingTableService trainingTableService;
 
     @GetMapping(Literals.TRAINING_TABLES)
@@ -50,15 +61,15 @@ public class TrainingTableController {
         }
     }
 
-    @PostMapping(Literals.TRAINING_TABLE_USER)
-    public ResponseEntity<List<TrainingTable>> findByUser(@RequestBody User user) {
+    @GetMapping(Literals.TRAINING_TABLE_USER)
+    public ResponseEntity<List<TrainingTable>> findByUser(@PathVariable String userId) {
 
         List<TrainingTable> trainingTables;
         try {
-            trainingTables = trainingTableService.findByUser(user);
+            trainingTables = trainingTableService.findByUser(userId);
             return new ResponseEntity(trainingTables, HttpStatus.OK);
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), user, e.getMessage());
+            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), userId, e.getMessage());
             return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -76,7 +87,7 @@ public class TrainingTableController {
         }
     }
 
-    @PutMapping(Literals.TRAINING_TABLE)
+    @PatchMapping(Literals.TRAINING_TABLE)
     public ResponseEntity<ResponseHTTP> updateTrainingTable(@RequestBody TrainingTable trainingTable) {
 
         try {

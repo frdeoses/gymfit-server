@@ -14,6 +14,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -97,7 +98,11 @@ public class GymMachineService implements IGymMachineService {
         }
 
         try {
+
+            gymMachine.setCreationDate(LocalDateTime.now());
+            gymMachine.setLastUpdateDate(LocalDateTime.now());
             gymMachineRepository.save(gymMachine);
+
             log.info("OK: Máquina de entrenamiento guardado con éxito.");
         } catch (DataAccessException e) {
             log.error("ERROR: Error al guardar la maquina en la base de datos - {}", e.getMessage());
@@ -116,6 +121,7 @@ public class GymMachineService implements IGymMachineService {
         }
 
         gymMachine.setNumMachine(newNumMachine);
+
         return gymMachine;
 
     }
@@ -138,6 +144,9 @@ public class GymMachineService implements IGymMachineService {
 
             log.info("Existe la maquina de entrenamiento en el sistema.");
             // insertamos nuevo
+
+            gymMachine.setLastUpdateDate(LocalDateTime.now());
+
             gymMachineRepository.save(gymMachine);
             log.info("OK: Máquina de entrenamiento actualizado con éxito.");
 
@@ -170,13 +179,16 @@ public class GymMachineService implements IGymMachineService {
         if (gymMachineRepository.existsById(idGymMachine)) {
             log.info("Existe la maquina de entrenamiento en el sistema.");
 
-            GymMachine gymMachineDelete = gymMachineRepository.findById(idGymMachine).get();
+            Optional<GymMachine> gymMachineDelete = gymMachineRepository.findById(idGymMachine);
 
-            deleteGymMachineInTrainings(gymMachineDelete);
+            if (gymMachineDelete.isPresent()) {
+                deleteGymMachineInTrainings(gymMachineDelete.get());
+                //una vez este correcto borramos el dato.
+                gymMachineRepository.deleteById(idGymMachine);
+                log.info("OK: Maquina de entrenamiento eliminada con éxito.");
 
-            //una vez este correcto borramos el dato.
-            gymMachineRepository.deleteById(idGymMachine);
-            log.info("OK: Maquina de entrenamiento eliminada con éxito.");
+            }
+
 
         } else {
             log.error("La máquina que quiere eliminar no se encuentra en el sistema - ID:{} .", idGymMachine);
@@ -185,21 +197,27 @@ public class GymMachineService implements IGymMachineService {
 
     }
 
-    private void deleteGymMachineInTrainings(GymMachine gymMachine) {
+    /**
+     * Borra de la tabla de entrenamiento aquellos entrenamientos
+     * que contenga dicho entrenamiento que vamos a eliminar
+     */
+    private void deleteGymMachineInTrainings(GymMachine gymMachineDelete) {
 
-        log.info("Buscamos en el sistema si existe alguna maquina asociada a algún entrenamiento.");
+        log.info("Buscamos en el sistema si alguna tabla de entrenamiento contiene la maquina de entrenamiento que vamos a borrar");
+        List<Training> trainingList = trainingRepository.findAll();
 
-        if (trainingRepository.existsByGymMachine(gymMachine)) {
-            log.info("OK: Existe entrenamientos que contienen dicha maquina que quieres eliminar.");
-            List<Training> trainings = trainingRepository.findByGymMachine(gymMachine);
-            trainings.stream().forEach(training -> {
-                if (training.getGymMachine().getId().equals(gymMachine.getId())) {
-                    training.setGymMachine(null);
-                    trainingRepository.save(training);
-                }
-            });
-            log.info("OK: Se han eliminado con éxito las maquinas de los {} entrenamientos", trainings.size());
-        }
+        trainingList.forEach(training -> {
 
+            Optional<GymMachine> gymMachine = Optional.ofNullable(training.getGymMachine());
+
+            if (gymMachine.isPresent()) {
+                training.setGymMachine(gymMachine.get().getId().equals(gymMachineDelete.getId()) ? null : gymMachine.get());
+                log.warn("OK: Se procede a borrar dicha maquina de entrenamiento del ejercicio: {}", training);
+                trainingRepository.save(training);
+            }
+
+        });
+        log.info("OK: Finalizado con éxito el proceso de borrado...");
     }
+
 }

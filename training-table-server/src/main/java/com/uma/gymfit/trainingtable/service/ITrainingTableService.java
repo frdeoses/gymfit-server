@@ -1,7 +1,6 @@
 package com.uma.gymfit.trainingtable.service;
 
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
-import com.uma.gymfit.trainingtable.model.user.User;
 
 import java.util.List;
 
@@ -63,6 +62,6 @@ public interface ITrainingTableService {
      * @param user
      * @return
      */
-    List<TrainingTable> findByUser(User user);
+    List<TrainingTable> findByUser(String userId);
 
 }

@@ -12,12 +12,12 @@ import com.uma.gymfit.trainingtable.service.ITrainingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -96,16 +96,20 @@ public class TrainingService implements ITrainingService {
     private void checkUser(Training training) {
 
         log.info("En el caso de que tenga un usuario asignado comprobamos que existe en el sistema");
-        User userTraining = training.getUser();
+        if (Objects.nonNull(training.getUserId())) {
 
-        log.info("OK: Tiene un usuario asignado y comprobamos que existe el usuario en el sistema");
-        Optional<User> userInRepository = userRepository.findById(userTraining.getId());
+            Optional<User> userTraining = userRepository.findById(training.getUserId());
 
-        if (userInRepository.isEmpty()) {
-            log.warn("OK: No existe dicho usuario, asi que procedemos a eliminarlo...");
-            training.setUser(null);
-            trainingRepository.save(training);
+            log.info("OK: Tiene un usuario asignado y comprobamos que existe el usuario en el sistema");
+
+            if (userTraining.isEmpty()) {
+                log.warn("OK: No existe dicho usuario, asi que procedemos a eliminarlo...");
+                training.setUserId(null);
+                trainingRepository.save(training);
+
+            }
         }
+
 
         log.info("OK: Terminamos el proceso de comprobar si el usuario existe en el sistema con éxito....");
     }
@@ -121,10 +125,7 @@ public class TrainingService implements ITrainingService {
         try {
             //en caso de no tener problemas guardaremos en el repositorio.
             log.info("Procedemos a guardar en el sistema el siguiente ejercicio: {}.", training);
-            if (Objects.isNull(training.getUser()) || !userRepository.existsById(training.getUser().getId())) {
-                log.error("Error: El usuario asignado al siguiente entrenamiento no se encuentra en el sistema - Training: {}", training);
-                throw new UsernameNotFoundException("Error: El usuario asignado al siguiente entrenamiento no se encuentra en el sistema");
-            }
+
 
             if (Strings.isEmpty(training.getId()))
                 training.setId(UUID.randomUUID().toString());
@@ -187,26 +188,35 @@ public class TrainingService implements ITrainingService {
 
         trainingTableList.forEach(trainingTable -> {
 
-            boolean isTrainingDelete = trainingTable.getListTraining().removeIf(training -> training.getId().equals(trainingDelete.getId()));
+            if (Objects.nonNull(trainingTable.getListTraining())) {
 
-            if (isTrainingDelete) {
-                log.warn("OK: Se procede a borrar dicho entrenamiento de la tabla: {}", trainingTable);
-                trainingTableRepository.save(trainingTable);
+                boolean isTrainingDelete = trainingTable.getListTraining().removeIf(training -> training.getId().equals(trainingDelete.getId()));
+
+                if (isTrainingDelete) {
+                    log.warn("OK: Se procede a borrar dicho entrenamiento de la tabla: {}", trainingTable);
+                    trainingTableRepository.save(trainingTable);
+                }
             }
+
 
         });
         log.info("OK: Finalizado con éxito el proceso de borrado...");
     }
 
     @Override
-    public List<Training> findTrainingsByUser(User user) {
-        log.info("Buscamos los entrenamiento del siguiente usuario: {} ", user);
-        if (!userRepository.existsById(user.getId())) {
-            log.error("No se encuentra el usuario - User: {}.", user);
-            throw new TrainingNotFoundException("No se encuentra el usuario.");
+    public List<Training> findTrainingsByUser(String userId) {
+        log.info("Buscamos los entrenamiento del siguiente usuario: {} ", userId);
+
+        List<Training> trainingList = allTraining();
+
+        if (trainingList.isEmpty()) {
+            log.info("No hay entrenamientos en el sistema...");
+            return Collections.emptyList();
         }
 
-        return trainingRepository.findByUser(user);
+        return trainingList.stream()
+                .filter(training -> Objects.equals(training.getUserId(), userId))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -230,7 +240,7 @@ public class TrainingService implements ITrainingService {
 
         log.info("OK: Usuario encontrado: {}", user);
 
-        List<Training> trainingListByUser = trainingRepository.findByUser(user);
+        List<Training> trainingListByUser = findTrainingsByUser(user.getId());
 
         log.info("Los entrenamientos asignados al usuario son: {} ", trainingListByUser);
 
