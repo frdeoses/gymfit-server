@@ -15,7 +15,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -80,22 +83,22 @@ public class TrainingTableService implements ITrainingTableService {
      */
     private void checkUserInRepository(TrainingTable trainingTable) {
 
-        User userTrainingTable = trainingTable.getUser();
+        String userIdTrainingTable = trainingTable.getUserId();
 
-        log.info("En el caso de que tenga un usuario asignado comprobamos que existe en el sistema");
+        if (Objects.nonNull(userIdTrainingTable)) {
+            Optional<User> userTrainingTable = userRepository.findById(userIdTrainingTable);
 
-        if (userTrainingTable != null) {
+            log.info("En el caso de que tenga un usuario asignado comprobamos que existe en el sistema");
 
-            log.info("OK: Tiene un usuario asignado y comprobamos que existe el usuario en el sistema");
-            Optional<User> userInRepository = userRepository.findById(userTrainingTable.getId());
+            if (userTrainingTable.isEmpty()) {
 
-            if (userInRepository.isEmpty()) {
                 log.info("OK: No existe dicho usuario, asi que procedemos a eliminarlo...");
-                trainingTable.setUser(null);
+                trainingTable.setUserId(null);
                 trainingTableRepository.save(trainingTable);
-            }
 
+            }
         }
+
 
         log.info("OK: Terminamos el proceso de comprobar si el usuario existe en el sistema con éxito....");
     }
@@ -115,6 +118,12 @@ public class TrainingTableService implements ITrainingTableService {
 
             if (Strings.isEmpty(trainingT.getId()))
                 trainingT.setId(UUID.randomUUID().toString());
+
+            if (Objects.nonNull(trainingT.getListTraining())) {
+                trainingT.setCaloriesBurned(calculateCalories(trainingT.getListTraining()));
+            }
+            trainingT.setCreationDate(LocalDateTime.now());
+            trainingT.setLastUpdateDate(LocalDateTime.now());
 
             trainingTableRepository.save(trainingT);
             log.info("OK: Tabla de entrenamiento guardado con éxito.");
@@ -171,7 +180,9 @@ public class TrainingTableService implements ITrainingTableService {
 
             log.info("Existe la tabla de entrenamiento en el sistema.");
             // insertamos nuevo
-            trainingT.setCaloriesBurned(calculateCalories(trainingT.getListTraining()));
+            if (Objects.nonNull(trainingT.getListTraining()))
+                trainingT.setCaloriesBurned(calculateCalories(trainingT.getListTraining()));
+            trainingT.setLastUpdateDate(LocalDateTime.now());
             trainingTableRepository.save(trainingT);
             log.info("OK: Tabla de entrenamiento actualizado con éxito.");
 
@@ -207,7 +218,7 @@ public class TrainingTableService implements ITrainingTableService {
             }
 
             log.info("Buscamos las tablas asignadas al siguiente usuario: {}", user);
-            List<TrainingTable> listTrainingTablesByUser = trainingTableRepository.findByUser(user);
+            List<TrainingTable> listTrainingTablesByUser = findByUser(user.getId());
 
             log.info("Las tablas asignadas son: {} ", listTrainingTablesByUser);
 
@@ -228,9 +239,20 @@ public class TrainingTableService implements ITrainingTableService {
     }
 
     @Override
-    public List<TrainingTable> findByUser(User user) {
-        log.info("Buscamos tablas de entrenamiento del siguiente usuario: {} ", user);
-        return trainingTableRepository.findByUser(user);
+    public List<TrainingTable> findByUser(String userId) {
+        log.info("Buscamos tablas de entrenamiento del siguiente usuario: {} ", userId);
+
+        List<TrainingTable> trainingTableList = allTrainingTable();
+
+        if (trainingTableList.isEmpty()) {
+            log.info("No hay tablas de entrenamientos en el sistema...");
+            return Collections.emptyList();
+        }
+
+        return trainingTableList.stream()
+                .filter(Objects::nonNull)
+                .filter(training -> Objects.equals(training.getUserId(), userId))
+                .collect(Collectors.toList());
     }
 
 }
