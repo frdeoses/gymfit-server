@@ -197,7 +197,7 @@ class CalendarControllerTest {
 
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendarEdit)));
+        ResultActions response = mockMvc.perform(patch("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendarEdit)));
 
         // then
         response.andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.id", is(calendarEdit.getId())));
@@ -245,7 +245,7 @@ class CalendarControllerTest {
 
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendar)));
+        ResultActions response = mockMvc.perform(patch("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendar)));
 
         // then
         response.andExpect(status().isInternalServerError()).andDo(print()).andExpect(jsonPath("$.title", is(calendar.getTitle())));
