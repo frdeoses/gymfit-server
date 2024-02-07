@@ -2,7 +2,6 @@ package com.uma.gymfit.trainingtable.service;
 
 import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingType;
-import com.uma.gymfit.trainingtable.model.user.User;
 
 import java.util.List;
 
@@ -56,7 +55,7 @@ public interface ITrainingService {
      * @param user
      * @return
      */
-    List<Training> findTrainingsByUser(User user);
+    List<Training> findTrainingsByUser(String userId);
 
     /**
      * Devuelve los entrenamientos segun el tipo de entrenamiento y el
