@@ -37,11 +37,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      #      - name: build with maven 'calendar server'
-      #        run: |
-      #          mvn clean verify
-      #          echo "build with maven `calendar-server`"
-      #        working-directory: ./calendar-server
+      - name: build with maven 'calendar server'
+        run: |
+          mvn clean verify
+          echo "build with maven `calendar-server`"
+        working-directory: ./calendar-server
 
       - name: build with maven 'user server'
         run: |
