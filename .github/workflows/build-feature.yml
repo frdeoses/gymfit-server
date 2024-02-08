@@ -5,7 +5,6 @@ on:
       - develop
       - master
       - feature/**
-      - hotfix/**
   pull_request:
     branches: [ develop, master ]
     types: [ opened, reopened ]
