@@ -104,31 +104,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.base_ref }}
-
-########################################################
-#  Publish each project artifact
-##########################################################
-
-      - name: Publish Calendar Server Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: calendar-server-artifact
-          path: ./calendar-server/target/*.jar
-
-      - name: Publish User Server Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: user-server-artifact
-          path: ./user-server/target/*.jar
-
-      - name: Publish Training-Table Server Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: training-table-server-artifact
-          path: ./training-table-server/target/*.jar
-
-      - name: Publish Gateway Service Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: gateway-service-artifact
-          path: ./gateway-service/target/*.jar
