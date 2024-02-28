@@ -14,6 +14,13 @@ public interface IUserService {
     List<User> allUser();
 
     /**
+     * Devuelve todos los usuarios almacenados en BB DD
+     *
+     * @return List<U>
+     */
+    List<User> allUserRoleUsers();
+
+    /**
      * Devuelve el usuario almacenado en BB DD
      *
      * @param idUser

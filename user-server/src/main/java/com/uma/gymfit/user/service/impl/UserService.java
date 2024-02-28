@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -40,6 +41,16 @@ public class UserService
     @Override
     public List<User> allUser() {
         return repositorioUsuario.findAll();
+    }
+
+    @Override
+    public List<User> allUserRoleUsers() {
+        return repositorioUsuario.findAll().stream()
+                .filter(Objects::nonNull)
+                .filter(user -> user.getUserRoles().stream()
+                        .anyMatch(userRol ->
+                                RoleList.USER.name().equals(userRol.getNameRole())))
+                .collect(Collectors.toList());
     }
 
     /**

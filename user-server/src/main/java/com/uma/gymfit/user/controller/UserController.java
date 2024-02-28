@@ -30,8 +30,14 @@ public class UserController {
     private IUserService gymFitService;
 
     @GetMapping(Literals.USERS)
-    public ResponseEntity<List<User>> allUsers() {
-        return new ResponseEntity<>(gymFitService.allUser(), HttpStatus.OK);
+    public ResponseEntity<ResponseHTTP<List<User>>> allUsers() {
+        return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, gymFitService.allUser(), null));
+    }
+
+    @GetMapping(Literals.USERS_ROLE_USER)
+    public ResponseEntity<ResponseHTTP<List<User>>> allUsersRoleUsers() {
+        return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, gymFitService.allUserRoleUsers(), null));
+
     }
 
     @GetMapping(Literals.USER_ID)
