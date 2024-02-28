@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -41,57 +42,57 @@ public class UserController {
     }
 
     @GetMapping(Literals.USER_ID)
-    public ResponseEntity<User> findUser(@PathVariable String idUser) {
-        User user;
+    public ResponseEntity<ResponseHTTP<?>> findUser(@PathVariable String idUser) {
         try {
-            user = gymFitService.findUser(idUser);
-            return new ResponseEntity(user, HttpStatus.OK);
+            return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, gymFitService.findUser(idUser), null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idUser, e.getMessage());
-            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.internalServerError().body(createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, idUser, e.getMessage()));
         }
     }
 
     @PostMapping(Literals.USER)
-    public ResponseEntity<ResponseHTTP> createUser(@Validated @RequestBody User user) {
+    public ResponseEntity<ResponseHTTP<User>> createUser(@Validated @RequestBody User user) {
 
         try {
             gymFitService.createUser(user);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.CREATED.value(), HttpStatus.CREATED.toString(), user, null);
-            return new ResponseEntity<>(res, HttpStatus.CREATED);
+            return ResponseEntity.created(URI.create(Literals.USER)).body(createResponseHttp(HttpStatus.CREATED, user, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), user, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.internalServerError().body(createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
 
     }
 
     @PatchMapping(Literals.USER)
-    public ResponseEntity<ResponseHTTP> updateUser(@RequestBody User user) {
+    public ResponseEntity<ResponseHTTP<User>> updateUser(@RequestBody User user) {
 
         try {
             gymFitService.updateUser(user);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), user, null);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, user, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), user, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.internalServerError().body(createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
 
     }
 
     @DeleteMapping(Literals.USER_ID)
-    public ResponseEntity<ResponseHTTP> deleteUser(@PathVariable String idUser) {
+    public ResponseEntity<ResponseHTTP<String>> deleteUser(@PathVariable String idUser) {
 
         try {
             gymFitService.deleteUser(idUser);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idUser, null);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, idUser, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idUser, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.internalServerError().body(createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
 
+
+    }
+
+    private <T> ResponseHTTP<T> createResponseHttp(HttpStatus httpStatus, T object, String message) {
+        return new ResponseHTTP<>(httpStatus.value(), httpStatus.toString(), object, message);
     }
 
 }
