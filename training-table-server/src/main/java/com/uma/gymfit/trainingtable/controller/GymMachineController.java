@@ -8,8 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -21,76 +31,72 @@ public class GymMachineController {
     private IGymMachineService gymMachineService;
 
     @GetMapping(Literals.GYM_MACHINES)
-    public ResponseEntity<List<GymMachine>> allGymMachine() {
-        return new ResponseEntity<>(gymMachineService.allGymMachine(), HttpStatus.OK);
+    public ResponseEntity<ResponseHTTP<List<GymMachine>>> allGymMachine() {
+
+        return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, gymMachineService.allGymMachine(), null));
     }
 
     @GetMapping(Literals.GYM_MACHINE_ID)
-    public ResponseEntity<GymMachine> findGymMachine(@PathVariable String idGymMachine) {
+    public ResponseEntity<ResponseHTTP<GymMachine>> findGymMachine(@PathVariable String idGymMachine) {
 
-        GymMachine gymMachine;
         try {
-            gymMachine = gymMachineService.findGymMachine(idGymMachine);
-            return new ResponseEntity(gymMachine, HttpStatus.OK);
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, gymMachineService.findGymMachine(idGymMachine), null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idGymMachine, e.getMessage());
-            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
+
         }
     }
 
     @PostMapping(Literals.GYM_MACHINE)
-    public ResponseEntity<ResponseHTTP> createGymMachine(@Validated @RequestBody GymMachine gymMachine) {
+    public ResponseEntity<ResponseHTTP<GymMachine>> createGymMachine(@Validated @RequestBody GymMachine gymMachine) {
 
         try {
             gymMachineService.createGymMachine(gymMachine);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.CREATED.value(), HttpStatus.CREATED.toString(), gymMachine, null);
-            return new ResponseEntity<>(res, HttpStatus.CREATED);
+            return ResponseEntity.created(URI.create(Literals.GYM_MACHINE)).body(Literals.createResponseHttp(HttpStatus.OK, gymMachine, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), gymMachine, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
+
         }
     }
 
     @PatchMapping(Literals.GYM_MACHINE)
-    public ResponseEntity<ResponseHTTP> updateGymMachine(@RequestBody GymMachine gymMachine) {
+    public ResponseEntity<ResponseHTTP<GymMachine>> updateGymMachine(@RequestBody GymMachine gymMachine) {
 
         try {
             gymMachineService.updateGymMachine(gymMachine);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), gymMachine, null);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, gymMachine, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), gymMachine, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
+
         }
 
     }
 
     @DeleteMapping(Literals.GYM_MACHINE_ID)
-    public ResponseEntity<ResponseHTTP> deleteGymMachine(@PathVariable String idGymMachine) {
+    public ResponseEntity<ResponseHTTP<String>> deleteGymMachine(@PathVariable String idGymMachine) {
 
         try {
             gymMachineService.deleteGymMachine(idGymMachine);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idGymMachine, null);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, idGymMachine, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idGymMachine, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, idGymMachine, e.getMessage()));
+
         }
 
     }
 
     @DeleteMapping(Literals.GYM_MACHINE_EMPTY_REPOSITORY)
-    public ResponseEntity<ResponseHTTP> deleteAllGymMachine() {
+    public ResponseEntity<ResponseHTTP<String>> deleteAllGymMachine() {
 
         try {
             gymMachineService.deleteAllGymMachine();
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), null, null);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, null, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), null, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
+
         }
 
     }
+
 
 }

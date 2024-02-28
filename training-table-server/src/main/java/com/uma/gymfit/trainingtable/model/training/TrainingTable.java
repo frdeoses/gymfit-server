@@ -33,7 +33,7 @@ public class TrainingTable implements Serializable {
     private String name;
 
     private String description;
-
+    
     private LocalDateTime creationDate;
 
     @JsonProperty(required = true)

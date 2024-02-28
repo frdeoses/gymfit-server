@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -31,86 +32,88 @@ public class TrainingTableController {
     private ITrainingTableService trainingTableService;
 
     @GetMapping(Literals.TRAINING_TABLES)
-    public ResponseEntity<List<TrainingTable>> allTrainingTable() {
-        return new ResponseEntity<>(trainingTableService.allTrainingTable(), HttpStatus.OK);
+    public ResponseEntity<ResponseHTTP<List<TrainingTable>>> allTrainingTable() {
+
+        return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, trainingTableService.allTrainingTable(), null));
     }
 
     @GetMapping(Literals.TRAINING_TABLE_ID)
-    public ResponseEntity<TrainingTable> findTrainingTable(@PathVariable String idTrainingTable) {
+    public ResponseEntity<ResponseHTTP<TrainingTable>> findTrainingTable(@PathVariable String idTrainingTable) {
 
         TrainingTable trainingTable;
         try {
             trainingTable = trainingTableService.findTrainingTable(idTrainingTable);
-            return new ResponseEntity(trainingTable, HttpStatus.OK);
+
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, trainingTable, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idTrainingTable, e.getMessage());
-            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
     }
 
     @GetMapping(Literals.TRAINING_TABLE_TYPE)
-    public ResponseEntity<List<TrainingTable>> findByTrainingType(@RequestParam String typeTraining, @RequestParam String idUser) {
+    public ResponseEntity<ResponseHTTP<List<TrainingTable>>> findByTrainingType(@RequestParam String typeTraining, @RequestParam String idUser) {
 
         List<TrainingTable> trainingTables;
         try {
             trainingTables = trainingTableService.findByTrainingType(typeTraining, idUser);
-            return new ResponseEntity(trainingTables, HttpStatus.OK);
+
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, trainingTables, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), typeTraining, e.getMessage());
-            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
     }
 
     @GetMapping(Literals.TRAINING_TABLE_USER)
-    public ResponseEntity<List<TrainingTable>> findByUser(@PathVariable String userId) {
+    public ResponseEntity<ResponseHTTP<List<TrainingTable>>> findByUser(@PathVariable String userId) {
 
         List<TrainingTable> trainingTables;
         try {
             trainingTables = trainingTableService.findByUser(userId);
-            return new ResponseEntity(trainingTables, HttpStatus.OK);
+
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, trainingTables, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), userId, e.getMessage());
-            return new ResponseEntity(res, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
     }
 
     @PostMapping(Literals.TRAINING_TABLE)
-    public ResponseEntity<ResponseHTTP> createTrainingTable(@Validated @RequestBody TrainingTable trainingTable) {
+    public ResponseEntity<ResponseHTTP<TrainingTable>> createTrainingTable(@Validated @RequestBody TrainingTable trainingTable) {
 
         try {
             trainingTableService.createTrainingTable(trainingTable);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.CREATED.value(), HttpStatus.CREATED.toString(), trainingTable, null);
-            return new ResponseEntity<>(res, HttpStatus.CREATED);
+
+            return ResponseEntity.created(URI.create(Literals.TRAINING_TABLE)).body(Literals.createResponseHttp(HttpStatus.OK, trainingTable, null));
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), trainingTable, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
     }
 
     @PatchMapping(Literals.TRAINING_TABLE)
-    public ResponseEntity<ResponseHTTP> updateTrainingTable(@RequestBody TrainingTable trainingTable) {
+    public ResponseEntity<ResponseHTTP<TrainingTable>> updateTrainingTable(@RequestBody TrainingTable trainingTable) {
 
         try {
             trainingTableService.updateTrainingTable(trainingTable);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), trainingTable, null);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, trainingTable, null));
+
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), trainingTable, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
 
     }
 
     @DeleteMapping(Literals.TRAINING_TABLE_ID)
-    public ResponseEntity<ResponseHTTP> deleteTrainingTable(@PathVariable String idTrainingTable) {
+    public ResponseEntity<ResponseHTTP<String>> deleteTrainingTable(@PathVariable String idTrainingTable) {
 
         try {
             trainingTableService.deleteTrainingTable(idTrainingTable);
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.OK.value(), HttpStatus.OK.toString(), idTrainingTable, null);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, idTrainingTable, null));
+
         } catch (Exception e) {
-            ResponseHTTP res = new ResponseHTTP(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), idTrainingTable, e.getMessage());
-            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
 
     }

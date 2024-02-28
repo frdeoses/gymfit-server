@@ -1,5 +1,8 @@
 package com.uma.gymfit.trainingtable.utils;
 
+import com.uma.gymfit.trainingtable.model.ResponseHTTP;
+import org.springframework.http.HttpStatus;
+
 public class Literals {
 
     public static final String API = "/api/gymfit";
@@ -37,5 +40,9 @@ public class Literals {
     public static final String GENERATE_TOKEN = "/api/gymfit/training-tables/generate-token";
 
     public static final String CURRENT_USER = "/current-user";
+
+    public static <T> ResponseHTTP<T> createResponseHttp(HttpStatus httpStatus, T object, String message) {
+        return new ResponseHTTP<>(httpStatus.value(), httpStatus.toString(), object, message);
+    }
 
 }
