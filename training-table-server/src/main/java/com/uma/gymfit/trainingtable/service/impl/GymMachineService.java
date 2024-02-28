@@ -56,10 +56,10 @@ public class GymMachineService implements IGymMachineService {
             GymMachine user = gymMachineOptional.get();
             log.info("OK: Maquina encontrada - ID: {}", user.getId());
             return user;
-        } else {
-            log.error("ERROR: La maquina no se encuentra en el sistema - ID: {}", idGymMachine);
-            throw new GymMachineNotFoundException("Maquina no se encuentra en el sistema - ID: " + idGymMachine);
         }
+        
+        log.error("ERROR: La maquina no se encuentra en el sistema - ID: {}", idGymMachine);
+        throw new GymMachineNotFoundException("Maquina no se encuentra en el sistema - ID: " + idGymMachine);
 
 
     }
