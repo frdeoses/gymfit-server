@@ -38,11 +38,12 @@ class CalendarServiceTest {
 
     @BeforeEach
     void setup() {
-        calendar = new Calendar();
-        calendar.setTitle("Test1");
-        calendar.setDescription("prueba 1");
-        calendar.setPublished(false);
-        calendar.setId("1");
+        calendar = Calendar.builder()
+                .id("1")
+                .title("Test1")
+                .description("prueba 1")
+                .published(false)
+                .build();
     }
 
     @AfterEach
@@ -57,10 +58,11 @@ class CalendarServiceTest {
 
         // given
 
-        Calendar calendar1 = new Calendar();
-        calendar1.setId("2");
-        calendar1.setTitle("Prueba 2");
-        calendar1.setPublished(true);
+        Calendar calendar1 = calendar.toBuilder()
+                .title("Test2")
+                .description("prueba 2")
+                .published(false)
+                .build();
 
         given(calendarRepository.findAll()).willReturn(List.of(calendar, calendar1));
 
@@ -69,7 +71,6 @@ class CalendarServiceTest {
         List<Calendar> calendarList = calendarService.allCalendars();
 
         // then
-
         assertThat(calendarList.size()).isEqualTo(2);
 
     }
@@ -80,10 +81,11 @@ class CalendarServiceTest {
 
         // given
 
-        Calendar calendar1 = new Calendar();
-        calendar1.setId("2");
-        calendar1.setTitle("Prueba 2");
-        calendar1.setPublished(true);
+        Calendar calendar1 = calendar.toBuilder()
+                .title("Test2")
+                .description("prueba 2")
+                .published(false)
+                .build();
 
         given(calendarRepository.findAll()).willReturn(Collections.emptyList());
 

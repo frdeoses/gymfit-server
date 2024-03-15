@@ -9,13 +9,13 @@ import lombok.ToString;
 @Setter
 @ToString
 @AllArgsConstructor
-public class ResponseHTTP {
+public class ResponseHTTP<T> {
 
     private int code;
 
     private String response;
 
-    private Object body;
+    private T body;
 
     private String error;
 

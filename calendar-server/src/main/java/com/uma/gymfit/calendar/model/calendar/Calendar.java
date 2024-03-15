@@ -1,6 +1,7 @@
 package com.uma.gymfit.calendar.model.calendar;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Builder(toBuilder = true)
 public class Calendar implements Serializable {
 
     private static final long serialVersionUID = 2790992461526821035L;

@@ -6,14 +6,17 @@ import com.uma.gymfit.calendar.config.JwtAuthenticationFilter;
 import com.uma.gymfit.calendar.config.JwtUtils;
 import com.uma.gymfit.calendar.exception.CalendarNotFoundException;
 import com.uma.gymfit.calendar.model.calendar.Calendar;
+import com.uma.gymfit.calendar.model.calendar.ResponseHTTP;
 import com.uma.gymfit.calendar.security.service.impl.UserDetailsServiceImpl;
 import com.uma.gymfit.calendar.service.impl.CalendarService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -22,8 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.BDDMockito.doNothing;
+import static org.mockito.BDDMockito.doThrow;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,23 +61,36 @@ class CalendarControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private Calendar calendar;
+
+    @BeforeEach
+    void setup() {
+        calendar = Calendar.builder()
+                .id("1")
+                .title("Test1")
+                .description("prueba 1")
+                .published(false)
+                .build();
+    }
+
     @DisplayName("Test para crear un evento:")
     @Test
     void createCalendarTest() throws Exception {
 
         // given
-        Calendar calendar = new Calendar();
-        calendar.setTitle("Test1");
-        calendar.setDescription("prueba 1");
-        calendar.setPublished(false);
-        calendar.setId("1");
-        calendar.setComments(new ArrayList<>());
+
+
+        ResponseHTTP<Calendar> responseHTTP = createResponseHttp(HttpStatus.CREATED, calendar, null);
 
         doNothing().when(calendarService).createCalendar(calendar);
 
-        ResultActions response = mockMvc.perform(post("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendar)));
+        ResultActions response = mockMvc.perform(post("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendar
+        )));
 
-        response.andDo(print()).andExpect(status().isCreated()).andDo(print());
+        response.andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.body.id", is(responseHTTP.getBody().getId())))
+                .andDo(print());
 
     }
 
@@ -80,28 +102,31 @@ class CalendarControllerTest {
 
         List<Calendar> calendarList = new ArrayList<>();
 
-        Calendar calendar = new Calendar();
-        calendar.setTitle("Test1");
-        calendar.setDescription("prueba 1");
-        calendar.setPublished(false);
-        calendar.setId("1");
-        calendar.setComments(new ArrayList<>());
-        calendarList.add(calendar);
+        Calendar calendar1 = calendar.toBuilder()
+                .id("1")
+                .title("Test1")
+                .description("prueba 1")
+                .published(false)
+                .build();
 
-        Calendar calendar2 = new Calendar();
-        calendar2.setTitle("Test2");
-        calendar2.setDescription("prueba 2");
-        calendar2.setPublished(false);
-        calendar2.setId("2");
-        calendar.setComments(new ArrayList<>());
+        calendarList.add(calendar1);
+
+        Calendar calendar2 = calendar.toBuilder()
+                .id("2")
+                .title("Test2")
+                .description("prueba 2")
+                .published(false)
+                .build();
+
         calendarList.add(calendar2);
 
-        Calendar calendar3 = new Calendar();
-        calendar3.setTitle("Test3");
-        calendar3.setDescription("prueba 3");
-        calendar3.setPublished(false);
-        calendar3.setId("3");
-        calendar3.setComments(new ArrayList<>());
+        Calendar calendar3 = calendar.toBuilder()
+                .id("3")
+                .title("Test3")
+                .description("prueba 3")
+                .published(false)
+                .build();
+
         calendarList.add(calendar3);
 
         given(calendarService.allCalendars()).willReturn(calendarList);
@@ -113,7 +138,8 @@ class CalendarControllerTest {
 
         // then
 
-        response.andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.size()", is(calendarList.size())));
+        response.andExpect(status().isOk()).andDo(print())
+                .andExpect(jsonPath("$.body.size()", is(calendarList.size())));
 
     }
 
@@ -124,15 +150,8 @@ class CalendarControllerTest {
         // given
 
 
-        Calendar calendar = new Calendar();
-        calendar.setTitle("Test1");
-        calendar.setDescription("prueba 1");
-        calendar.setPublished(false);
-        calendar.setId("1");
-        calendar.setComments(new ArrayList<>());
-
-
         given(calendarService.findCalendar("1")).willReturn(calendar);
+        ResponseHTTP<Calendar> responseHTTP = createResponseHttp(HttpStatus.OK, calendar, null);
 
         // when
 
@@ -141,7 +160,13 @@ class CalendarControllerTest {
 
         // then
 
-        response.andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.title", is(calendar.getTitle()))).andExpect(jsonPath("$.published", is(calendar.isPublished()))).andExpect(jsonPath("$.description", is(calendar.getDescription())));
+        response.andExpect(status().isOk()).andDo(print())
+                .andExpect(jsonPath("$.body.id", is(calendar.getId())))
+                .andExpect(jsonPath("$.body.title", is(calendar.getTitle())))
+                .andExpect(jsonPath("$.body.description", is(calendar.getDescription())))
+                .andExpect(jsonPath("$.body.published", is(calendar.isPublished())))
+                // Agrega comparaciones para otras propiedades si es necesario
+                .andExpect(jsonPath("$.error").doesNotExist());
 
     }
 
@@ -151,12 +176,6 @@ class CalendarControllerTest {
 
         // given
 
-        Calendar calendar = new Calendar();
-        calendar.setTitle("Test1");
-        calendar.setDescription("prueba 1");
-        calendar.setPublished(false);
-        calendar.setId("1");
-        calendar.setComments(new ArrayList<>());
 
         CalendarNotFoundException e = new CalendarNotFoundException("ERROR: Calendario no se encuentra en el sistema.");
 
@@ -176,31 +195,32 @@ class CalendarControllerTest {
 
         // given
 
+        Calendar calendar = Calendar.builder()
+                .id("1")
+                .title("Test1")
+                .description("prueba 1")
+                .published(false)
+                .comments(new ArrayList<>())
+                .build();
 
-        Calendar calendar = new Calendar();
-        calendar.setTitle("Test1");
-        calendar.setDescription("prueba 1");
-        calendar.setPublished(false);
-        calendar.setId("1");
-        calendar.setComments(new ArrayList<>());
+        Calendar calendarEdit = calendar.toBuilder()
+                .id("2")
+                .title("Test2")
+                .description("prueba 2")
+                .published(true)
+                .build();
 
-        Calendar calendarEdit = new Calendar();
-        calendarEdit.setTitle("Test2");
-        calendarEdit.setDescription("prueba 2");
-        calendarEdit.setPublished(true);
-        calendarEdit.setId("2");
-        calendarEdit.setComments(new ArrayList<>());
-
-        given(calendarService.updateCalendar(calendar)).willReturn(calendar);
-
-        given(calendarService.updateCalendar(calendarEdit)).willReturn(calendarEdit);
-
+        ResponseHTTP<Calendar> responseHTTP = createResponseHttp(HttpStatus.OK, calendarEdit, null);
+        
+        given(calendarService.updateCalendar(calendar)).willReturn(calendarEdit);
 
         // when
-        ResultActions response = mockMvc.perform(patch("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendarEdit)));
+        ResultActions response = mockMvc.perform(patch("/api/gymfit/calendar")
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendar)));
 
         // then
-        response.andExpect(status().isOk()).andDo(print()).andExpect(jsonPath("$.id", is(calendarEdit.getId())));
+        response.andExpect(status().isOk()).andDo(print())
+                .andExpect(jsonPath("$.body.id", is(responseHTTP.getBody().getId())));
 
     }
 
@@ -209,12 +229,7 @@ class CalendarControllerTest {
     void deleteCalendarTest() throws Exception {
 
         // given
-        Calendar calendar = new Calendar();
-        calendar.setTitle("Test1");
-        calendar.setDescription("prueba 1");
-        calendar.setPublished(false);
-        calendar.setId("1");
-        calendar.setComments(new ArrayList<>());
+
 
         willDoNothing().given(calendarService).deleteCalendar(calendar.getId());
 
@@ -233,23 +248,27 @@ class CalendarControllerTest {
         // given
 
 
-        Calendar calendar = new Calendar();
-        calendar.setTitle("Test1");
-        calendar.setDescription("prueba 1");
-        calendar.setPublished(false);
-        calendar.setId("1");
-        calendar.setComments(new ArrayList<>());
+        Calendar calendarNotFound = calendar.toBuilder()
+                .id("3").build();
 
 
-        doThrow(CalendarNotFoundException.class).when(calendarService).updateCalendar(calendar);
+        doThrow(CalendarNotFoundException.class).when(calendarService).updateCalendar(calendarNotFound);
+
+        ResponseHTTP<Calendar> responseHTTP = createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, calendarNotFound, "");
 
 
         // when
-        ResultActions response = mockMvc.perform(patch("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendar)));
+        ResultActions response = mockMvc.perform(patch("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(calendarNotFound)));
 
         // then
-        response.andExpect(status().isInternalServerError()).andDo(print()).andExpect(jsonPath("$.title", is(calendar.getTitle())));
+        response.andExpect(status().isInternalServerError()).andDo(print())
+                .andExpect(jsonPath("$.body.id", is(responseHTTP.getBody().getId())));
 
+    }
+
+    private <T> ResponseHTTP<T> createResponseHttp(HttpStatus httpStatus, T object, String message) {
+        return new ResponseHTTP<>(httpStatus.value(), httpStatus.toString(), object, message);
     }
 
 }

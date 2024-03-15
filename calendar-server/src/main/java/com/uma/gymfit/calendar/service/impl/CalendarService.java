@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -44,9 +45,12 @@ public class CalendarService
     public Calendar findCalendar(String idCalendar) {
 
         log.info("Buscamos el calendario en el sistema....");
-        if (calendarRepository.existsById(idCalendar)) {
+
+        Optional<Calendar> optionalCalendar = calendarRepository.findById(idCalendar);
+
+        if (optionalCalendar.isPresent()) {
             log.info("OK: Calendario encontrado.....");
-            return calendarRepository.findById(idCalendar).get();
+            return optionalCalendar.get();
         }
 
         log.error("ERROR: Calendario no se encuentra en el sistema - ID: {}.", idCalendar);
@@ -70,7 +74,9 @@ public class CalendarService
                 calendar.setId(UUID.randomUUID().toString());
             calendar.setCreationDate(LocalDateTime.now());
             calendar.setLastUpdateDate(LocalDateTime.now());
+
             calendarRepository.save(calendar);
+            
             log.info("OK: Calendario guardado con éxito.");
         } catch (DataAccessException e) {
             log.error("ERROR: Error al guardar el evento en la base de datos - {}", e.getMessage());
@@ -88,7 +94,7 @@ public class CalendarService
     @Override
     public void deleteCalendar(String id) {
 
-        //comprobamos que el 'id' se encuentra en el reepositorio
+        //comprobamos que el 'id' se encuentra en el repositorio
         log.info("Comprobamos en el sistema que existe el calendario en el sistema ");
         if (calendarRepository.existsById(id)) {
 

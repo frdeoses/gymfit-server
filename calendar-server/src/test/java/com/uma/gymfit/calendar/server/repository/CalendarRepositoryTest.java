@@ -24,11 +24,12 @@ class CalendarRepositoryTest {
 
     @BeforeEach
     void setup() {
-        calendar = new Calendar();
-        calendar.setTitle("Test1");
-        calendar.setDescription("prueba 1");
-        calendar.setPublished(false);
-        calendar.setId("1");
+        calendar = Calendar.builder()
+                .id("1")
+                .title("Test1")
+                .description("prueba 1")
+                .published(false)
+                .build();
     }
 
     @AfterEach
@@ -40,12 +41,12 @@ class CalendarRepositoryTest {
     @Test
     void crearEventoTest() {
 
-        Calendar calendar1 = new Calendar();
-        calendar1.setTitle("Test1");
-        calendar1.setDescription("prueba 1");
-        calendar1.setPublished(false);
+//        Calendar calendar1 = new Calendar();
+//        calendar1.setTitle("Test1");
+//        calendar1.setDescription("prueba 1");
+//        calendar1.setPublished(false);
 
-        Calendar calendarSave = calendarRepository.save(calendar1);
+        Calendar calendarSave = calendarRepository.save(calendar);
         assertThat(calendarSave).isNotNull();
         assertThat(calendarSave.getTitle()).isEqualToIgnoringCase("Test1");
 
@@ -56,10 +57,12 @@ class CalendarRepositoryTest {
     void listarEventoTest() {
 
         // give
-        Calendar calendar1 = new Calendar();
-        calendar1.setTitle("Test1");
-        calendar1.setDescription("prueba 1");
-        calendar1.setPublished(false);
+        Calendar calendar1 = calendar.toBuilder()
+                .id("2")
+                .title("Test2")
+                .description("prueba 2")
+                .published(false)
+                .build();
 
         calendarRepository.save(calendar1);
         calendarRepository.save(calendar);
