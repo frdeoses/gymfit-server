@@ -1,20 +1,20 @@
 package com.uma.gymfit.calendar.model.calendar;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Data
+@Value
+@Builder(toBuilder = true)
 public class Comment implements Serializable {
-    
-    private String id;
 
-    private String idUser;
+    String id;
 
-    private String userName;
+    String userName;
 
-    private String text;
+    String text;
 
-    private LocalDateTime date;
+    LocalDateTime date;
 }

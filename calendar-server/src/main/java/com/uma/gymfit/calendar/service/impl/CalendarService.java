@@ -3,18 +3,27 @@ package com.uma.gymfit.calendar.service.impl;
 import com.uma.gymfit.calendar.exception.CalendarCreationException;
 import com.uma.gymfit.calendar.exception.CalendarNotFoundException;
 import com.uma.gymfit.calendar.model.calendar.Calendar;
+import com.uma.gymfit.calendar.model.calendar.Comment;
+import com.uma.gymfit.calendar.model.dto.CalendarDto;
+import com.uma.gymfit.calendar.model.dto.CommentDto;
 import com.uma.gymfit.calendar.repository.ICalendarRepository;
 import com.uma.gymfit.calendar.service.ICalendarService;
+import com.uma.gymfit.calendar.utils.Literals;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.Objects;
+
+import static com.uma.gymfit.calendar.utils.CalendarTrace.logErrorNotFoundCalendar;
+import static com.uma.gymfit.calendar.utils.CalendarTrace.logInfoSaveCalendar;
+import static com.uma.gymfit.calendar.utils.CalendarTrace.logInfoSaveOK;
+import static com.uma.gymfit.calendar.utils.Literals.ERROR_AL_CREAR_EL_EVENTO_EN_LA_BASE_DE_DATOS;
 
 @AllArgsConstructor
 @Service
@@ -23,6 +32,7 @@ public class CalendarService
         implements ICalendarService {
 
     private final ICalendarRepository calendarRepository;
+
 
     /**
      * Devuelve todos los calendarios almacenados en BB DD
@@ -37,7 +47,6 @@ public class CalendarService
     /**
      * Devuelve el calendario almacenado en BB DD
      *
-     * @param idCalendar
      * @return
      * @
      */
@@ -46,41 +55,42 @@ public class CalendarService
 
         log.info("Buscamos el calendario en el sistema....");
 
-        Optional<Calendar> optionalCalendar = calendarRepository.findById(idCalendar);
+        return calendarRepository.findById(idCalendar)
+                .orElseThrow(() -> {
+                    logErrorNotFoundCalendar(idCalendar);
+                    return new CalendarNotFoundException("ERROR: Calendario no se encuentra en el sistema.");
+                });
 
-        if (optionalCalendar.isPresent()) {
-            log.info("OK: Calendario encontrado.....");
-            return optionalCalendar.get();
-        }
-
-        log.error("ERROR: Calendario no se encuentra en el sistema - ID: {}.", idCalendar);
-        throw new CalendarNotFoundException("ERROR: Calendario no se encuentra en el sistema.");
     }
 
     /**
      * Crea un calendario
-     *
-     * @param calendar
      */
     @Override
-    public void createCalendar(Calendar calendar) {
+    public void createCalendar(CalendarDto calendarDto) {
 
         //en caso de no tener problemas guardaremos en el repositorio.
         log.info("Verificamos que el evento que quiere crear no esta ya en el sistema...");
 
         try {
-            log.info("Procedemos a guardar en el sistema el siguiente calendario: {}.", calendar);
-            if (Strings.isEmpty(calendar.getId()))
-                calendar.setId(UUID.randomUUID().toString());
-            calendar.setCreationDate(LocalDateTime.now());
-            calendar.setLastUpdateDate(LocalDateTime.now());
+
+            Calendar calendar = Calendar.builder()
+                    .description(calendarDto.getDescription())
+                    .creationDate(LocalDateTime.now())
+                    .lastUpdateDate(LocalDateTime.now())
+                    .title(calendarDto.getTitle())
+                    .published(calendarDto.isPublished())
+                    .build();
+
+            logInfoSaveCalendar(calendar);
+
 
             calendarRepository.save(calendar);
-            
-            log.info("OK: Calendario guardado con éxito.");
+
+            logInfoSaveOK();
         } catch (DataAccessException e) {
-            log.error("ERROR: Error al guardar el evento en la base de datos - {}", e.getMessage());
-            throw new CalendarCreationException("Error al crear el evento en la base de datos.");
+            log.error(Literals.ERROR_AL_GUARDAR_EL_EVENTO_EN_LA_BASE_DE_DATOS, e.getMessage());
+            throw new CalendarCreationException(ERROR_AL_CREAR_EL_EVENTO_EN_LA_BASE_DE_DATOS);
         }
 
 
@@ -88,23 +98,19 @@ public class CalendarService
 
     /**
      * Borra un calendario por su id
-     *
-     * @param id
      */
     @Override
     public void deleteCalendar(String id) {
 
         //comprobamos que el 'id' se encuentra en el repositorio
         log.info("Comprobamos en el sistema que existe el calendario en el sistema ");
-        if (calendarRepository.existsById(id)) {
 
-            log.info("Existe el calendario en el sistema.");
-            //una vez este correcto guardaremos el dato.
+        try {
             calendarRepository.deleteById(id);
-            log.info("OK: Calendario eliminado con exito.");
-        } else {
-            log.error("El calendario que quiere eliminar no se encuentra en el sistema - ID: {}.", id);
-            throw new CalendarNotFoundException("El calendario que quiere eliminar no se encuentra en el sistema");
+            log.info("Tabla de entrenamiento con ID: {} eliminada con éxito.", id);
+        } catch (EmptyResultDataAccessException e) {
+            log.error("La tabla de entrenamiento con ID: {} no se encuentra en el sistema.Error: {}", id, e.getMessage());
+            throw new CalendarNotFoundException("La tabla de entrenamiento con ID: " + id + " no se encuentra en el sistema.");
         }
 
     }
@@ -112,29 +118,44 @@ public class CalendarService
 
     /**
      * Modifica un calendario
-     *
-     * @param calendar
      */
     @Override
-    public Calendar updateCalendar(Calendar calendar) {
+    public CalendarDto updateCalendar(CalendarDto calendar) {
 
 
-        // comprobamos que se encuentra en la BBDD
+        // comprobamos que se encuentra en la BB DD
         log.info("Comprobamos en el sistema que existe el calendario.");
-        if (calendarRepository.existsById(calendar.getId())) {
 
-            log.info("Existe el calendario en el sistema.");
-            calendar.setLastUpdateDate(LocalDateTime.now());
+        Calendar calendarSave = calendarRepository.findById(calendar.getId())
+                .orElseThrow(() -> {
+                    log.error("No se encuentra el calendario que quieres modificar - ID: {}.", calendar.getId());
+                    return new CalendarNotFoundException("No se encuentra el calendario que quieres modificar");
+                });
 
-            // insertamos nuevo
-            log.info("OK: Calendario guardado con éxito.");
-            return calendarRepository.save(calendar);
+        Calendar calendarUpdate = updateFields(calendar, calendarSave);
 
-        } else {
-            log.error("No se encuentra el calendario que quieres modificar - ID: {}.", calendar.getId());
-            throw new CalendarNotFoundException("No se encuentra el calendario que quieres modificar");
+        try {
+            calendarRepository.save(calendarUpdate);
+
+
+        } catch (DataAccessException e) {
+            log.error(Literals.ERROR_AL_GUARDAR_EL_EVENTO_EN_LA_BASE_DE_DATOS, e.getMessage());
+            throw new CalendarCreationException(ERROR_AL_CREAR_EL_EVENTO_EN_LA_BASE_DE_DATOS);
+
         }
 
+        return calendar;
+
+    }
+
+    private Calendar updateFields(CalendarDto calendar, Calendar calendarSave) {
+        return calendarSave.toBuilder()
+                .title(calendar.getTitle())
+                .published(calendar.isPublished())
+                .description(calendar.getDescription())
+                .comments(calendar.getComments())
+                .lastUpdateDate(LocalDateTime.now())
+                .build();
     }
 
     @Override
@@ -143,5 +164,46 @@ public class CalendarService
         return calendarRepository.findByPublished(true);
     }
 
+    @Override
+    public Comment addComment(CommentDto commentDto) {
+
+        Calendar calendar = calendarRepository.findById(commentDto.getIdCalendar())
+                .orElseThrow(() -> {
+                    logErrorNotFoundCalendar(commentDto.getIdCalendar());
+                    return new CalendarNotFoundException("ERROR: Calendario no se encuentra en el sistema.");
+                });
+
+        Comment comment = getComment(commentDto);
+
+        log.info("OK: Comentario creado con éxito. - Comentario: {}", comment);
+
+        if (Objects.isNull(calendar.getComments()) || calendar.getComments().isEmpty())
+            calendar.setComments(new ArrayList<>());
+
+        calendar.getComments().add(comment);
+
+        log.info("OK: Comentario añadido con éxito. - Comentario: {}", comment);
+
+        try {
+            logInfoSaveCalendar(calendar);
+
+            calendarRepository.save(calendar);
+
+            logInfoSaveOK();
+        } catch (DataAccessException e) {
+            log.error(Literals.ERROR_AL_GUARDAR_EL_EVENTO_EN_LA_BASE_DE_DATOS, e.getMessage());
+            throw new CalendarCreationException(ERROR_AL_CREAR_EL_EVENTO_EN_LA_BASE_DE_DATOS);
+        }
+
+        return comment;
+    }
+
+    private static Comment getComment(CommentDto commentDto) {
+        return Comment.builder()
+                .date(LocalDateTime.now())
+                .userName(commentDto.getUsername())
+                .text(commentDto.getComment())
+                .build();
+    }
 
 }
