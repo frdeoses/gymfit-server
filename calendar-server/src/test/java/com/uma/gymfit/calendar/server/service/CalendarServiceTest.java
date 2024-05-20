@@ -92,11 +92,6 @@ class CalendarServiceTest {
 
         // given
 
-        Calendar calendar1 = calendar.toBuilder()
-                .title("Test2")
-                .description("prueba 2")
-                .published(false)
-                .build();
 
         given(calendarRepository.findAll()).willReturn(Collections.emptyList());
 
@@ -112,7 +107,7 @@ class CalendarServiceTest {
 
     @DisplayName("Test para obtener un evento.")
     @Test
-    void findCalendarTest() throws Exception {
+    void findCalendarTest() {
 
         // given
 
@@ -132,7 +127,7 @@ class CalendarServiceTest {
 
     @DisplayName("Test para editar un evento.")
     @Test
-    void editCalendarTest() throws Exception {
+    void editCalendarTest() {
 
         // given
 
@@ -160,7 +155,7 @@ class CalendarServiceTest {
 
     @DisplayName("Test para crear un evento.")
     @Test
-    void createCalendarsTest() throws Exception {
+    void createCalendarsTest() {
 
 
         given(calendarRepository.findById(calendar.getId())).willReturn(Optional.empty());
@@ -194,7 +189,7 @@ class CalendarServiceTest {
 
     @DisplayName("Test para eliminar un evento.")
     @Test
-    void deleteCalendarTest() throws Exception {
+    void deleteCalendarTest() {
 
         // given
         given(calendarRepository.existsById("1")).willReturn(true);

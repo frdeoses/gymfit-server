@@ -56,6 +56,7 @@ class CalendarControllerTest {
 
     @MockBean
     private JwtAuthenticationEntryPoint unauthorizeHandler;
+
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -161,7 +162,6 @@ class CalendarControllerTest {
 
 
         given(calendarService.findCalendar("1")).willReturn(calendar);
-        ResponseHTTP<Calendar> responseHTTP = createResponseHttp(HttpStatus.OK, calendar, null);
 
         // when
 
