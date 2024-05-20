@@ -3,11 +3,14 @@ package com.uma.gymfit.calendar.model.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class AnthropometricData {
+public class AnthropometricData implements Serializable {
+
+    private static final long serialVersionUID = 1764177798999036118L;
 
     private double height;
 

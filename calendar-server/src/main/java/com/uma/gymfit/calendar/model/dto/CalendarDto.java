@@ -29,6 +29,6 @@ public class CalendarDto implements Serializable {
 
     boolean published;
 
-    private List<Comment> comments;
+    transient List<Comment> comments;
 
 }
