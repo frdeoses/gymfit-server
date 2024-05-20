@@ -1,6 +1,9 @@
 package com.uma.gymfit.calendar.service;
 
 import com.uma.gymfit.calendar.model.calendar.Calendar;
+import com.uma.gymfit.calendar.model.calendar.Comment;
+import com.uma.gymfit.calendar.model.dto.CalendarDto;
+import com.uma.gymfit.calendar.model.dto.CommentDto;
 
 import java.util.List;
 
@@ -27,7 +30,7 @@ public interface ICalendarService {
      *
      * @param calendar
      */
-    void createCalendar(Calendar calendar);
+    void createCalendar(CalendarDto calendar);
 
 
     /**
@@ -43,7 +46,7 @@ public interface ICalendarService {
      *
      * @param calendar
      */
-    Calendar updateCalendar(Calendar calendar);
+    CalendarDto updateCalendar(CalendarDto calendar);
 
 
     /**
@@ -52,4 +55,10 @@ public interface ICalendarService {
      * @return List<U>
      */
     List<Calendar> allCalendarsPublishedActive();
+
+    /**
+     * Añadir un comentario
+     */
+    Comment addComment(CommentDto comment);
+
 }
