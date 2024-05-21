@@ -7,9 +7,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface ITrainingRepository extends MongoRepository<Training, String> {
-    
+
     List<Training> findByGymMachine(GymMachine gymMachine);
 
-    boolean existsByGymMachine(GymMachine gymMachine);
+    List<Training> findByUserId(String userId);
 
 }
