@@ -1,5 +1,6 @@
 package com.uma.gymfit.trainingtable.service;
 
+import com.uma.gymfit.trainingtable.model.dtos.NewWorkedWeight;
 import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingType;
 
@@ -9,8 +10,6 @@ public interface ITrainingService {
 
     /**
      * Devuelve todas las tablas almacenadas en BBDD
-     *
-     * @return List<T>
      */
     TrainingType[] trainingType();
 
@@ -29,41 +28,33 @@ public interface ITrainingService {
     Training findTraining(String idTraining);
 
     /**
-     * Crea  un ejercicio
-     *
-     * @param training
+     * Crea un ejercicio
      */
     void createTraining(Training training);
 
     /**
      * Borra un ejercicio por su id
-     *
-     * @param idTraining
      */
     void deleteTraining(String idTraining);
 
     /**
      * Modifica un ejercicio
-     *
-     * @param training
      */
     void updateTraining(Training training);
 
     /**
      * Devuelve los entrenamientos del sistema segun el user pasado
-     *
-     * @param user
-     * @return
      */
     List<Training> findTrainingsByUser(String userId);
 
     /**
-     * Devuelve los entrenamientos segun el tipo de entrenamiento y el
-     * usuario que este registrado en el sistema.
-     *
-     * @param typeTraining
-     * @param idUser
-     * @return
+     * Devuelve los entrenamientos según el tipo de entrenamiento y el
+     * usuario que esté registrado en el sistema.
      */
     List<Training> findTrainingsByTrainingType(String typeTraining, String idUser);
+
+    /**
+     * Añade peso al listado de pesos en un ejercicio específico
+     */
+    void addNewWorkedWeights(NewWorkedWeight workedWeight);
 }
