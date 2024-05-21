@@ -8,17 +8,17 @@ import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.repository.IGymMachineRepository;
 import com.uma.gymfit.trainingtable.repository.ITrainingRepository;
 import com.uma.gymfit.trainingtable.service.IGymMachineService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@AllArgsConstructor
 @Service
 @Slf4j
 public class GymMachineService implements IGymMachineService {
@@ -27,23 +27,31 @@ public class GymMachineService implements IGymMachineService {
 
     private final ITrainingRepository trainingRepository;
 
+    @Autowired
+    public GymMachineService(final IGymMachineRepository gymMachineRepository,
+                             final ITrainingRepository trainingRepository) {
+        this.gymMachineRepository = gymMachineRepository;
+        this.trainingRepository = trainingRepository;
+    }
+
+
     /**
-     * Devuelve todas las máquinas almacenadas en BBDD
+     * Devuelve todas las máquinas almacenadas en BB DD
      *
      * @return List<TrainingTable>
      */
     @Override
+    @Transactional(readOnly = true)
     public List<GymMachine> allGymMachine() {
         return gymMachineRepository.findAll();
     }
 
     /***
-     * Devuelve las tablas almacenadas en BBDD
-     * @param idGymMachine
-     * @return
-     * @throws Exception
+     * Devuelve las tablas almacenadas en BB DD
+     *
      */
     @Override
+    @Transactional(readOnly = true)
     public GymMachine findGymMachine(String idGymMachine) {
 
         log.info("Buscamos la maquina en el sistema con ID: {}", idGymMachine);
@@ -58,10 +66,9 @@ public class GymMachineService implements IGymMachineService {
 
     /**
      * Crea  una maquina
-     *
-     * @param gymMachine
      */
     @Override
+    @Transactional
     public void createGymMachine(GymMachine gymMachine) {
 
         validateGymMachine(gymMachine);
@@ -82,7 +89,7 @@ public class GymMachineService implements IGymMachineService {
     }
 
     private void validateGymMachine(GymMachine gymMachine) {
-        
+
         if (Objects.isNull(gymMachine)) {
             throw new IllegalArgumentException("La máquina no puede ser null.");
         }
@@ -99,11 +106,10 @@ public class GymMachineService implements IGymMachineService {
 
 
     /**
-     * Modifica una máquina de entrenamimento
-     *
-     * @param gymMachine
+     * Modifica una máquina de entrenamiento
      */
     @Override
+    @Transactional
     public void updateGymMachine(GymMachine gymMachine) {
 
         // comprobamos que se encuentra en la BB DD
@@ -126,6 +132,7 @@ public class GymMachineService implements IGymMachineService {
     }
 
     @Override
+    @Transactional
     public void deleteAllGymMachine() {
 
         log.info("Procedemos a vaciar la BB DD de maquinas en el sistema...");
@@ -136,10 +143,9 @@ public class GymMachineService implements IGymMachineService {
 
     /**
      * Borra una máquina de entrenamiento por su id
-     *
-     * @param idGymMachine
      */
     @Override
+    @Transactional
     public void deleteGymMachine(String idGymMachine) {
 
         log.info("Checking for the existence of GymMachine with ID: {}", idGymMachine);
