@@ -1,9 +1,8 @@
 package com.uma.gymfit.trainingtable.model.training;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,9 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(value = "Training")
-@Getter
-@Setter
-@ToString
+@Data
+@Builder(toBuilder = true)
 public class Training implements Serializable {
 
     @Id
@@ -43,7 +41,7 @@ public class Training implements Serializable {
 
     private int caloriesBurned;
 
-    private List<WorkedWeights> listWorkedWeights;
+    private List<WorkedWeight> listWorkedWeights;
 
     private GymMachine gymMachine;
 
