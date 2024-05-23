@@ -1,9 +1,10 @@
 package com.uma.gymfit.user.security.controller;
 
+import com.uma.gymfit.user.converters.ConvertUserToUserRS;
 import com.uma.gymfit.user.exception.UserAutenticationException;
+import com.uma.gymfit.user.model.dto.UserRS;
 import com.uma.gymfit.user.model.security.JwtRequest;
 import com.uma.gymfit.user.model.security.JwtResponse;
-import com.uma.gymfit.user.model.user.User;
 import com.uma.gymfit.user.security.config.JwtUtils;
 import com.uma.gymfit.user.security.service.impl.UserDetailsServiceImpl;
 import com.uma.gymfit.user.utils.Literals;
@@ -16,7 +17,11 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
@@ -25,14 +30,24 @@ import java.security.Principal;
 @Slf4j
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+
+    private final UserDetailsServiceImpl userDetailsService;
+
+    private final JwtUtils jwtUtils;
+
+    private final ConvertUserToUserRS convertUserToUserRS;
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    private JwtUtils jwtUtils;
+    public AuthenticationController(final ConvertUserToUserRS convertUserToUserRS,
+                                    final JwtUtils jwtUtils,
+                                    final UserDetailsServiceImpl userDetailsService,
+                                    final AuthenticationManager authenticationManager) {
+        this.convertUserToUserRS = convertUserToUserRS;
+        this.jwtUtils = jwtUtils;
+        this.userDetailsService = userDetailsService;
+        this.authenticationManager = authenticationManager;
+    }
 
     @PostMapping(Literals.GENERATE_TOKEN)
     public ResponseEntity<?> generarToken(@RequestBody JwtRequest jwtRequest) {
@@ -62,7 +77,7 @@ public class AuthenticationController {
     }
 
     @GetMapping(Literals.CURRENT_USER)
-    public User getCurrentUser(Principal principal) {
-        return (User) this.userDetailsService.loadUserByUsername(principal.getName());
+    public UserRS getCurrentUser(Principal principal) {
+        return convertUserToUserRS.convert(this.userDetailsService.loadUserByUsername(principal.getName()));
     }
 }

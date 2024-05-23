@@ -1,6 +1,11 @@
 package com.uma.gymfit.user.service.impl;
 
+import com.uma.gymfit.user.converters.ConvertUserToUserRS;
 import com.uma.gymfit.user.exception.UserCreationException;
+import com.uma.gymfit.user.model.dto.UserDto;
+import com.uma.gymfit.user.model.dto.UserRS;
+import com.uma.gymfit.user.model.user.AnthropometricData;
+import com.uma.gymfit.user.model.user.PersonalData;
 import com.uma.gymfit.user.model.user.RoleList;
 import com.uma.gymfit.user.model.user.User;
 import com.uma.gymfit.user.model.user.UserRol;
@@ -8,9 +13,11 @@ import com.uma.gymfit.user.model.user.Weight;
 import com.uma.gymfit.user.repository.IUserRepository;
 import com.uma.gymfit.user.service.IUserService;
 import com.uma.gymfit.user.utils.Literals;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,11 +26,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Service
 @Slf4j
 public class UserService
@@ -33,24 +37,34 @@ public class UserService
 
     private final IUserRepository repositorioUsuario;
 
+    private final ConvertUserToUserRS convertUserToUserRS;
+
+    @Autowired
+    public UserService(BCryptPasswordEncoder passwordEncoder, IUserRepository repositorioUsuario, ConvertUserToUserRS convertUserToUserRS) {
+        this.passwordEncoder = passwordEncoder;
+        this.repositorioUsuario = repositorioUsuario;
+        this.convertUserToUserRS = convertUserToUserRS;
+    }
+
     /**
      * Devuelve todos los usuarios almacenados en BB DD
      *
      * @return List<User>
      */
     @Override
-    public List<User> allUser() {
-        return repositorioUsuario.findAll();
+    public List<UserRS> allUser() {
+
+        List<User> users = repositorioUsuario.findAll();
+
+        return convertUserToUserRS.convert(users);
     }
 
     @Override
-    public List<User> allUserRoleUsers() {
-        return repositorioUsuario.findAll().stream()
-                .filter(Objects::nonNull)
-                .filter(user -> user.getUserRoles().stream()
-                        .anyMatch(userRol ->
-                                RoleList.USER.name().equals(userRol.getNameRole())))
-                .collect(Collectors.toList());
+    public List<UserRS> allUserRoleUsers() {
+        List<User> users = repositorioUsuario.findByUserRoles_Name(RoleList.USER.name());
+
+        return convertUserToUserRS.convert(users);
+
     }
 
     /**
@@ -60,28 +74,25 @@ public class UserService
      * @return User
      */
     @Override
-    public User findUser(String idUser) {
+    public UserRS findUser(String idUser) {
         log.info("Buscamos el usuario en el sistema con ID: {}", idUser);
 
-        Optional<User> userOptional = repositorioUsuario.findById(idUser);
+        User user = repositorioUsuario.findById(idUser)
+                .orElseThrow(() -> {
+                    log.error("ERROR: Usuario no se encuentra en el sistema - ID: {}", idUser);
+                    return new UsernameNotFoundException("Usuario no se encuentra en el sistema - ID: " + idUser);
+                });
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            log.info("OK: Usuario encontrado - ID: {}", user.getId());
-            return user;
-        } else {
-            log.error("ERROR: Usuario no se encuentra en el sistema - ID: {}", idUser);
-            throw new UsernameNotFoundException("Usuario no se encuentra en el sistema - ID: " + idUser);
-        }
+        return convertUserToUserRS.convert(user);
+
+
     }
 
     /**
      * Crea un usuario
-     *
-     * @param user
      */
     @Override
-    public void createUser(User user) {
+    public void createUser(UserDto user) {
 
         try {
             //en caso de no tener problemas guardaremos en el repositorio.
@@ -89,20 +100,20 @@ public class UserService
 
             validateUsernameAndEmail(user.getUsername(), user.getEmail());
 
-            user.setId(UUID.randomUUID().toString());
-            user.setPassword(this.passwordEncoder.encode(user.getPassword()));
-            user.setRegistrationDate(LocalDateTime.now());
+            AnthropometricData anthropometricData = new AnthropometricData(user.getHeight(), user.getWeight(), 0, 0, new ArrayList<>(), new ArrayList<>());
 
-            if (user.getWeight() > 0) {
-                log.info("Procedemos a guardar en el sistema el peso del usuario: {}.", user.getWeight());
-                Weight newWeight = new Weight(LocalDateTime.now(), user.getWeight());
-                user.setListUserWeight(new ArrayList<>());
-                user.getListUserWeight().add(newWeight);
+            User newUser = new User(user.getUsername(), user.getPassword(), getPersonalData(user), anthropometricData);
+
+            newUser.setPassword(this.passwordEncoder.encode(user.getPassword()));
+            newUser.setRegistrationDate(LocalDateTime.now());
+
+            if (newUser.getAnthropometricData().getWeight() > 0) {
+                addNewWeight(newUser);
             }
 
-            assignRole(user, RoleList.USER);
+            assignRole(newUser, RoleList.USER);
 
-            repositorioUsuario.save(user);
+            repositorioUsuario.save(newUser);
             log.info("OK: Usuario guardado con éxito.");
 
         } catch (DataAccessException e) {
@@ -119,7 +130,7 @@ public class UserService
             throw new UserCreationException("El usurario existe en el sistema con el mismo username");
         }
 
-        if (repositorioUsuario.existsUserByEmail(email)) {
+        if (repositorioUsuario.existsUserByPersonalData_Email(email)) {
             log.error("ERROR: El usurario existe en el sistema con el mismo email: {}", email);
             throw new UserCreationException("El usurario existe en el sistema con el mismo email");
         }
@@ -127,9 +138,6 @@ public class UserService
 
     /**
      * Asignamos role al usuario
-     *
-     * @param user
-     * @param role
      */
     private void assignRole(User user, RoleList role) {
 
@@ -151,15 +159,12 @@ public class UserService
 
         //comprobamos que el ID se encuentra en el repositorio
         log.info("Comprobamos en el sistema que existe el usuario en el sistema ");
-        if (repositorioUsuario.existsById(id)) {
-
-            log.info("Existe el usuario en el sistema.");
-            //una vez este correcto guardaremos el dato.
+        try {
             repositorioUsuario.deleteById(id);
-            log.info("OK: User eliminado con éxito.");
-        } else {
-            log.error("El usuario que quiere eliminar no se encuentra en el sistema - ID:{} .", id);
-            throw new UsernameNotFoundException(Literals.USER_NOT_FOUND);
+            log.info("El usuario con ID: {} eliminada con éxito.", id);
+        } catch (EmptyResultDataAccessException e) {
+            log.error("El usuario con ID: {} no se encuentra en el sistema. Error: {}", id, e.getMessage());
+            throw new UsernameNotFoundException("El usuario con ID: " + id + " no se encuentra en el sistema.");
         }
 
     }
@@ -170,39 +175,59 @@ public class UserService
      * @param user
      */
     @Override
-    public void updateUser(User user) {
+    public UserRS updateUser(UserDto user) {
 
         // comprobamos que se encuentra en la BB DD
         log.info("Comprobamos en el sistema que existe el usuario.");
-        if (repositorioUsuario.existsById(user.getId())) {
 
-            // Borramos anterior user
-            log.info("Existe el usuario en el sistema.");
-            Optional<User> oldUserSave = repositorioUsuario.findById(user.getId());
+        User existingUser = repositorioUsuario.findById(user.getId())
+                .orElseThrow(() -> new UsernameNotFoundException(Literals.USER_NOT_FOUND));
 
-            if (oldUserSave.isEmpty()) {
-                log.error(Literals.USER_NOT_FOUND);
-                throw new UsernameNotFoundException(Literals.USER_NOT_FOUND);
-            }
+        updateFields(user, existingUser);
 
-            User oldUser = oldUserSave.get();
-            // insertamos nuevo
-            if (oldUser.getWeight() != user.getWeight()) {
-                log.info("Se ha actualizado el peso actual y procedemos a añadirlo en el histórico.");
-                Weight newWeight = new Weight(LocalDateTime.now(), user.getWeight());
+        // Actualiza el usuario
+        repositorioUsuario.save(existingUser);
+        log.info("Usuario con ID: {} actualizado con éxito.", user.getId());
 
-                if (Objects.isNull(user.getListUserWeight()))
-                    user.setListUserWeight(new ArrayList<>());
-                user.getListUserWeight().add(newWeight);
-            }
-            repositorioUsuario.save(user);
-            log.info("OK: User guardado con éxito.");
+        return convertUserToUserRS.convert(existingUser);
 
-        } else {
-            log.error(Literals.USER_NOT_FOUND);
-            throw new UsernameNotFoundException(Literals.USER_NOT_FOUND);
-        }
+    }
 
+    private static void updateFields(final UserDto user, final User existingUser) {
+
+        existingUser.setPersonalData(getPersonalData(user));
+        existingUser.setAnthropometricData(getAnthropometricData(user, existingUser));
+
+        addNewWeight(existingUser);
+    }
+
+    private static @NotNull AnthropometricData getAnthropometricData(UserDto user, User existingUser) {
+        return new AnthropometricData(user.getHeight(),
+                user.getWeight(),
+                existingUser.getAnthropometricData().getCaloriesBurned(),
+                existingUser.getAnthropometricData().getHeartRate(),
+                existingUser.getAnthropometricData().getListUserWeight(),
+                existingUser.getAnthropometricData().getListFatPercentage());
+    }
+
+    private static @NotNull PersonalData getPersonalData(UserDto user) {
+        return new PersonalData(user.getName(),
+                user.getSurname(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getBirthDate());
+    }
+
+    private static void addNewWeight(final User user) {
+        // Actualiza el peso si ha cambiado y añade al histórico
+        log.info("Actualizando peso y añadiendo al histórico para el usuario ID: {}", user.getId());
+        Weight newWeight = new Weight(LocalDateTime.now(), user.getAnthropometricData().getWeight());
+
+        if (Objects.isNull(user.getAnthropometricData().getListUserWeight())
+                || user.getAnthropometricData().getListUserWeight().isEmpty())
+            user.getAnthropometricData().setListUserWeight(new ArrayList<>());
+
+        user.getAnthropometricData().getListUserWeight().add(newWeight);
     }
 
 

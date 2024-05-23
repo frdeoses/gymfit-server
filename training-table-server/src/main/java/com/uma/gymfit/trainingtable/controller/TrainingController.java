@@ -1,6 +1,8 @@
 package com.uma.gymfit.trainingtable.controller;
 
 import com.uma.gymfit.trainingtable.model.ResponseHTTP;
+import com.uma.gymfit.trainingtable.model.dtos.NewWorkedWeight;
+import com.uma.gymfit.trainingtable.model.dtos.TrainingDto;
 import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingType;
 import com.uma.gymfit.trainingtable.service.ITrainingService;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -29,8 +32,12 @@ import java.util.List;
 @RequestMapping(Literals.API)
 public class TrainingController {
 
+    private final ITrainingService trainingService;
+
     @Autowired
-    private ITrainingService trainingService;
+    public TrainingController(ITrainingService trainingService) {
+        this.trainingService = trainingService;
+    }
 
     @GetMapping(Literals.TYPE_TRAINING)
     public ResponseEntity<ResponseHTTP<TrainingType[]>> allTrainingType() {
@@ -79,11 +86,10 @@ public class TrainingController {
     }
 
     @PostMapping(Literals.TRAINING)
-    public ResponseEntity<ResponseHTTP<Training>> createTraining(@Validated @RequestBody Training training) {
+    public ResponseEntity<ResponseHTTP<Training>> createTraining(@Validated @RequestBody TrainingDto trainingDto) {
 
         try {
-            trainingService.createTraining(training);
-            return ResponseEntity.created(URI.create(Literals.TRAINING)).body(Literals.createResponseHttp(HttpStatus.OK, training, null));
+            return ResponseEntity.created(URI.create(Literals.TRAINING)).body(Literals.createResponseHttp(HttpStatus.OK, trainingService.createTraining(trainingDto), null));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
 
@@ -91,17 +97,15 @@ public class TrainingController {
     }
 
     @PatchMapping(Literals.TRAINING)
-    public ResponseEntity<ResponseHTTP<Training>> updateTraining(@RequestBody Training training) {
+    public ResponseEntity<ResponseHTTP<Training>> updateTraining(@RequestBody @Valid TrainingDto trainingDto) {
 
         try {
-            trainingService.updateTraining(training);
-            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, training, null));
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, trainingService.updateTraining(trainingDto), null));
 
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
 
         }
-
     }
 
     @DeleteMapping(Literals.TRAINING_ID)
@@ -113,6 +117,18 @@ public class TrainingController {
 
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, idTraining, e.getMessage()));
+
+        }
+    }
+
+    @PostMapping(Literals.WORKED_WEIGHTS)
+    public ResponseEntity<ResponseHTTP<NewWorkedWeight>> addNewWorkedWeights(@RequestBody @Valid NewWorkedWeight newWorkedWeight) {
+
+        try {
+            trainingService.addNewWorkedWeights(newWorkedWeight);
+            return ResponseEntity.ok(Literals.createResponseHttp(HttpStatus.OK, newWorkedWeight, null));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Literals.createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
 
         }
     }
