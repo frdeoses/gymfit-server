@@ -98,8 +98,6 @@ public class TrainingService implements ITrainingService {
 
     /**
      * Crea un Ejercicio
-     *
-     * @return
      */
     @Override
     @Transactional
