@@ -1,7 +1,9 @@
 package com.uma.gymfit.trainingtable.service.impl;
 
+import com.uma.gymfit.trainingtable.converters.ConvertTrainingDtoToTraining;
 import com.uma.gymfit.trainingtable.exception.training.TrainingNotFoundException;
 import com.uma.gymfit.trainingtable.model.dtos.NewWorkedWeight;
+import com.uma.gymfit.trainingtable.model.dtos.TrainingDto;
 import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingTable;
 import com.uma.gymfit.trainingtable.model.training.TrainingType;
@@ -17,7 +19,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,12 +39,17 @@ public class TrainingService implements ITrainingService {
 
     private final IUserRepository userRepository;
 
+    private final ConvertTrainingDtoToTraining convertTrainingDtoToTraining;
+
+
     @Autowired
     public TrainingService(final ITrainingRepository trainingRepository,
                            final ITrainingTableRepository trainingTableRepository,
+                           final ConvertTrainingDtoToTraining convertTrainingDtoToTraining,
                            final IUserRepository userRepository) {
         this.trainingRepository = trainingRepository;
         this.trainingTableRepository = trainingTableRepository;
+        this.convertTrainingDtoToTraining = convertTrainingDtoToTraining;
         this.userRepository = userRepository;
     }
 
@@ -72,7 +78,6 @@ public class TrainingService implements ITrainingService {
 
     /***
      * Devuelve la tabla almacenada en BB DD
-     * @param idTraining
      * @return
      * @
      */
@@ -94,19 +99,16 @@ public class TrainingService implements ITrainingService {
     /**
      * Crea un Ejercicio
      *
-     * @param training
+     * @return
      */
     @Override
     @Transactional
-    public void createTraining(Training training) {
+    public Training createTraining(TrainingDto trainingDto) {
 
         try {
             //en caso de no tener problemas guardaremos en el repositorio.
-            log.info("Procedemos a guardar en el sistema el siguiente ejercicio: {}.", training);
-            training.setCreationDate(LocalDateTime.now());
-            updateFields(training, training);
-            trainingRepository.save(training);
-            log.info("OK: Ejercicio guardado con éxito.");
+            log.info("Procedemos a guardar en el sistema el siguiente ejercicio: {}.", trainingDto);
+            return trainingRepository.save(convertTrainingDtoToTraining.convert(trainingDto));
 
         } catch (DataAccessException e) {
             log.error("ERROR: Error al guardar el entrenamiento en la base de datos - {}", e.getMessage());
@@ -116,8 +118,6 @@ public class TrainingService implements ITrainingService {
 
     /**
      * Borra un ejercicio por su id
-     *
-     * @param idTraining
      */
     @Override
     @Transactional
@@ -144,8 +144,6 @@ public class TrainingService implements ITrainingService {
     /**
      * Borra de la tabla de entrenamiento aquellos entrenamientos
      * que contenga dicho entrenamiento que vamos a eliminar
-     *
-     * @param trainingDelete
      */
     private void deleteTrainingInTrainingTable(Training trainingDelete) {
 
@@ -204,28 +202,26 @@ public class TrainingService implements ITrainingService {
 
     /**
      * Modifica un ejercicio
-     *
-     * @param training
      */
     @Override
     @Transactional
-    public void updateTraining(Training training) {
+    public Training updateTraining(TrainingDto trainingDto) {
 
-        log.info("Intentando actualizar el entrenamiento con ID: {}", training.getId());
+        log.info("Intentando actualizar el entrenamiento con ID: {}", trainingDto.getId());
 
-        trainingRepository.findById(training.getId()).ifPresentOrElse(
+        trainingRepository.findById(trainingDto.getId()).ifPresentOrElse(
                 trainingSave -> {
 
-                    Training trainingUpdateFields = updateFields(trainingSave, training);
-
-                    trainingRepository.save(trainingUpdateFields);
-                    logUpdateTraining(training.getId());
+                    trainingRepository.save(convertTrainingDtoToTraining.convert(trainingDto));
+                    logUpdateTraining(trainingSave.getId());
                 }, () -> {
-                    logErrorNotFoundTraining(training.getId());
+                    logErrorNotFoundTraining(trainingDto.getId());
 
-                    throw new TrainingNotFoundException(NOT_FOUND_TRAINING_MSG + training.getId());
+                    throw new TrainingNotFoundException(NOT_FOUND_TRAINING_MSG + trainingDto.getId());
                 }
         );
+
+        return convertTrainingDtoToTraining.convert(trainingDto);
 
     }
 
@@ -239,7 +235,7 @@ public class TrainingService implements ITrainingService {
 
             log.info("Entrenamiento con ID: {} encontrado.", training.getId());
 
-            if (Objects.isNull(training.getListWorkedWeights()) || training.getListWorkedWeights().isEmpty())
+            if (Objects.isNull(training.getListWorkedWeights()))
                 training.setListWorkedWeights(new ArrayList<>());
 
             training.getListWorkedWeights().add(workedWeight.getWorkedWeight());
@@ -256,22 +252,4 @@ public class TrainingService implements ITrainingService {
 
     }
 
-
-    private Training updateFields(Training trainingSave, Training training) {
-        return trainingSave.toBuilder()
-                .lastUpdateDate(LocalDateTime.now())
-                .userId(training.getUserId())
-                .like(training.getLike())
-                .description(training.getDescription())
-                .name(training.getName())
-                .exercisedArea(training.getExercisedArea())
-                .gymMachine(training.getGymMachine())
-                .caloriesBurned(training.getCaloriesBurned())
-                .needBeSupervised(training.isNeedBeSupervised())
-                .numSeries(training.getNumSeries())
-                .listWorkedWeights(training.getListWorkedWeights())
-                .typeTraining(training.getTypeTraining())
-                .build();
-
-    }
 }
