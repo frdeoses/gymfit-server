@@ -1,6 +1,7 @@
 package com.uma.gymfit.trainingtable.service;
 
 import com.uma.gymfit.trainingtable.model.dtos.NewWorkedWeight;
+import com.uma.gymfit.trainingtable.model.dtos.TrainingDto;
 import com.uma.gymfit.trainingtable.model.training.Training;
 import com.uma.gymfit.trainingtable.model.training.TrainingType;
 
@@ -29,8 +30,10 @@ public interface ITrainingService {
 
     /**
      * Crea un ejercicio
+     *
+     * @return
      */
-    void createTraining(Training training);
+    Training createTraining(TrainingDto trainingDto);
 
     /**
      * Borra un ejercicio por su id
@@ -39,8 +42,10 @@ public interface ITrainingService {
 
     /**
      * Modifica un ejercicio
+     *
+     * @return
      */
-    void updateTraining(Training training);
+    Training updateTraining(TrainingDto training);
 
     /**
      * Devuelve los entrenamientos del sistema segun el user pasado
