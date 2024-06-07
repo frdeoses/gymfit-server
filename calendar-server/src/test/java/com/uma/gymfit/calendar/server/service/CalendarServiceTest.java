@@ -1,6 +1,7 @@
 package com.uma.gymfit.calendar.server.service;
 
 import com.uma.gymfit.calendar.model.calendar.Calendar;
+import com.uma.gymfit.calendar.model.dto.CalendarDto;
 import com.uma.gymfit.calendar.repository.ICalendarRepository;
 import com.uma.gymfit.calendar.service.impl.CalendarService;
 import org.junit.jupiter.api.AfterEach;
@@ -36,9 +37,19 @@ class CalendarServiceTest {
 
     private Calendar calendar;
 
+    private CalendarDto calendarDto;
+
     @BeforeEach
     void setup() {
         calendar = Calendar.builder()
+                .id("1")
+                .title("Test1")
+                .description("prueba 1")
+                .published(false)
+                .build();
+
+
+        calendarDto = CalendarDto.builder()
                 .id("1")
                 .title("Test1")
                 .description("prueba 1")
@@ -71,7 +82,7 @@ class CalendarServiceTest {
         List<Calendar> calendarList = calendarService.allCalendars();
 
         // then
-        assertThat(calendarList.size()).isEqualTo(2);
+        assertThat(calendarList).hasSize(2);
 
     }
 
@@ -81,11 +92,6 @@ class CalendarServiceTest {
 
         // given
 
-        Calendar calendar1 = calendar.toBuilder()
-                .title("Test2")
-                .description("prueba 2")
-                .published(false)
-                .build();
 
         given(calendarRepository.findAll()).willReturn(Collections.emptyList());
 
@@ -96,13 +102,12 @@ class CalendarServiceTest {
         // then
 
         assertThat(calendarList).isEmpty();
-        assertThat(calendarList.size()).isZero();
 
     }
 
     @DisplayName("Test para obtener un evento.")
     @Test
-    void findCalendarTest() throws Exception {
+    void findCalendarTest() {
 
         // given
 
@@ -122,7 +127,7 @@ class CalendarServiceTest {
 
     @DisplayName("Test para editar un evento.")
     @Test
-    void editCalendarTest() throws Exception {
+    void editCalendarTest() {
 
         // given
 
@@ -136,7 +141,7 @@ class CalendarServiceTest {
         // when
 
 
-        calendarService.updateCalendar(calendar);
+        calendarService.updateCalendar(calendarDto);
 
         Calendar calendarUpdate = calendarService.findCalendar(calendar.getId());
 
@@ -150,7 +155,7 @@ class CalendarServiceTest {
 
     @DisplayName("Test para crear un evento.")
     @Test
-    void createCalendarsTest() throws Exception {
+    void createCalendarsTest() {
 
 
         given(calendarRepository.findById(calendar.getId())).willReturn(Optional.empty());
@@ -158,7 +163,7 @@ class CalendarServiceTest {
 
         given(calendarRepository.save(calendar)).willReturn(calendar);
 
-        calendarService.createCalendar(calendar);
+        calendarService.createCalendar(calendarDto);
 
         assertThat(calendarRepository.findById(calendar.getId())).isNotNull();
 
@@ -184,7 +189,7 @@ class CalendarServiceTest {
 
     @DisplayName("Test para eliminar un evento.")
     @Test
-    void deleteCalendarTest() throws Exception {
+    void deleteCalendarTest() {
 
         // given
         given(calendarRepository.existsById("1")).willReturn(true);

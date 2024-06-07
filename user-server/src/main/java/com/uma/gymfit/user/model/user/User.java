@@ -9,13 +9,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,43 +39,22 @@ public class User implements UserDetails {
     @NotNull
     private Set<UserRol> userRoles;
 
-    @JsonProperty(required = true)
-    @NotNull
-    @NotBlank
-    private String name;
-
-    @JsonProperty(required = true)
-    @NotNull
-    @NotBlank
-    private String surname;
-
-    @Indexed(unique = true)
-    @NotNull
-    @NotBlank
-    @Email
-    private String email;
-
-    @JsonProperty(required = true)
-    @NotNull
-    @NotBlank
-    private String phone;
-
-    @JsonProperty(required = true)
-    @NotNull
-    private LocalDateTime birthDate;
+    private PersonalData personalData;
 
     private LocalDateTime registrationDate;
 
-    private double height;
+    private AnthropometricData anthropometricData;
 
-    private double weight;
-
-    private int caloriesBurned;
-
-    private List<Weight> listUserWeight;
-
-    private List<FatPercentage> listFatPercentage;
-
+    public User(final String username,
+                final String password,
+                final PersonalData personalData,
+                final AnthropometricData anthropometricData) {
+        this.username = username;
+        this.password = password;
+        this.personalData = personalData;
+        this.anthropometricData = anthropometricData;
+        userRoles = new HashSet<>();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

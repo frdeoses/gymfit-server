@@ -1,6 +1,7 @@
 package com.uma.gymfit.user.service;
 
-import com.uma.gymfit.user.model.user.User;
+import com.uma.gymfit.user.model.dto.UserDto;
+import com.uma.gymfit.user.model.dto.UserRS;
 
 import java.util.List;
 
@@ -11,14 +12,14 @@ public interface IUserService {
      *
      * @return List<U>
      */
-    List<User> allUser();
+    List<UserRS> allUser();
 
     /**
      * Devuelve todos los usuarios almacenados en BB DD
      *
      * @return List<U>
      */
-    List<User> allUserRoleUsers();
+    List<UserRS> allUserRoleUsers();
 
     /**
      * Devuelve el usuario almacenado en BB DD
@@ -26,7 +27,7 @@ public interface IUserService {
      * @param idUser
      * @return User
      */
-    User findUser(String idUser);
+    UserRS findUser(String idUser);
 
 
     /**
@@ -34,7 +35,7 @@ public interface IUserService {
      *
      * @param user
      */
-    void createUser(User user);
+    void createUser(UserDto user);
 
 
     /**
@@ -50,6 +51,6 @@ public interface IUserService {
      *
      * @param user
      */
-    void updateUser(User user);
+    UserRS updateUser(UserDto user);
 
 }

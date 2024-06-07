@@ -8,14 +8,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Document(value = "User")
 @Data
@@ -39,48 +38,26 @@ public class User implements UserDetails {
     @NotNull
     private Set<UserRol> userRoles;
 
-    @JsonProperty(required = true)
-    @NotNull
-    @NotBlank
-    private String name;
+    private PersonalData personalData;
 
-    @JsonProperty(required = true)
-    @NotNull
-    @NotBlank
-    private String surname;
-
-    @Indexed(unique = true)
-    @NotNull
-    @NotBlank
-    @Email
-    private String email;
-
-    @JsonProperty(required = true)
-    @NotNull
-    @NotBlank
-    private String phone;
-
-    @JsonProperty(required = true)
-    @NotNull
-    private LocalDateTime birthDate;
-
-    @JsonProperty(required = true)
-    @NotNull
     private LocalDateTime registrationDate;
-    
-    private double weight;
 
-    private double height;
+    private AnthropometricData anthropometricData;
 
-    private int caloriesBurned;
-
-    private List<Weight> listUserWeight;
-
-    private List<FatPercentage> listFatPercentage;
+    public User(final PersonalData personalData,
+                final AnthropometricData anthropometricData) {
+        this.personalData = personalData;
+        this.anthropometricData = anthropometricData;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<Authority> authorities = new HashSet<>();
+
+        if (userRoles.isEmpty()) {
+            userRoles = new HashSet<>();
+            userRoles.add(new UserRol(UUID.randomUUID().toString(), RoleList.USER.toString(), RoleList.USER));
+        }
 
         this.userRoles.forEach(userRol -> {
             Authority authority = new Authority(userRol.getRoleList().name());

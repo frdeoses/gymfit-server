@@ -7,6 +7,7 @@ import com.uma.gymfit.calendar.config.JwtUtils;
 import com.uma.gymfit.calendar.exception.CalendarNotFoundException;
 import com.uma.gymfit.calendar.model.calendar.Calendar;
 import com.uma.gymfit.calendar.model.calendar.ResponseHTTP;
+import com.uma.gymfit.calendar.model.dto.CalendarDto;
 import com.uma.gymfit.calendar.security.service.impl.UserDetailsServiceImpl;
 import com.uma.gymfit.calendar.service.impl.CalendarService;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,6 +56,7 @@ class CalendarControllerTest {
 
     @MockBean
     private JwtAuthenticationEntryPoint unauthorizeHandler;
+
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -63,9 +65,18 @@ class CalendarControllerTest {
 
     private Calendar calendar;
 
+    private CalendarDto calendarDto;
+
     @BeforeEach
     void setup() {
         calendar = Calendar.builder()
+                .id("1")
+                .title("Test1")
+                .description("prueba 1")
+                .published(false)
+                .build();
+
+        calendarDto = CalendarDto.builder()
                 .id("1")
                 .title("Test1")
                 .description("prueba 1")
@@ -82,9 +93,9 @@ class CalendarControllerTest {
 
         ResponseHTTP<Calendar> responseHTTP = createResponseHttp(HttpStatus.CREATED, calendar, null);
 
-        doNothing().when(calendarService).createCalendar(calendar);
+        doNothing().when(calendarService).createCalendar(calendarDto);
 
-        ResultActions response = mockMvc.perform(post("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendar
+        ResultActions response = mockMvc.perform(post("/api/gymfit/calendar").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendarDto
         )));
 
         response.andDo(print())
@@ -151,7 +162,6 @@ class CalendarControllerTest {
 
 
         given(calendarService.findCalendar("1")).willReturn(calendar);
-        ResponseHTTP<Calendar> responseHTTP = createResponseHttp(HttpStatus.OK, calendar, null);
 
         // when
 
@@ -194,29 +204,20 @@ class CalendarControllerTest {
     void editCalendarTest() throws Exception {
 
         // given
-
-        Calendar calendar = Calendar.builder()
-                .id("1")
-                .title("Test1")
-                .description("prueba 1")
-                .published(false)
-                .comments(new ArrayList<>())
-                .build();
-
-        Calendar calendarEdit = calendar.toBuilder()
+        CalendarDto calendarEdit = calendarDto.toBuilder()
                 .id("2")
                 .title("Test2")
                 .description("prueba 2")
                 .published(true)
                 .build();
 
-        ResponseHTTP<Calendar> responseHTTP = createResponseHttp(HttpStatus.OK, calendarEdit, null);
-        
-        given(calendarService.updateCalendar(calendar)).willReturn(calendarEdit);
+        ResponseHTTP<CalendarDto> responseHTTP = createResponseHttp(HttpStatus.OK, calendarEdit, null);
+
+        given(calendarService.updateCalendar(calendarEdit)).willReturn(calendarEdit);
 
         // when
         ResultActions response = mockMvc.perform(patch("/api/gymfit/calendar")
-                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendar)));
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(calendarEdit)));
 
         // then
         response.andExpect(status().isOk()).andDo(print())
@@ -248,13 +249,13 @@ class CalendarControllerTest {
         // given
 
 
-        Calendar calendarNotFound = calendar.toBuilder()
+        CalendarDto calendarNotFound = calendarDto.toBuilder()
                 .id("3").build();
 
 
         doThrow(CalendarNotFoundException.class).when(calendarService).updateCalendar(calendarNotFound);
 
-        ResponseHTTP<Calendar> responseHTTP = createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, calendarNotFound, "");
+        ResponseHTTP<CalendarDto> responseHTTP = createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, calendarNotFound, "");
 
 
         // when

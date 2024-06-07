@@ -1,7 +1,8 @@
 package com.uma.gymfit.user.controller;
 
+import com.uma.gymfit.user.model.dto.UserDto;
+import com.uma.gymfit.user.model.dto.UserRS;
 import com.uma.gymfit.user.model.user.ResponseHTTP;
-import com.uma.gymfit.user.model.user.User;
 import com.uma.gymfit.user.service.IUserService;
 import com.uma.gymfit.user.utils.Literals;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,54 +23,57 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 
+
 @RestController
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.POST, RequestMethod.PATCH})
 @RequestMapping(Literals.API)
 public class UserController {
 
+    private final IUserService gymFitService;
+
     @Autowired
-    private IUserService gymFitService;
+    public UserController(IUserService gymFitService) {
+        this.gymFitService = gymFitService;
+    }
 
     @GetMapping(Literals.USERS)
-    public ResponseEntity<ResponseHTTP<List<User>>> allUsers() {
+    public ResponseEntity<ResponseHTTP<List<UserRS>>> allUsers() {
         return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, gymFitService.allUser(), null));
     }
 
     @GetMapping(Literals.USERS_ROLE_USER)
-    public ResponseEntity<ResponseHTTP<List<User>>> allUsersRoleUsers() {
+    public ResponseEntity<ResponseHTTP<List<UserRS>>> allUsersRoleUsers() {
         return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, gymFitService.allUserRoleUsers(), null));
 
     }
 
     @GetMapping(Literals.USER_ID)
-    public ResponseEntity<ResponseHTTP<?>> findUser(@PathVariable String idUser) {
+    public ResponseEntity<ResponseHTTP<UserRS>> findUser(@PathVariable String idUser) {
         try {
             return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, gymFitService.findUser(idUser), null));
         } catch (Exception e) {
 
-            return ResponseEntity.internalServerError().body(createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, idUser, e.getMessage()));
+            return ResponseEntity.internalServerError().body(createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
     }
 
     @PostMapping(Literals.USER)
-    public ResponseEntity<ResponseHTTP<User>> createUser(@Validated @RequestBody User user) {
+    public ResponseEntity<ResponseHTTP<UserDto>> createUser(@Validated @RequestBody UserDto user) {
 
         try {
             gymFitService.createUser(user);
             return ResponseEntity.created(URI.create(Literals.USER)).body(createResponseHttp(HttpStatus.CREATED, user, null));
         } catch (Exception e) {
-
             return ResponseEntity.internalServerError().body(createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
         }
 
     }
 
     @PatchMapping(Literals.USER)
-    public ResponseEntity<ResponseHTTP<User>> updateUser(@RequestBody User user) {
+    public ResponseEntity<ResponseHTTP<UserRS>> updateUser(@RequestBody UserDto user) {
 
         try {
-            gymFitService.updateUser(user);
-            return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, user, null));
+            return ResponseEntity.ok(createResponseHttp(HttpStatus.OK, gymFitService.updateUser(user), null));
         } catch (Exception e) {
 
             return ResponseEntity.internalServerError().body(createResponseHttp(HttpStatus.INTERNAL_SERVER_ERROR, null, e.getMessage()));
