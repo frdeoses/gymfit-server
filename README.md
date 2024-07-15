@@ -1,3 +1,3 @@
-# Gym Fit 
+# GYMFIT
 
-Small api-rest application, made with spring boot 2 and non-relational database (MongoDB).
+Small group of microservices, made with spring boot 2 and non-relational database (MongoDB).

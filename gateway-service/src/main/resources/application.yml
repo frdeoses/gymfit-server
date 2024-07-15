@@ -1,0 +1,69 @@
+#spring.profiles.active: local
+server:
+  port: 80
+  #ssl:
+  #  enabled: true # Uses self-signed certificate because no key-store configuration is specified.
+
+internal.lb.uri: http://localhost
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user
+          uri: ${internal.lb.uri}:8001
+          predicates:
+            - Path=/api/gymfit/user**
+          filters:
+            - RewritePath=/(?<path>.*), /$\{path}
+        - id: user_id
+          uri: ${internal.lb.uri}:8001
+          predicates:
+            - Path=/api/gymfit/users/**
+          filters:
+            - RewritePath=/users/(?<path>.*), /users/$\{path}
+        - id: autenticate_id
+          uri: ${internal.lb.uri}:8001
+          predicates:
+            - Path=/generate-token**
+        - id: current_user_id
+          uri: ${internal.lb.uri}:8001
+          predicates:
+            - Path=/current-user**
+        - id: training-table
+          uri: ${internal.lb.uri}:8002
+          predicates:
+            - Path=/api/gymfit/training-table**
+          filters:
+            - RewritePath=/(?<path>.*), /$\{path}
+        - id: training-table_id
+          uri: ${internal.lb.uri}:8002
+          predicates:
+            - Path=/api/gymfit/training-tables/**
+          filters:
+            - RewritePath=/training-tables/(?<path>.*), /training-tables/$\{path}
+        - id: autenticate_training-table_id
+          uri: ${internal.lb.uri}:8002
+          predicates:
+            - Path=/api/gymfit/training-tables/generate-token**
+        - id: calendar
+          uri: ${internal.lb.uri}:8003
+          predicates:
+            - Path=/api/gymfit/calendar**
+          filters:
+            - RewritePath=/(?<path>.*),/$\{path}
+        - id: calendar_id
+          uri: ${internal.lb.uri}:8003
+          predicates:
+            - Path=/api/gymfit/calendars/**
+          filters:
+            - RewritePath=/calendars/(?<path>.*),/calendars/$\{path}
+        - id: autenticate_calendars_id
+          uri: ${internal.lb.uri}:8003
+          predicates:
+            - Path=/api/gymfit/calendars/generate-token**
+        - id: webapp
+          uri: ${internal.lb.uri}:8004
+          predicates:
+            - Path=/**
+          filters:
+            - RewritePath=/(?<path>.*), /$\{path}
